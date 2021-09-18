@@ -153,7 +153,7 @@ baud_indx = 4 # baud rate to be changed to (new baudrate for TF-Luna)
 tot_pts = 100 # points for sample rate test
 time_array,dist_array = [],[[],[]] # for storing values
 
-lidars = [LiDAR("/dev/serial0)"), LiDAR("/dev/ttyAMA1")]
+lidars = [LiDAR("/dev/serial0"), LiDAR("/dev/ttyAMA1")]
 
 print('Starting Ranging...')
 while len(dist_array[0])<tot_pts:
