@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
  # baud rates
 
 class LiDAR:
-    def __init__(self, path, samp_rate=100, baud_indx=4, ):
+    def __init__(self, path, samp_rate=100, baud_indx=4):
         LiDAR.baudrates = [9600,19200,38400,57600,115200,230400,460800,921600]
         
         self.path = path
@@ -43,6 +43,8 @@ class LiDAR:
         self.set_samp_rate() # set sample rate 1-250
         self.get_version() # print version info for TF-Luna
         
+        self.distanceArray = [-1]*100
+        
     def read_tfluna_data(self):
         while True:
             counter = self.ser.in_waiting # count the number of bytes of the serial port
@@ -53,10 +55,10 @@ class LiDAR:
     
                 if bytes_serial[0] == 0x59 and bytes_serial[1] == 0x59: # check first two bytes
                     distance = bytes_serial[2] + bytes_serial[3]*256 # distance in next two bytes
-                    strength = bytes_serial[4] + bytes_serial[5]*256 # signal strength in next two bytes
-                    temperature = bytes_serial[6] + bytes_serial[7]*256 # temp in next two bytes
-                    temperature = (temperature/8) - 256 # temp scaling and offset
-                    return distance/100.0,strength,temperature
+#                    strength = bytes_serial[4] + bytes_serial[5]*256 # signal strength in next two bytes
+#                    temperature = bytes_serial[6] + bytes_serial[7]*256 # temp in next two bytes
+#                    temperature = (temperature/8) - 256 # temp scaling and offset
+                    return distance/100.0#,strength,temperature
     
     def set_samp_rate(self):
         ##########################
