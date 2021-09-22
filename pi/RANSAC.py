@@ -11,6 +11,8 @@ import math
 class dangerDetection:
     MIN_ANGLE = 2*math.pi/9
     MAX_ANGLE = 7*math.pi/9
+
+
     
     def getBase(radius:float, velo:float, sec:float, goLeft:bool):
         return radius, (1 if goLeft else -1) * 9*velo*sec/(5*math.pi), (-7 if goLeft else 2)*velo*sec/5
