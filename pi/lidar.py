@@ -45,7 +45,7 @@ class LiDAR:
         
         self.distanceArray = [-1]*100
         
-    def read_tfluna_data(self):
+    def read_data(self):
         while True:
             counter = self.ser.in_waiting # count the number of bytes of the serial port
             bytes_to_read = 9
@@ -152,34 +152,34 @@ baud_indx = 4 # baud rate to be changed to (new baudrate for TF-Luna)
 # Testing the TF-Luna Output
 ############################
 #
-tot_pts = 100 # points for sample rate test
-time_array,dist_array = [],[[],[]] # for storing values
+#tot_pts = 100 # points for sample rate test
+#time_array,dist_array = [],[[],[]] # for storing values
 
-lidars = [LiDAR("/dev/serial0"), LiDAR("/dev/ttyAMA1")]
+#lidars = [LiDAR("/dev/serial0"), LiDAR("/dev/ttyAMA1")]
 
-print('Starting Ranging...')
-while len(dist_array[0])<tot_pts:
-    try:
-        distance,strength,temperature = lidars[0].read_tfluna_data() # read values
-        distance1,strength1,temperature1 = lidars[0].read_tfluna_data() # read values
-        dist_array[0].append(distance) # append to array
-        dist_array[1].append(distance1) # append to array
-        time_array.append(time.time())
-    except:
-        continue
-print('Sample Rate: {0:2.0f} Hz'.format(len(dist_array[0])/(time_array[-1]-time_array[0]))) # print sample rate
-lidars[0].close() # close serial port
-lidars[1].close()
+# print('Starting Ranging...')
+# while len(dist_array[0])<tot_pts:
+#     try:
+#         distance,strength,temperature = lidars[0].read_data() # read values
+#         distance1,strength1,temperature1 = lidars[0].read_data() # read values
+#         dist_array[0].append(distance) # append to array
+#         dist_array[1].append(distance1) # append to array
+#         time_array.append(time.time())
+#     except:
+#         continue
+# print('Sample Rate: {0:2.0f} Hz'.format(len(dist_array[0])/(time_array[-1]-time_array[0]))) # print sample rate
+# lidars[0].close() # close serial port
+# lidars[1].close()
 #
 ##############################
 # Plotting the TF-Luna Output
 ##############################
 #
-plt.style.use('ggplot') # figure formatting
-fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-ax.plot(np.subtract(time_array,time_array[0]),dist_array[0],linewidth=3.5) # plot ranging data
-ax.plot(np.subtract(time_array,time_array[0]),dist_array[1],linewidth=3.5) # plot ranging data
-ax.set_ylabel('Distance [m]',fontsize=16) 
-ax.set_xlabel('Time [s]',fontsize=16)
-ax.set_title('TF-Luna Ranging Test',fontsize=18)
-plt.show() # show figure
+# plt.style.use('ggplot') # figure formatting
+# fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
+# ax.plot(np.subtract(time_array,time_array[0]),dist_array[0],linewidth=3.5) # plot ranging data
+# ax.plot(np.subtract(time_array,time_array[0]),dist_array[1],linewidth=3.5) # plot ranging data
+# ax.set_ylabel('Distance [m]',fontsize=16) 
+# ax.set_xlabel('Time [s]',fontsize=16)
+# ax.set_title('TF-Luna Ranging Test',fontsize=18)
+# plt.show() # show figure
