@@ -35,7 +35,7 @@ class Main:
         
         plt.style.use('ggplot') # figure formatting
         fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-        ax.plot(angleList ,rawList,linewidth=3.5) # plot ranging data
+        ax.scatter(angleList ,rawList) # plot ranging data
         ax.set_ylabel('Distance [m]',fontsize=16) 
         ax.set_xlabel('Angle [DEG]',fontsize=16)
         ax.set_title('TF-Luna Ranging Test',fontsize=18)
