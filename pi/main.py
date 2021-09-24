@@ -7,7 +7,7 @@ Created on Thu Sep 23 18:58:26 2021
 
 from lidarManager import LiDARManager 
 import threading
-import matplotlib.plot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 
 class Main:
@@ -27,7 +27,7 @@ class Main:
         
     def run(self):
         rawsAndAngles = 0
-        t = threading.Thread(rawsAndAngles = self.lm.getRaws, args=(0))
+        t = threading.Thread(target = self.lm.getRaws, args=(0))
         t.start()
         
         t.join()

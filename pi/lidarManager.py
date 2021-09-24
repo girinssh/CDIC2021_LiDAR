@@ -5,7 +5,7 @@ Created on Thu Sep 23 16:05:30 2021
 @author: tngus
 """
 
-import lidar
+from lidar import LiDAR
 import time
 import numpy as np
 
@@ -26,8 +26,8 @@ class LiDARManager:
         self.state = LiDARManager.STATE_FORWARD
         
         self.lidars = [
-                lidar("/dev/serial0", samp_rate=samp_rate),
-                lidar("/dev/ttyAMA1", samp_rate=samp_rate),
+                LiDAR("/dev/serial0", samp_rate=samp_rate),
+                LiDAR("/dev/ttyAMA1", samp_rate=samp_rate),
                 #lidar("/dev/ttyAMA2", samp_rate=samp_rate)
             ]
         
