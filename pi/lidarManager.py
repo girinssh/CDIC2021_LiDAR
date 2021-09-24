@@ -44,9 +44,9 @@ class LiDARManager:
     def getRaws(self, POS: int):
         rawArray = [-1]*self.rawPerOneway
         angleArray = [-1]*self.rawPerOneway
-        start = time.time()
         index = 0
         last = -1
+        start = time.time()
         while index < self.rawPerOneway:
             last = time.time()
             #time을 계산하면서 rawArray에 집어넣는다. 

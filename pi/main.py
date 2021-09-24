@@ -28,18 +28,24 @@ class Main:
     def run(self):
         pool = ThreadPool(processes = 2)
         
-        result = pool.apply_async(self.lm.getRaws, (0,))
-        rawsAndAngles = result.get()
-        rawList = rawsAndAngles[0]
-        angleList = rawsAndAngles[1]
+        result = pool.map(self.lm.getRaws, (0,1))
+        print(result)
+        # rawsAndAngles = result.get()
         
-        plt.style.use('ggplot') # figure formatting
-        fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-        ax.scatter(angleList ,rawList) # plot ranging data
-        ax.set_ylabel('Distance [m]',fontsize=16) 
-        ax.set_xlabel('Angle [DEG]',fontsize=16)
-        ax.set_title('TF-Luna Ranging Test',fontsize=18)
-        plt.show() # show figure
+        # rawList = rawsAndAngles[0]
+        # angleList = rawsAndAngles[1]
+        
+        
+        # print(rawList)
+        # print(angleList)
+        
+        # plt.style.use('ggplot') # figure formatting
+        # fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
+        # ax.scatter(angleList ,rawList) # plot ranging data
+        # ax.set_ylabel('Distance [m]',fontsize=16) 
+        # ax.set_xlabel('Angle [DEG]',fontsize=16)
+        # ax.set_title('TF-Luna Ranging Test',fontsize=18)
+        # plt.show() # show figure
         
         
 main = Main()
