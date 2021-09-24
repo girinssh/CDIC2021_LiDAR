@@ -12,8 +12,7 @@ import numpy as np
 
 def plotter(plot_pts = 100):
     plt.style.use('ggplot') # plot formatting
-    fig,axs = plt.subplots(1,1,figsize=(12,8),
-                        gridspec_kw={'width_ratios': [5,1]}) # create figure
+    fig,axs = plt.subplots(1,1,figsize=(12,8)) # create figure
     fig.canvas.set_window_title('TF-Luna Real-Time Ranging')
     fig.subplots_adjust(wspace=0.05)
     # ranging axis formatting
