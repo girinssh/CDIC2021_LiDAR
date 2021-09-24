@@ -17,8 +17,8 @@ Created on Sat Sep 18 20:24:29 2021
 ######################################################
 #
 import serial,time
-import numpy as np
-import matplotlib.pyplot as plt
+#import numpy as np
+#import matplotlib.pyplot as plt
 #
 ############################
 # Serial Functions
@@ -42,8 +42,7 @@ class LiDAR:
         
         self.set_samp_rate() # set sample rate 1-250
         self.get_version() # print version info for TF-Luna
-        
-        self.distanceArray = [-1]*100
+
         
     def read_data(self):
         while True:
@@ -89,9 +88,7 @@ class LiDAR:
                 else:
                     self.ser.write(info_packet)
                     time.sleep(0.1)
-    
-    def get_sample_rate(self):
-        return self.samp_rate
+
     
     def set_baudrate(self):
         ##########################
@@ -144,7 +141,7 @@ class LiDAR:
 #
 
  # open serial port if not open
-baud_indx = 4 # baud rate to be changed to (new baudrate for TF-Luna)
+# baud_indx = 4 # baud rate to be changed to (new baudrate for TF-Luna)
  # set baudrate, get new serial at new baudrate
 
 
