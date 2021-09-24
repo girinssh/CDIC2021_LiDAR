@@ -30,22 +30,19 @@ class Main:
         
         result = pool.map(self.lm.getRaws, (0,1))
         print(result, sep="\n")
-        # rawsAndAngles = result.get()
         
-        # rawList = rawsAndAngles[0]
-        # angleList = rawsAndAngles[1]
+        plt.style.use('ggplot') # figure formatting
+        fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
         
+        for raa in result:
+            rawList = raa[0]
+            angleList = raa[1]
+            ax.scatter(angleList ,rawList) # plot ranging data
         
-        # print(rawList)
-        # print(angleList)
-        
-        # plt.style.use('ggplot') # figure formatting
-        # fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-        # ax.scatter(angleList ,rawList) # plot ranging data
-        # ax.set_ylabel('Distance [m]',fontsize=16) 
-        # ax.set_xlabel('Angle [DEG]',fontsize=16)
-        # ax.set_title('TF-Luna Ranging Test',fontsize=18)
-        # plt.show() # show figure
+        ax.set_ylabel('Distance [m]',fontsize=16) 
+        ax.set_xlabel('Angle [DEG]',fontsize=16)
+        ax.set_title('TF-Luna Ranging Test',fontsize=18)
+        plt.show() # show figure
         
         
 main = Main()
