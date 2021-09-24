@@ -22,10 +22,10 @@ def plotter(plot_pts = 100):
     axs.set_ylim([0.0,8.0]) # set ranging limits
     # draw and background specification
     fig.canvas.draw() # draw initial plot
-    ax_bgnd = fig.canvas.copy_from_bbox(axs[0].bbox) # get background
-    line1, = axs[0].plot(np.zeros((plot_pts,)),linewidth=3.0,
+    ax_bgnd = fig.canvas.copy_from_bbox(axs.bbox) # get background
+    line1, = axs.plot(np.zeros((plot_pts,)),linewidth=3.0,
                 color=plt.cm.Set1(1)) # dummy initial ranging data (zeros)
-    line2, = axs[0].plot(np.zeros((plot_pts,)),linewidth=3.0,
+    line2, = axs.plot(np.zeros((plot_pts,)),linewidth=3.0,
                 color=plt.cm.Set1(0)) 
     fig.show() # show plot
     return fig,axs,ax_bgnd,line1,line2
@@ -36,9 +36,9 @@ def plot_updater(fig, axs, ax_bgnd, line1, line2, dist_array):
     fig.canvas.restore_region(ax_bgnd) # restore background 1 (for speed)
     line1.set_ydata(dist_array[0])
     line2.set_ydata(dist_array[1])
-    axs[0].draw_artist(line1) # draw line
-    axs[0].draw_artist(line2)
-    fig.canvas.blit(axs[0].bbox) # blitting (for speed)
+    axs.draw_artist(line1) # draw line
+    axs.draw_artist(line2)
+    fig.canvas.blit(axs.bbox) # blitting (for speed)
     fig.canvas.flush_events() # required for blitting
     return line1, line2
 
@@ -51,7 +51,7 @@ class Main:
         pass
     
     def getRPM():
-        return 30
+        return 3000
     
     
     def __init__(self):
