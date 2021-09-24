@@ -52,7 +52,7 @@ class Main:
         pass
     
     def getRPM():
-        return 3000
+        return 30
     
     
     def __init__(self):
@@ -63,36 +63,36 @@ class Main:
         #######################################
         # ------ Print First 50 points ------ #
         #######################################
-        # pool = ThreadPool(processes = 2)        
-        # result = pool.map(self.lm.getRaws, (0,1))
-        # print(result, sep="\n")
-        # plt.style.use('ggplot') # figure formatting
-        # fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-        # for raa in result:
-        #     rawList = raa[0]
-        #     angleList = raa[1]
-        #     ax.scatter(angleList ,rawList) # plot ranging data
-        # ax.set_ylabel('Distance [m]',fontsize=16) 
-        # ax.set_xlabel('Angle [DEG]',fontsize=16)
-        # ax.set_title('TF-Luna Ranging Test',fontsize=18)
-        # plt.show() # show figure
+        pool = ThreadPool(processes = 2)        
+        result = pool.map(self.lm.getRaws, (0,1))
+        print(result, sep="\n")
+        plt.style.use('ggplot') # figure formatting
+        fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
+        for raa in result:
+            rawList = raa[0]
+            angleList = raa[1]
+            ax.scatter(angleList ,rawList) # plot ranging data
+        ax.set_ylabel('Distance [m]',fontsize=16) 
+        ax.set_xlabel('Angle [DEG]',fontsize=16)
+        ax.set_title('TF-Luna Ranging Test',fontsize=18)
+        plt.show() # show figure
         
         
         #######################################
         # ------ Real Time Visualizing ------ #
         #######################################
-        fig,axs,ax_bgnd,line1, line2 = plotter(100) 
+        # fig,axs,ax_bgnd,line1, line2 = plotter(100) 
         
-        distArray = [[],[]]
+        # distArray = [[],[]]
         
-        print('Starting Ranging...')
-        while True:
-            distances = self.lm.getRaws(0) # read values
-            distArray[0].append(distances[0][0]) # append to array
-            distArray[1].append(distances[0][0]) # append to array
-            if len(distArray[0])>100:
-                distArray = distArray[:][1:] # drop first point (maintain array size)
-                line1,line2 = plot_updater(fig,axs,ax_bgnd,line1, line2, distArray) # update plot
+        # print('Starting Ranging...')
+        # while True:
+        #     distances = self.lm.getRaws(0) # read values
+        #     distArray[0].append(distances[0][0]) # append to array
+        #     distArray[1].append(distances[0][0]) # append to array
+        #     if len(distArray[0])>100:
+        #         distArray = distArray[:][1:] # drop first point (maintain array size)
+        #         line1,line2 = plot_updater(fig,axs,ax_bgnd,line1, line2, distArray) # update plot
         
         
 main = Main()
