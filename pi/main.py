@@ -6,7 +6,7 @@ Created on Thu Sep 23 18:58:26 2021
 """
 
 from lidarManager import LiDARManager 
-import threading
+from multiprocessing.pool import ThreadPool
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -27,10 +27,10 @@ class Main:
         
     def run(self):
         rawsAndAngles = 0
-        t = threading.Thread(target = self.lm.getRaws, args=(0))
-        t.start()
         
-        t.join()
+        pool = ThreadPool(processes = 2)
+        
+        rawsAndAngles = pool.apply_async(self.lm.getRaws, (0)).get()
         
         rawList = rawsAndAngles[0]
         angleList = rawsAndAngles[1]
