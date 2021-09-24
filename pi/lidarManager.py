@@ -7,6 +7,7 @@ Created on Thu Sep 23 16:05:30 2021
 
 import lidar
 import time
+import numpy as np
 
 class LiDARManager:
 
@@ -54,7 +55,7 @@ class LiDARManager:
                 angleArray[index] = self.angle_unit * index + self.angle_min
             index += 1
 
-        return rawArray, angleArray
+        return np.array([rawArray, angleArray])
 
     def setState(self, newState):
         if newState in LiDARManager.STATES:
