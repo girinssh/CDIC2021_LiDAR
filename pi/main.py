@@ -85,6 +85,7 @@ class Main:
         print('Starting Ranging...')
         while True:
             distances = self.lm.getRaws(0) # read values
+            print(distances)
             distArray[0].append(distances[0][0]) # append to array
             distArray[1].append(distances[0][0]) # append to array
             if len(distArray[0])>100:
