@@ -19,15 +19,15 @@ class LiDARManager:
     STATE_BACKWARD = -1
     STATES = [STATE_FORWARD, STATE_BACKWARD]
     
-    def __init__(self, rpm, samp_rate, minAngle, maxAngle):
+    def __init__(self, rpm:int, samp_rate:int, minAngle, maxAngle):
         self.rpm = rpm
         self.samp_rate = samp_rate
         
         self.state = LiDARManager.STATE_FORWARD
         
         self.lidars = [
-                LiDAR("/dev/serial0", samp_rate=samp_rate),
-                LiDAR("/dev/ttyAMA1", samp_rate=samp_rate),
+                LiDAR("/dev/serial0", samp_rate=self.samp_rate),
+                LiDAR("/dev/ttyAMA1", samp_rate=self.samp_rate),
                 #lidar("/dev/ttyAMA2", samp_rate=samp_rate)
             ]
         
@@ -41,7 +41,7 @@ class LiDARManager:
         self.angle_range = maxAngle - minAngle
         self.angle_unit = self.angle_range / self.rawPerOneway
         
-        print("Sample Rate\t", self.rawPerOneway)
+        print("Sample Rate\t", self.samp_rate)
         print("Data Count Per Oneway\t", self.rawPerOneway)
     
     def getRaws(self, POS: int):
