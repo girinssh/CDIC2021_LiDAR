@@ -63,7 +63,7 @@ class LiDAR:
         ##########################
         # change the sample rate
         samp_rate_packet = [0x5a,0x06,0x03,self.samp_rate,00,00] # sample rate byte array
-        print(samp_rate_packet)
+        print(samp_rate_packet, type(samp_rate_packet))
         self.ser.write(samp_rate_packet) # send sample rate instruction
         return
                 
