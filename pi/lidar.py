@@ -174,7 +174,7 @@ baud_indx = 4 # baud rate to be changed to (new baudrate for TF-Luna)
 ##############################
 # Plotting the TF-Luna Output
 ##############################
-#
+# 
 # plt.style.use('ggplot') # figure formatting
 # fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
 # ax.plot(np.subtract(time_array,time_array[0]),dist_array[0],linewidth=3.5) # plot ranging data
