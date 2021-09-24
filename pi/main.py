@@ -84,10 +84,11 @@ class Main:
         distArray = [[],[]]
         print('Starting Ranging...')
         while True:
-            distances = self.lm.getRaws(0) # read values
-            print(distances)
-            distArray[0].append(distances[0][0]) # append to array
-            distArray[1].append(distances[0][0]) # append to array
+            distance1 = self.lm.getRaws(0) # read values
+            distance2 = self.lm.getRaws(1)
+            
+            distArray[0].append(distance1[0][0]) # append to array
+            distArray[1].append(distance2[0][0]) # append to array
             if len(distArray[0])>100:
                 distArray = distArray[:][1:] # drop first point (maintain array size)
                 line1,line2 = plot_updater(fig,axs,ax_bgnd,line1, line2, distArray) # update plot
