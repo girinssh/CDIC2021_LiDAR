@@ -32,7 +32,7 @@ class LiDARManager:
             ]
         
         # 편도로 가는 동안 몇개의 데이터를 수집해야하는가.
-        self.rawPerOneway = 60 / (self.rpm * 2) * samp_rate
+        self.rawPerOneway = int(60 / (self.rpm * 2) * samp_rate)
         
         # 1개의 데이터를 수집할 때 몇초를 소모해야하는가. 
         self.secPerRaw = (float)(1 / samp_rate)
