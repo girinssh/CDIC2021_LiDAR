@@ -29,7 +29,7 @@ class Main:
         pool = ThreadPool(processes = 2)
         
         result = pool.map(self.lm.getRaws, (0,1))
-        print(result)
+        print(result, sep="\n")
         # rawsAndAngles = result.get()
         
         # rawList = rawsAndAngles[0]
