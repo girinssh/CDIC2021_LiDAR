@@ -50,7 +50,7 @@ class LiDARManager:
         while index < self.rawPerOneway:
             last = time.time()
             #time을 계산하면서 rawArray에 집어넣는다. 
-            if last - start < index * self.secPerRaw:
+            if last - start < (index + 1) * self.secPerRaw:
                 rawArray[index] = self.lidars[POS].read_data()
                 angleArray[index] = self.angle_unit * index + self.angle_min
             index += 1
