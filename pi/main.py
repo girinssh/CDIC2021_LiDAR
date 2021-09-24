@@ -26,12 +26,10 @@ class Main:
         self.lm = LiDARManager(Main.getRPM(), 100, -50, 50)
         
     def run(self):
-        rawsAndAngles = 0
-        
         pool = ThreadPool(processes = 2)
         
-        rawsAndAngles = pool.apply_async(self.lm.getRaws, (0)).get()
-        
+        result = pool.apply_async(self.lm.getRaws, (0))
+        rawsAndAngles = result.get()
         rawList = rawsAndAngles[0]
         angleList = rawsAndAngles[1]
         
