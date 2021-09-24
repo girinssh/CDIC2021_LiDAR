@@ -28,7 +28,7 @@ class Main:
     def run(self):
         pool = ThreadPool(processes = 2)
         
-        result = pool.apply_async(self.lm.getRaws, (0))
+        result = pool.apply_async(self.lm.getRaws, (0,))
         rawsAndAngles = result.get()
         rawList = rawsAndAngles[0]
         angleList = rawsAndAngles[1]
