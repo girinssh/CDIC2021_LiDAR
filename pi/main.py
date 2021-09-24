@@ -16,10 +16,10 @@ def plotter(plot_pts = 100):
     fig.canvas.set_window_title('TF-Luna Real-Time Ranging')
     fig.subplots_adjust(wspace=0.05)
     # ranging axis formatting
-    axs[0].set_xlabel('Sample',fontsize=16)
-    axs[0].set_ylabel('Amplitude',fontsize=16) # amplitude label
-    axs[0].set_xlim([0.0,plot_pts])
-    axs[0].set_ylim([0.0,8.0]) # set ranging limits
+    axs.set_xlabel('Sample',fontsize=16)
+    axs.set_ylabel('Amplitude',fontsize=16) # amplitude label
+    axs.set_xlim([0.0,plot_pts])
+    axs.set_ylim([0.0,8.0]) # set ranging limits
     # draw and background specification
     fig.canvas.draw() # draw initial plot
     ax_bgnd = fig.canvas.copy_from_bbox(axs[0].bbox) # get background
