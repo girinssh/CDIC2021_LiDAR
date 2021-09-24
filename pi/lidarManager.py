@@ -40,6 +40,9 @@ class LiDARManager:
         self.angle_max = maxAngle
         self.angle_range = maxAngle - minAngle
         self.angle_unit = self.angle_range / self.rawPerOneway
+        
+        print("Sample Rate\t", self.rawPerOneway)
+        print("Data Count Per Oneway\t", self.rawPerOneway)
     
     def getRaws(self, POS: int):
         rawArray = [-1]*self.rawPerOneway
