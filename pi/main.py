@@ -90,7 +90,8 @@ class Main:
             distArray[0].append(distance1[0][0]) # append to array
             distArray[1].append(distance2[0][0]) # append to array
             if len(distArray[0])>100:
-                distArray = distArray[:][1:] # drop first point (maintain array size)
+                distArray[0] = distArray[0][1:] # drop first point (maintain array size)
+                distArray[1] = distArray[1][1:] # drop first point (maintain array size)
                 line1,line2 = plot_updater(fig,axs,ax_bgnd,line1, line2, distArray) # update plot
         
         
