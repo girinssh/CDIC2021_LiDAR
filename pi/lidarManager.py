@@ -40,6 +40,7 @@ class LiDARManager:
         
     
     def getRaws(self, POS: int, DIR: int):
+        print("getRaws ", POS, DIR)
         rawArray = [-1]*self.rawPerOneway
         angleArray = [-1]*self.rawPerOneway
         index = 0

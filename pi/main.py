@@ -70,7 +70,7 @@ class Main:
                           
     
     def run(self):
-        
+        print(self.onewayTime)
         for i in range(3):
             start_time = time.time()
             
