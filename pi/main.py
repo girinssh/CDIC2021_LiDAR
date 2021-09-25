@@ -50,6 +50,7 @@ class Main:
     def __init__(self):
         self.lm = LiDARManager(Main.getRPM(), 100, -50, 50)
         self.onewayTime = 60 / (Main.getRPM() * 2)
+        self.height = 0.3
                               
     # only develop at raspberry pi
     def getCommand(self):
@@ -71,13 +72,19 @@ class Main:
     
     def run(self):
         print(self.onewayTime)
-        for i in range(3):
+        
+        totalStart = time.time()
+        for i in range(100):
             start_time = time.time()
             
             future = list(tpe().map(self.lm.getRaws, (0, 1), (1, 1), timeout=self.onewayTime))
     
             end_time = time.time()
             print(i, end_time - start_time)
+            
+        totalEnd = time.time()
+        
+        print("Total Time: ", totalEnd - totalStart)
         #######################################
         # ------ Print First 50 points ------ #
         #######################################
