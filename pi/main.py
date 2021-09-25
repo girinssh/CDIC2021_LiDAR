@@ -6,59 +6,78 @@ Created on Thu Sep 23 18:58:26 2021
 """
 
 from lidarManager import LiDARManager 
-from multiprocessing.pool import ThreadPool
+
+import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor as tpe
+
+import serial,time
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plotter(plot_pts = 100):
-    plt.style.use('ggplot') # plot formatting
-    fig,axs = plt.subplots(1,1,figsize=(12,8)) # create figure
-    fig.canvas.set_window_title('TF-Luna Real-Time Ranging')
-    fig.subplots_adjust(wspace=0.05)
-    # ranging axis formatting
-    axs.set_xlabel('Sample',fontsize=16)
-    axs.set_ylabel('Amplitude',fontsize=16) # amplitude label
-    axs.set_xlim([0.0,plot_pts])
-    axs.set_ylim([0.0,8.0]) # set ranging limits
-    # draw and background specification
-    fig.canvas.draw() # draw initial plot
-    ax_bgnd = fig.canvas.copy_from_bbox(axs.bbox) # get background
-    line1, = axs.plot(np.zeros((plot_pts,)),linewidth=3.0,
-                color=plt.cm.Set1(1)) # dummy initial ranging data (zeros)
-    line2, = axs.plot(np.zeros((plot_pts,)),linewidth=3.0,
-                color=plt.cm.Set1(0)) 
-    fig.show() # show plot
-    return fig,axs,ax_bgnd,line1,line2
-
-def plot_updater(fig, axs, ax_bgnd, line1, line2, dist_array):
-    ##########################################
-    # ---- time series 
-    fig.canvas.restore_region(ax_bgnd) # restore background 1 (for speed)
-    line1.set_ydata(dist_array[0])
-    line2.set_ydata(dist_array[1])
-    axs.draw_artist(line1) # draw line
-    axs.draw_artist(line2)
-    fig.canvas.blit(axs.bbox) # blitting (for speed)
-    fig.canvas.flush_events() # required for blitting
-    return line1, line2
+# def plotter(plot_pts = 100):
+#     plt.style.use('ggplot') # plot formatting
+#     fig,axs = plt.subplots(1,1,figsize=(12,8)) # create figure
+#     fig.canvas.set_window_title('TF-Luna Real-Time Ranging')
+#     fig.subplots_adjust(wspace=0.05)
+#     # ranging axis formatting
+#     axs.set_xlabel('Sample',fontsize=16)
+#     axs.set_ylabel('Amplitude',fontsize=16) # amplitude label
+#     axs.set_xlim([0.0,plot_pts])
+#     axs.set_ylim([0.0,8.0]) # set ranging limits
+#     # draw and background specification
+#     fig.canvas.draw() # draw initial plot
+#     ax_bgnd = fig.canvas.copy_from_bbox(axs.bbox) # get background
+#     line1, = axs.plot(np.zeros((plot_pts,)),linewidth=3.0,
+#                 color=plt.cm.Set1(1)) # dummy initial ranging data (zeros)
+#     line2, = axs.plot(np.zeros((plot_pts,)),linewidth=3.0,
+#                 color=plt.cm.Set1(0)) 
+#     fig.show() # show plot
+#     return fig,axs,ax_bgnd,line1,line2
+# def plot_updater(fig, axs, ax_bgnd, line1, line2, dist_array):
+#     ##########################################
+#     # ---- time series 
+#     fig.canvas.restore_region(ax_bgnd) # restore background 1 (for speed)
+#     line1.set_ydata(dist_array[0])
+#     line2.set_ydata(dist_array[1])
+#     axs.draw_artist(line1) # draw line
+#     axs.draw_artist(line2)
+#     fig.canvas.blit(axs.bbox) # blitting (for speed)
+#     fig.canvas.flush_events() # required for blitting
+#     return line1, line2
 
 class Main:
-
-    def getCommand():
-        pass
-
-    def postCommand():
-        pass
-    
-    def getRPM():
-        return 3000
-    
     
     def __init__(self):
         self.lm = LiDARManager(Main.getRPM(), 100, -50, 50)
-        
-    def run(self):
+        self.onewayTime = int(60 / (Main.getRPM() * 2))
+                              
+    # only develop at raspberry pi
+    def getCommand(self):
+        while True:
+            pass
+        pass
 
+    def postCommand(self):
+        pass
+    
+    def getRPM():
+        return 120
+    
+    # need to be executed every oneway time.
+    def lidarThreadRun(self):
+        self.lm.getRaws(0)
+        pass
+                          
+    
+    def run(self):
+        
+        for i in range(3):
+            start_time = time.time()
+            
+            future = list(tpe().map(self.getRaws, ((0, 0), (1, 0), (2, 0)), timeout=self.onewayTime))
+            
+            end_time = time.time()
+            print(i, end_time - start_time)
         #######################################
         # ------ Print First 50 points ------ #
         #######################################
@@ -80,21 +99,20 @@ class Main:
         #######################################
         # ------ Real Time Visualizing ------ #
         #######################################
-        fig,axs,ax_bgnd,line1, line2 = plotter(100)         
-        distArray = [[],[]]
-        print('Starting Ranging...')
-        while True:
-            distance1 = self.lm.getRaws(0) # read values
-            distance2 = self.lm.getRaws(1)
-            
-            distArray[0].append(distance1[0][0]) # append to array
-            distArray[1].append(distance2[0][0]) # append to array
-            if len(distArray[0])>100:
-                distArray[0] = distArray[0][1:] # drop first point (maintain array size)
-                distArray[1] = distArray[1][1:] # drop first point (maintain array size)
-                line1,line2 = plot_updater(fig,axs,ax_bgnd,line1, line2, distArray) # update plot
+        # fig,axs,ax_bgnd,line1, line2 = plotter(100)         
+        # distArray = [[],[]]
+        # print('Starting Ranging...')
+        # while True:
+        #     distance1 = self.lm.getRaws(0) # read values
+        #     distance2 = self.lm.getRaws(1)
+        #     distArray[0].append(distance1[0][0]) # append to array
+        #     distArray[1].append(distance2[0][0]) # append to array
+        #     if len(distArray[0])>100:
+        #         distArray[0] = distArray[0][1:] # drop first point (maintain array size)
+        #         distArray[1] = distArray[1][1:] # drop first point (maintain array size)
+        #         line1,line2 = plot_updater(fig,axs,ax_bgnd,line1, line2, distArray) # update plot
         
-        
-main = Main()
 
-main.run()
+if __name__ == '__main__':
+    main = Main()
+    main.run()
