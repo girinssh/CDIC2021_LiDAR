@@ -80,7 +80,7 @@ class Main:
             future = list(tpe().map(self.lm.getRaws, (0, 1), (1, 1), timeout=self.onewayTime))
             
             # for calculation time test
-            _ = 2 ** 100
+            _ = 2 ** 1000
             
             end_time = time.time()
             print(i, end_time - start_time)
