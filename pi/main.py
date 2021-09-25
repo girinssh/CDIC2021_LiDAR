@@ -75,7 +75,7 @@ class Main:
             start_time = time.time()
             
             future = tpe().map(self.lm.getRaws, ((0, 1), (0, 0)) , timeout=self.onewayTime)
-            concurrent.futures.wait((future,), timeout=self.onewayTime, return_when="ALL_COMPLETED")
+            concurrent.futures.wait((future,))
             
             end_time = time.time()
             print(i, end_time - start_time)
