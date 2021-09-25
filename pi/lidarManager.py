@@ -22,8 +22,6 @@ class LiDARManager:
         self.rpm = rpm
         self.samp_rate = samp_rate
         
-        self.state = LiDARManager.STATE_FORWARD
-        
         self.lidars = [
                 LiDAR("/dev/serial0", samp_rate=self.samp_rate),
                 LiDAR("/dev/ttyAMA1", samp_rate=self.samp_rate),
