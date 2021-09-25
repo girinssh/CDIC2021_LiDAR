@@ -74,7 +74,7 @@ class Main:
         for i in range(3):
             start_time = time.time()
             
-            future = tpe().map(self.lm.getRaws, ((0, 1, 2), (0, 0, 0)) , timeout=self.onewayTime)
+            future = tpe().map(self.lm.getRaws, ((0, 1), (0, 0)) , timeout=self.onewayTime)
             
             end_time = time.time()
             print(i, end_time - start_time)
