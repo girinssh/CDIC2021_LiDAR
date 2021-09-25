@@ -77,7 +77,7 @@ class Main:
             future = list(tpe().map(self.lm.getRaws, (0, 1), (1, 1), timeout=self.onewayTime))
     
             end_time = time.time()
-            print(i, end_time - start_time, future[0][0])
+            print(i, end_time - start_time)
         #######################################
         # ------ Print First 50 points ------ #
         #######################################
