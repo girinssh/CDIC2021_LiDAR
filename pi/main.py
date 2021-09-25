@@ -49,7 +49,7 @@ class Main:
     
     def __init__(self):
         self.lm = LiDARManager(Main.getRPM(), 100, -50, 50)
-        self.onewayTime = int(60 / (Main.getRPM() * 2))
+        self.onewayTime = 60 / (Main.getRPM() * 2)
                               
     # only develop at raspberry pi
     def getCommand(self):
