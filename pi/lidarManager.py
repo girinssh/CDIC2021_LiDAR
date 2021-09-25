@@ -15,9 +15,8 @@ class LiDARManager:
     POS_RIGHT = 1
     POS_BACK = 2
     
-    STATE_FORWARD = 1
-    STATE_BACKWARD = -1
-    STATES = [STATE_FORWARD, STATE_BACKWARD]
+    DIR_LEFT2RIGHT = 1
+    DIR_RIGHT2LEFT = -1
     
     def __init__(self, rpm:int, samp_rate:int, minAngle, maxAngle):
         self.rpm = rpm
@@ -42,26 +41,19 @@ class LiDARManager:
         self.angle_unit = self.angle_range / self.rawPerOneway
         
     
-    def getRaws(self, POS: int):
+    def getRaws(self, POS: int, DIR: int):
         rawArray = [-1]*self.rawPerOneway
         angleArray = [-1]*self.rawPerOneway
         index = 0
         last = -1
         start = time.time()
-        while index < self.rawPerOneway:
+        while index < self.rawPerOneway - 1:
             last = time.time()
             #time을 계산하면서 rawArray에 집어넣는다. 
             if last - start < (index + 1) * self.secPerRaw:
                 rawArray[index] = self.lidars[POS].read_data()
-                angleArray[index] = self.angle_unit * index + self.angle_min
+                angleArray[index] =  DIR *(self.angle_unit * index) + (self.angle_min \
+                    if DIR == LiDARManager.DIR_LEFT2RIGHT else self.angle_max)
             index += 1
 
         return np.array([rawArray, angleArray])
-
-    def setState(self, newState):
-        if newState in LiDARManager.STATES:
-            self.state = newState
-        return self.state
-            
-    def getState(self)->int:
-        return self.state
