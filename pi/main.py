@@ -77,10 +77,10 @@ class Main:
         totalStart = time.time()
         
         inlier, outlier, param = [], [], []
-        for i in range(1):
+        for i in range(100):
             start_time = time.time()
             
-            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, 1, 2), (1, 1, 1), timeout=self.onewayTime)))
+            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, 1, 2), (1, 1, 1))))
             
             # print(rawDistAngle)
             
