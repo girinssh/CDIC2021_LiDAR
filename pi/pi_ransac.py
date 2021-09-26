@@ -15,7 +15,7 @@ class dangerDetection:
     def getBase(radius:float, velo:float, sec:float, goLeft:bool):
         return radius, (1 if goLeft else -1) * 9*velo*sec/(5*math.pi), (-7 if goLeft else 2)*velo*sec/5
 
-    def RANSAC(pList): #pList [x1, y1], [x2, y2] ... #pList = [angle(radian), distance]
+    def RANSAC(cls, pList): #pList [x1, y1], [x2, y2] ... #pList = [angle(radian), distance]
         maxInliers = []
         finOutliers = [] # final outliers list
         
