@@ -42,7 +42,7 @@ class dangerDetection:
             outliers = []
     
             for p in pList:
-                print(p)
+                # print(p)
                 x = p[1] # angle of p
                 y = p[0] # distance of p
 
