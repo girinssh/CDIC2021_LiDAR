@@ -99,6 +99,7 @@ class Main:
         if outlier.size > 0 :    
             ax.scatter(outlier[:,0],outlier[:,1], color='r') # plot ranging data
         
+        print(param)
         x = np.linspace(-50, 50, 50)
         y = param[0]* np.sin(x) - param[1] * x + param[2]
         ax.plot(x, y, color='g')
