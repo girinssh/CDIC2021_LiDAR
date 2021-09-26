@@ -101,6 +101,7 @@ class Main:
         totalEnd = time.time()
         
         print("Total Time: ", totalEnd - totalStart)
+        plt.show()
         
         
         
