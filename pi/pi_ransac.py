@@ -17,7 +17,7 @@ class dangerDetection:
 
     def RANSAC(cls, pList): #pList [x1, y1], [x2, y2] ... #pList = [angle(radian), distance]
         print(type(pList))    
-        print(pList.shape())    
+        print(pList.shape)
         maxInliers = []
         finOutliers = [] # final outliers list
         
