@@ -80,7 +80,9 @@ class Main:
         for i in range(1):
             start_time = time.time()
             
-            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, 1), (1, 1), timeout=self.onewayTime)))
+            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, ), (1, ), timeout=self.onewayTime)))
+            
+            print(rawDistAngle)
             
             inlier, outlier = dangerDetection().RANSAC(rawDistAngle)
 
