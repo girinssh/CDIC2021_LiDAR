@@ -82,7 +82,7 @@ class Main:
             
             rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, 1, 2), (1, 1, 1), timeout=self.onewayTime)))
             
-            print(rawDistAngle)
+            # print(rawDistAngle)
             
             inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
