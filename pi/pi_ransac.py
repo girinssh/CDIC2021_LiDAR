@@ -27,8 +27,8 @@ class dangerDetection:
             
             while i1 == i2:
                 i2 = np.random.randint(0, pList[:,0].size, size=1)
-            p1 = np.array([pList[i1, 0], pList[i1, 1]])
-            p2 = np.array([pList[i2, 0], pList[i2, 1]])
+            p1 = np.array([pList[i1, 1], pList[i1, 0]])
+            p2 = np.array([pList[i2, 1], pList[i2, 0]])
 
             p1x=p1[1]/math.tan(p1[0]) # x (rcos(angle)) value of p1
             a = p1x/math.cos(p1[0])
