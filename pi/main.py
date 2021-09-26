@@ -76,7 +76,7 @@ class Main:
         
         totalStart = time.time()
         
-        inlier, outlier = [], []
+        inlier, outlier, param = [], [], []
         for i in range(1):
             start_time = time.time()
             
@@ -84,7 +84,7 @@ class Main:
             
             print(rawDistAngle)
             
-            inlier, outlier = dangerDetection().RANSAC(rawDistAngle[0].T)
+            inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
             print(i, end_time - start_time)
@@ -98,6 +98,11 @@ class Main:
         print("Outlier Count: ", outlier.shape)
         if outlier.size > 0 :    
             ax.scatter(outlier[:,0],outlier[:,1], color='r') # plot ranging data
+        
+        x = np.linspace(-50, 50, 50)
+        y = param[0]* np.sin(x) - param[1] * x + param[2]
+        ax.plot(x, y, '.', color='g')
+        
         ax.set_ylabel('Distance [m]',fontsize=16) 
         ax.set_xlabel('Angle [DEG]',fontsize=16)
         ax.set_title('TF-Luna Ranging Test',fontsize=18)

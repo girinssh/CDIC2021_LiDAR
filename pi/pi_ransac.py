@@ -63,4 +63,4 @@ class dangerDetection:
                 finOutliers = outliers.copy()
                 param = np.array([a, b, c])
     
-        return np.array(maxInliers), np.array(finOutliers)
+        return np.array(maxInliers), np.array(finOutliers), param
