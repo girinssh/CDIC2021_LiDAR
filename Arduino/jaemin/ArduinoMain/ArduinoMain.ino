@@ -3,31 +3,37 @@
 
 
 void setup() {
-  //스탭모터 구동
-  
+  //step_moter init
 
-  //서보모터 초기 각도
-  
+  //servo init deg
 }
 
 void loop() {
 
-
   
-  gps_velocity = gps.getvelocity();
+  gps_velocity = gps.getVelocity();
   
-  //send data
+  //send data(gps_velocity (+ imu(roll, pitch)))
   if(Serial.available() == 0){
     
   }
 
   //waiting & led initial
-  while(!Serial.available()){
+  while(!Serial.available())(
     
   }
 
   //recive data
-  String rec_data = Serial.read();
+  String recv_data = Serial.read();
+  //parsing
+
+
+  //servo setting
+  servo.set_deg(srvo_deg);
   
   //control led
+  if(warn_case){
+    led.set(led_num);
+  }
+  
 }
