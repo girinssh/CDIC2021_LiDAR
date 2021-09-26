@@ -74,9 +74,10 @@ class Main:
     def run(self):
         print(self.onewayTime)
         
-        totalStart = time.time()
-        
+        interval_max = 0
+        interval_min = 2
         inlier, outlier, param = [], [], []
+        total_time = 0
         for i in range(100):
             start_time = time.time()
             
@@ -87,9 +88,18 @@ class Main:
             #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
-            print(i, end_time - start_time)
+            interval = end_time - start_time
+            interval_max = interval if interval > interval_max else interval_max
+            interval_min = interval if interval < interval_min else interval_min
+            print(i, interval)
+            total_time += interval
         
-        totalEnd = time.time()    
+        interval_avg = total_time / 100
+           
+        print("Total Time: ", total_time)
+        print("Interval MAX: ", interval_max)
+        print("Interval MIN: ", interval_min)
+        print("Interval AVG: ", interval_avg)
         # # print(inlier, outlier)
         # plt.style.use('ggplot') # figure formatting
         # fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
@@ -102,7 +112,6 @@ class Main:
         
         # print(param)
         
-        print("Total Time: ", totalEnd - totalStart)
         # t = np.linspace(2*np.pi/9, 7*np.pi/9, 50)
         # #x = param[0] * np.cos(t)
         # y = param[0]* np.sin(t) + param[1] * t + param[2]
