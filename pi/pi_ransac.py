@@ -24,6 +24,9 @@ class dangerDetection:
         # algo rotation num is already set: 14
         for i in range(0, 14):
             i1, i2 = np.random.randint(0, pList[:,0].size, size=2)
+            
+            while i1 == i2:
+                i2 = np.random.randint(0, pList[:,0].size, size=1)
             p1 = np.array([pList[i1, 0], pList[i1, 1]])
             p2 = np.array([pList[i2, 0], pList[i2, 1]])
 
