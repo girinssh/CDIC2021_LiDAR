@@ -103,7 +103,7 @@ class Main:
         t = np.linspace(2*np.pi/9, 7*np.pi/9, 50)
         #x = param[0] * np.cos(t)
         y = param[0]* np.sin(t) - param[1] * t + param[2]
-        ax.scatter(t, y, color='g')
+        ax.scatter(np.rad2deg(t), y, color='g')
         
         ax.set_ylabel('Distance [m]',fontsize=16) 
         ax.set_xlabel('Angle [DEG]',fontsize=16)
