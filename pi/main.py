@@ -100,9 +100,9 @@ class Main:
             ax.scatter(outlier[:,0],outlier[:,1], color='r') # plot ranging data
         
         print(param)
-        t = np.linspace(np.deg2rad(-50), np.deg2rad(50), 50)
+        t = np.linspace(np.deg2rad(0), np.deg2rad(140), 50)
         x = param[0] * np.cos(t)
-        y = param[0]* np.sin(x) - param[1] * x + param[2]
+        y = param[0]* np.sin(t) - param[1] * t + param[2]
         ax.scatter(x, y, color='g')
         
         ax.set_ylabel('Distance [m]',fontsize=16) 
