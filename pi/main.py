@@ -101,7 +101,7 @@ class Main:
         
         x = np.linspace(-50, 50, 50)
         y = param[0]* np.sin(x) - param[1] * x + param[2]
-        ax.plot(x, y, '.', color='g')
+        ax.plot(x, y, color='g')
         
         ax.set_ylabel('Distance [m]',fontsize=16) 
         ax.set_xlabel('Angle [DEG]',fontsize=16)
