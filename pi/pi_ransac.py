@@ -43,8 +43,8 @@ class dangerDetection:
     
             for p in pList:
                 print(p)
-                x = p[0] # angle of p
-                y = p[1] # distance of p
+                x = p[1] # angle of p
+                y = p[0] # distance of p
 
                 # 임계값 넘어가면 outlier 
                 # 임계값 내에 있으면 inlier
