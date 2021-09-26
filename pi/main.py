@@ -94,10 +94,10 @@ class Main:
         fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
         print("Inlier Count: ", inlier.shape)
         if inlier.size > 0 :    
-            ax.scatter(inlier[:][0],inlier[:][1]) # plot ranging data
+            ax.scatter(inlier[:][0],inlier[:][1], color='b') # plot ranging data
         print("Outlier Count: ", outlier.shape)
         if outlier.size > 0 :    
-            ax.scatter(outlier[:,0],outlier[:,1]) # plot ranging data
+            ax.scatter(outlier[:,0],outlier[:,1], color='r') # plot ranging data
         ax.set_ylabel('Distance [m]',fontsize=16) 
         ax.set_xlabel('Angle [DEG]',fontsize=16)
         ax.set_title('TF-Luna Ranging Test',fontsize=18)
