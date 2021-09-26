@@ -53,7 +53,7 @@ class LiDAR:
                 self.ser.reset_input_buffer() # reset buffer
     
                 if bytes_serial[0] == 0x59 and bytes_serial[1] == 0x59: # check first two bytes
-                    distance = bytes_serial[2] + bytes_serial[3]*256 # distance in next two bytes
+                    distance = bytes_serial[2] + (bytes_serial[3] << 8)# distance in next two bytes
 #                    strength = bytes_serial[4] + bytes_serial[5]*256 # signal strength in next two bytes
 #                    temperature = bytes_serial[6] + bytes_serial[7]*256 # temp in next two bytes
 #                    temperature = (temperature/8) - 256 # temp scaling and offset
