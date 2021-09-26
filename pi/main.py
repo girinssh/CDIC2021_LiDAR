@@ -80,11 +80,11 @@ class Main:
         for i in range(1):
             start_time = time.time()
             
-            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, ), (1, ), timeout=self.onewayTime))[0])
+            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, ), (1, ), timeout=self.onewayTime)))
             
             print(rawDistAngle)
             
-            inlier, outlier = dangerDetection().RANSAC(rawDistAngle)
+            inlier, outlier = dangerDetection().RANSAC(rawDistAngle[0])
 
             end_time = time.time()
             print(i, end_time - start_time)
@@ -102,10 +102,6 @@ class Main:
         
         print("Total Time: ", totalEnd - totalStart)
         plt.show()
-        
-        
-        
-        
         
         #######################################
         # ------ Print First 50 points ------ #
