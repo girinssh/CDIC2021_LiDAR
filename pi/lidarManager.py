@@ -45,11 +45,12 @@ class LiDARManager:
         angleArray = [-1]*self.rawPerOneway
         index = 0
         last = -1
-        # start = time.time()
+        start = time.time()
         for index in range(self.rawPerOneway-1):
-            #last = time.time()
+            last = time.time()
             #time을 계산하면서 rawArray에 집어넣는다. 
-            # if last - start < (index + 1) * self.secPerRaw:
+            if last - start >= (index + 1) * self.secPerRaw:
+                index += 1
             rawArray[index] = self.lidars[POS].read_data()
             angleArray[index] =  DIR *(self.angle_unit * index) + (self.angle_min \
                 if DIR == LiDARManager.DIR_LEFT2RIGHT else self.angle_max)
