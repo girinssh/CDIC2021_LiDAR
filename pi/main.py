@@ -89,6 +89,7 @@ class Main:
             end_time = time.time()
             print(i, end_time - start_time)
         
+        print(inlier, outlier)
         plt.style.use('ggplot') # figure formatting
         fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
         if inlier.size > 0 :    
