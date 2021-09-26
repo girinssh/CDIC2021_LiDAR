@@ -92,10 +92,10 @@ class Main:
         # print(inlier, outlier)
         plt.style.use('ggplot') # figure formatting
         fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-        print("Inlier Count: ", inlier.size)
+        print("Inlier Count: ", inlier.shape)
         if inlier.size > 0 :    
             ax.scatter(inlier[:][0],inlier[:][1]) # plot ranging data
-        print("Outlier Count: ", outlier.size)
+        print("Outlier Count: ", outlier.shape)
         if outlier.size > 0 :    
             ax.scatter(outlier[:,0],outlier[:,1]) # plot ranging data
         ax.set_ylabel('Distance [m]',fontsize=16) 
