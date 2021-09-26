@@ -80,7 +80,7 @@ class Main:
         for i in range(1):
             start_time = time.time()
             
-            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, ), (1, ), timeout=self.onewayTime)))
+            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, 1, 2), (1, 1, 1), timeout=self.onewayTime)))
             
             print(rawDistAngle)
             
@@ -89,29 +89,29 @@ class Main:
             end_time = time.time()
             print(i, end_time - start_time)
         
-        # print(inlier, outlier)
-        plt.style.use('ggplot') # figure formatting
-        fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-        print("Inlier Count: ", inlier.shape)
-        if inlier.size > 0 :    
-            ax.scatter(inlier[:,0],inlier[:,1], color='b') # plot ranging data
-        print("Outlier Count: ", outlier.shape)
-        if outlier.size > 0 :    
-            ax.scatter(outlier[:,0],outlier[:,1], color='r') # plot ranging data
+        totalEnd = time.time()    
+        # # print(inlier, outlier)
+        # plt.style.use('ggplot') # figure formatting
+        # fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
+        # print("Inlier Count: ", inlier.shape)
+        # if inlier.size > 0 :    
+        #     ax.scatter(inlier[:,0],inlier[:,1], color='b') # plot ranging data
+        # print("Outlier Count: ", outlier.shape)
+        # if outlier.size > 0 :    
+        #     ax.scatter(outlier[:,0],outlier[:,1], color='r') # plot ranging data
         
-        print(param)
-        t = np.linspace(2*np.pi/9, 7*np.pi/9, 50)
-        #x = param[0] * np.cos(t)
-        y = param[0]* np.sin(t) + param[1] * t + param[2]
-        ax.scatter(np.rad2deg(t) - 90, y, color='g')
-        
-        ax.set_ylabel('Distance [m]',fontsize=16) 
-        ax.set_xlabel('Angle [DEG]',fontsize=16)
-        ax.set_title('TF-Luna Ranging Test',fontsize=18)
-        totalEnd = time.time()
+        # print(param)
         
         print("Total Time: ", totalEnd - totalStart)
-        plt.show()
+        # t = np.linspace(2*np.pi/9, 7*np.pi/9, 50)
+        # #x = param[0] * np.cos(t)
+        # y = param[0]* np.sin(t) + param[1] * t + param[2]
+        # ax.scatter(np.rad2deg(t) - 90, y, color='g')
+        # ax.set_ylabel('Distance [m]',fontsize=16) 
+        # ax.set_xlabel('Angle [DEG]',fontsize=16)
+        # ax.set_title('TF-Luna Ranging Test',fontsize=18)
+    
+        # plt.show()
         
         #######################################
         # ------ Print First 50 points ------ #
