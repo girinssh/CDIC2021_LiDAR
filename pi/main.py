@@ -6,6 +6,7 @@ Created on Thu Sep 23 18:58:26 2021
 """
 
 from lidarManager import LiDARManager 
+from pi_ransac import dangerDetection
 
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor as tpe
@@ -74,17 +75,33 @@ class Main:
         print(self.onewayTime)
         
         totalStart = time.time()
-        for i in range(100):
+        
+        inlier, outlier = [], []
+        for i in range(1):
             start_time = time.time()
             
-            future = list(tpe().map(self.lm.getRaws, (0, 1), (1, 1), timeout=self.onewayTime))
+            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (0, 1), (1, 1), timeout=self.onewayTime)))
             
+            inlier, outlier = dangerDetection().RANSAC(rawDistAngle)
+
             end_time = time.time()
             print(i, end_time - start_time)
-            
+        
+        plt.style.use('ggplot') # figure formatting
+        fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
+        ax.scatter(inlier[:,1],inlier[:,0]) # plot ranging data
+        ax.scatter(outlier[:,1],outlier[:,0]) # plot ranging data
+        ax.set_ylabel('Distance [m]',fontsize=16) 
+        ax.set_xlabel('Angle [DEG]',fontsize=16)
+        ax.set_title('TF-Luna Ranging Test',fontsize=18)
         totalEnd = time.time()
         
         print("Total Time: ", totalEnd - totalStart)
+        
+        
+        
+        
+        
         #######################################
         # ------ Print First 50 points ------ #
         #######################################
