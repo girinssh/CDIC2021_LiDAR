@@ -100,7 +100,7 @@ class Main:
             ax.scatter(outlier[:,0],outlier[:,1], color='r') # plot ranging data
         
         print(param)
-        t = np.linspace(np.deg2rad(0), np.deg2rad(140), 50)
+        t = np.linspace(2*np.pi/9, 7*np.pi/9, 50)
         #x = param[0] * np.cos(t)
         y = param[0]* np.sin(t) - param[1] * t + param[2]
         ax.scatter(t, y, color='g')
