@@ -91,8 +91,8 @@ class Main:
         
         plt.style.use('ggplot') # figure formatting
         fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-        ax.scatter(inlier[:,1],inlier[:,0]) # plot ranging data
-        ax.scatter(outlier[:,1],outlier[:,0]) # plot ranging data
+        ax.scatter(inlier[:][1],inlier[:][0]) # plot ranging data
+        ax.scatter(outlier[:][1],outlier[:][0]) # plot ranging data
         ax.set_ylabel('Distance [m]',fontsize=16) 
         ax.set_xlabel('Angle [DEG]',fontsize=16)
         ax.set_title('TF-Luna Ranging Test',fontsize=18)
