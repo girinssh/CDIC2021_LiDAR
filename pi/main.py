@@ -80,9 +80,9 @@ class Main:
         pass
     
     def convertRaw2Height(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), raw.items()[0], (self.srvo_ang,)*3, (self.lidarHeight,)*3)}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), raw.values()[0], (self.srvo_ang,)*3, (self.lidarHeight,)*3)}
     def convertRaw2DistHori(self, raw:dict)->dict:
-        return  {i[0]: i[1] for i in tpe().map(pi_method.raw2horiDist, raw.keys(), raw.items()[0], (self.srvo_ang,)*3, raw.items()[1])}
+        return  {i[0]: i[1] for i in tpe().map(pi_method.raw2horiDist, raw.keys(), raw.values()[0], (self.srvo_ang,)*3, raw.values()[1])}
     
     def run(self):
         print(self.onewayTime)
@@ -96,12 +96,10 @@ class Main:
             
             rawDistAngle = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3)}
 
-            
-            print(type(rawDistAngle.items()))
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
-            # heightList = tpe().submit(self.convertRaw2Height, rawDistAngle).result() 
-            # distHoriList = tpe().submit(self.convertRaw2DistHori, rawDistAngle).result()
+            heightList = tpe().submit(self.convertRaw2Height, rawDistAngle).result() 
+            distHoriList = tpe().submit(self.convertRaw2DistHori, rawDistAngle).result()
             
             # print(heightArray)
             #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
