@@ -5,15 +5,16 @@ Created on Wed Sep 22 17:41:41 2021
 """
 
 import numpy as np
-import math
+import Main
 
 class dangerDetection:
-    MIN_ANGLE = 2*math.pi/9
-    MAX_ANGLE = 7*math.pi/9
+    MIN_ANGLE = 2*np.pi/9
+    MAX_ANGLE = 7*np.pi/9
 
     # y expression
-    def getBase(radius:float, velo:float, sec:float, goLeft:bool):
-        return radius, (1 if goLeft else -1) * 9*velo*sec/(5*math.pi), (-7 if goLeft else 2)*velo*sec/5
+    def getBase(radius:float):
+        main = Main.getInstance()
+        return radius, (1 if main.goLeft else -1) * 9*main.velocity*main.onewayTime/(5*np.pi), (-7 if main.goLeft else 2)*main.velocity*main.onewayTime/5
 
     def RANSAC(cls, pList): #pList [x1, y1], [x2, y2] ... #pList = [angle(radian), distance]
         print(type(pList))    
@@ -30,10 +31,10 @@ class dangerDetection:
             p1 = np.array([pList[i1, 1], pList[i1, 0]])
             p2 = np.array([pList[i2, 1], pList[i2, 0]])
 
-            p1x=p1[1]/math.tan(p1[0]) # x (rcos(angle)) value of p1
-            a = p1x/math.cos(p1[0])
-            as1 = a * math.sin(p1[0])
-            as2 = a * math.sin(p2[0])
+            p1x=p1[1]/np.tan(p1[0]) # x (rcos(angle)) value of p1
+            a = p1x/np.cos(p1[0])
+            as1 = a * np.sin(p1[0])
+            as2 = a * np.sin(p2[0])
     
             b = (p2[1] - p1[1] - as2 + as1) / (p1[0] - p2[0])
             c = p1[1] - as1 + b * p1[0]
@@ -51,7 +52,7 @@ class dangerDetection:
 
                 y_th = 0.5 # threshold value [m]
 
-                py = a * math.sin(x) - b * x + c # p1, p2로 만든 식에 만족하는 y 값
+                py = a * np.sin(x) - b * x + c # p1, p2로 만든 식에 만족하는 y 값
 
                 if abs(y - py) > y_th:
                     outliers.append([x,y])
