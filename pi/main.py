@@ -99,7 +99,11 @@ class Main:
         interval_min = 2
         inlier, outlier, param = [], [], []
         total_time = 0
-        for i in range(100):
+        
+        plt.style.use('ggplot') # figure formatting
+        fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
+        
+        for i in range(3):
             start_time = time.time()
             
             rawDistAngle = {}
@@ -127,6 +131,10 @@ class Main:
             interval_max = interval if interval > interval_max else interval_max
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList[0].shape)
+            
+            for i in range(3):
+                ax.scatter(yposList[i], xposList[i], color='b')
+            
             total_time += interval
         
         interval_avg = total_time / 100
@@ -135,9 +143,14 @@ class Main:
         print("Interval MAX: ", interval_max)
         print("Interval MIN: ", interval_min)
         print("Interval AVG: ", interval_avg)
+        
+        ax.set_ylabel('Y Distance [m]',fontsize=16) 
+        ax.set_xlabel('X Distance [m]',fontsize=16)
+        ax.set_title('TF-Luna Ranging Test',fontsize=18)
+        plt.show()
+        
         # # print(inlier, outlier)
-        # plt.style.use('ggplot') # figure formatting
-        # fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
+
         # print("Inlier Count: ", inlier.shape)
         # if inlier.size > 0 :    
         #     ax.scatter(inlier[:,0],inlier[:,1], color='b') # plot ranging data
@@ -154,7 +167,6 @@ class Main:
         # ax.set_ylabel('Distance [m]',fontsize=16) 
         # ax.set_xlabel('Angle [DEG]',fontsize=16)
         # ax.set_title('TF-Luna Ranging Test',fontsize=18)
-    
         # plt.show()
         
         #######################################
