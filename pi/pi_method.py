@@ -3,11 +3,14 @@
 
 import numpy as np
 
-def raw2YPOS(pos:int, rawDistList, srvo_ang:float, angleList):
+def raw2YPOS(pos:int, rawDistList, srvo_ang:float, angleList, velocity: float):
 # 	for i in range (0, len(rawDistList)): 
 # 		distanceList[i] = rawDistList[i]*math.cos(math.radians(srvo_ang))*math.cos(abs(math.radians(angleList[i])-(math.pi/2)))
     # return distanceList
-    return pos, rawDistList*np.cos(srvo_ang)*np.sin(angleList)
+    
+    yList = rawDistList*np.cos(srvo_ang)*np.sin(angleList)
+
+    return pos, yList
 
 
 def raw2XPOS(pos:int, rawDistList, srvo_ang:float, angleList):

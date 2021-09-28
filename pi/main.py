@@ -103,7 +103,9 @@ class Main:
         plt.style.use('ggplot') # figure formatting
         fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
         
-        for i in range(3):
+        cycle = 3
+        
+        for i in range(cycle):
             start_time = time.time()
             
             rawDistAngle = {}
@@ -115,6 +117,8 @@ class Main:
                 continue    
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
+            
+            print(i, rawDistAngle[0][1])
             
             heightList = tpe().submit(self.convertRaw2Height, rawDistAngle)
             xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngle)
@@ -137,13 +141,14 @@ class Main:
             
             total_time += interval
         
-        interval_avg = total_time / 100
+        interval_avg = total_time / cycle
            
         print("Total Time: ", total_time)
         print("Interval MAX: ", interval_max)
         print("Interval MIN: ", interval_min)
         print("Interval AVG: ", interval_avg)
-        
+        ax.set_xlim([-1.0,1.0])
+        ax.set_ylim([0.0,8.0]) 
         ax.set_ylabel('Y Distance [m]',fontsize=16) 
         ax.set_xlabel('X Distance [m]',fontsize=16)
         ax.set_title('TF-Luna Ranging Test',fontsize=18)
