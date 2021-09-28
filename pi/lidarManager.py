@@ -56,4 +56,4 @@ class LiDARManager:
             rawArray.append(self.lidars[POS].read_data())
             angleArray.append((self.angle_min if DIR == self.DIR_LEFT2RIGHT else self.angle_max) + DIR * self.angle_range * np.sin(2*t*np.pi))
 
-        return [rawArray, angleArray]
+        return POS, [rawArray, angleArray]

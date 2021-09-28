@@ -90,9 +90,9 @@ class Main:
         for i in range(100):
             start_time = time.time()
             
-            rawDistAngle = np.array(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3))
+            rawDistAngle = tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3)
             
-            print(rawDistAngle.shape)
+            print(type(rawDistAngle))
             
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
