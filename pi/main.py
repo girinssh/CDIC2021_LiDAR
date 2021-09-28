@@ -121,7 +121,7 @@ class Main:
             yposList = yposList.result()
             
             # print(heightArray)
-            inlier, outlier, param = dangerDetection().RANSAC(np.array([xposList, yposList]))
+            inlier, outlier, param = dangerDetection().RANSAC(np.concatenate((xposList, yposList), axis=0))
 
             end_time = time.time()
             interval = end_time - start_time
