@@ -111,7 +111,7 @@ class Main:
             yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngle)
             
             heightList = heightList.result()
-            xposList = xposList.result
+            xposList = xposList.result()
             yposList = yposList.result()
             
             # print(heightArray)
@@ -121,7 +121,7 @@ class Main:
             interval = end_time - start_time
             interval_max = interval if interval > interval_max else interval_max
             interval_min = interval if interval < interval_min else interval_min
-            print(i, interval)
+            print(i, interval, yposList[0].shape)
             total_time += interval
         
         interval_avg = total_time / 100
