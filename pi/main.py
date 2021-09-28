@@ -120,7 +120,7 @@ class Main:
             xposList = xposList.result()
             yposList = yposList.result()
             
-            inlier, outlier, param = dangerDetection().RANSAC(np.concatenate((xposList[0], yposList[0])))
+            inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
 
             end_time = time.time()
             interval = end_time - start_time
