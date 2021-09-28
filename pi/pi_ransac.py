@@ -5,16 +5,16 @@ Created on Wed Sep 22 17:41:41 2021
 """
 
 import numpy as np
-import main
+# import main
 
 class dangerDetection:
     MIN_ANGLE = 2*np.pi/9
     MAX_ANGLE = 7*np.pi/9
 
     # y expression
-    def getBase(radius:float):
-        Main = main.Main.getInstance()
-        return radius, (1 if Main.goLeft else -1) * 9*Main.velocity*Main.onewayTime/(5*np.pi), (-7 if Main.goLeft else 2)*Main.velocity*Main.onewayTime/5
+    # def getBase(radius:float):
+    #     Main = main.Main.getInstance()
+    #     return radius, (1 if Main.goLeft else -1) * 9*Main.velocity*Main.onewayTime/(5*np.pi), (-7 if Main.goLeft else 2)*Main.velocity*Main.onewayTime/5
 
     def RANSAC(cls, pList): #pList [x1, y1], [x2, y2] ... #pList = [angle(radian), distance]
         print(type(pList))    

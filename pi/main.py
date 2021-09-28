@@ -87,7 +87,7 @@ class Main:
             
             # print(rawDistAngle)
             
-            #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
+            inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
             interval = end_time - start_time
