@@ -87,7 +87,7 @@ class Main:
         for i in range(100):
             start_time = time.time()
             
-            rawDistAngle = list(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (i%2,)*3))
+            rawDistAngle = list(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3))
             
             print(np.rad2deg(rawDistAngle[0][1]))
             
