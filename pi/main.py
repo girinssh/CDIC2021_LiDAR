@@ -89,7 +89,7 @@ class Main:
             
             rawDistAngle = list(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (i%2,)*3))
             
-            print(np.deg2rad(rawDistAngle[0][1]))
+            print(np.rad2deg(rawDistAngle[0][1]))
             
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
