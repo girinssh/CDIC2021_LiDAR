@@ -20,6 +20,8 @@ class dangerDetection:
         maxInliers = []
         finOutliers = [] # final outliers list
         
+        print(pList.shape)
+        
         # algo rotation num is already set: 14
         for i in range(0, 14):
             i1, i2 = np.random.randint(0, pList[:,0].size, size=2)
