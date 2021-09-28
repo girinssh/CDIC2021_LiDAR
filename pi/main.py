@@ -57,7 +57,7 @@ class Main:
         self.onewayTime = 60 / (self.rpm * 2)
         self.height = 0.3
         self.velocity = 5.0
-        self.serv_ang = 30
+        self.srvo_ang = 30
         self.lidarHeight = 0.3
         Main.goLeft = False
         Main.main = self
