@@ -102,7 +102,12 @@ class Main:
         for i in range(100):
             start_time = time.time()
             
-            rawDistAngle = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3)}
+            rawDistAngle = {}
+            
+            try:
+                rawDistAngle = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3, timeout=0.25)}
+            except:
+                continue    
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
