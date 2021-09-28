@@ -47,7 +47,6 @@ import numpy as np
 #     return line1, line2
 
 class Main:
-    
     def __init__(self):
         self.lm = LiDARManager(Main.getRPM(), 100, -50, 50)
         self.onewayTime = 60 / (Main.getRPM() * 2)
@@ -88,7 +87,7 @@ class Main:
             
             # print(rawDistAngle)
             
-            inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
+            #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
             interval = end_time - start_time
