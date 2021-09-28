@@ -47,7 +47,9 @@ class LiDARManager:
         last = -1
         start = time.time()
         while index < self.rawPerOneway - 1:
-            # last = time.time()
+            while index*self.secPerRaw > last - start:
+                last = time.time()
+                
             # #time을 계산하면서 rawArray에 집어넣는다. 
             # if last - start >= (index + 1) * self.secPerRaw:
             #     index += 1
