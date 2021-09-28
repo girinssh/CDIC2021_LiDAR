@@ -80,9 +80,9 @@ class Main:
         pass
     
     def convertRaw2Height(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), raw.values()[0], (self.srvo_ang,)*3, (self.lidarHeight,)*3)}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang,)*3, (self.lidarHeight,)*3)}
     def convertRaw2DistHori(self, raw:dict)->dict:
-        return  {i[0]: i[1] for i in tpe().map(pi_method.raw2horiDist, raw.keys(), raw.values()[0], (self.srvo_ang,)*3, raw.values()[1])}
+        return  {i[0]: i[1] for i in tpe().map(pi_method.raw2horiDist, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang,)*3,  [raw[i][1] for i in raw.keys()])}
     
     def run(self):
         print(self.onewayTime)
