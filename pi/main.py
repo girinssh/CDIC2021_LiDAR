@@ -107,6 +107,7 @@ class Main:
             try:
                 rawDistAngle = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3, timeout=0.25)}
             except:
+                print("EXCEPTION")
                 continue    
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
@@ -120,7 +121,7 @@ class Main:
             yposList = yposList.result()
             
             # print(heightArray)
-            #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
+            inlier, outlier, param = dangerDetection().RANSAC(np.array([xposList, yposList]))
 
             end_time = time.time()
             interval = end_time - start_time
