@@ -62,7 +62,7 @@ class Main:
         
         self.srvo_ang = np.arctan2(np.array([3, 5, 7]), self.height)
         self.dangerLevel = 0
-        self.srvo_level = 1
+        self.srvo_level = 0
 
         Main.goLeft = False
         Main.main = self
@@ -85,9 +85,9 @@ class Main:
         pass
     
     def convertRaw2Height(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang,)*3, (self.lidarHeight,)*3)}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, (self.height,)*3)}
     def convertRaw2DistHori(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2horiDist, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang,)*3,  [raw[i][1] for i in raw.keys()])}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2horiDist, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3,  [raw[i][1] for i in raw.keys()])}
     
     def run(self):
         print(self.onewayTime)
