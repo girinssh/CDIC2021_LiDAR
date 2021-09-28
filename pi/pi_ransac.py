@@ -5,7 +5,7 @@ Created on Wed Sep 22 17:41:41 2021
 """
 
 import numpy as np
-import Main
+import main
 
 class dangerDetection:
     MIN_ANGLE = 2*np.pi/9
@@ -13,8 +13,8 @@ class dangerDetection:
 
     # y expression
     def getBase(radius:float):
-        main = Main.getInstance()
-        return radius, (1 if main.goLeft else -1) * 9*main.velocity*main.onewayTime/(5*np.pi), (-7 if main.goLeft else 2)*main.velocity*main.onewayTime/5
+        Main = main.Main.getInstance()
+        return radius, (1 if Main.goLeft else -1) * 9*Main.velocity*Main.onewayTime/(5*np.pi), (-7 if Main.goLeft else 2)*Main.velocity*Main.onewayTime/5
 
     def RANSAC(cls, pList): #pList [x1, y1], [x2, y2] ... #pList = [angle(radian), distance]
         print(type(pList))    
