@@ -90,7 +90,7 @@ class Main:
         for i in range(100):
             start_time = time.time()
             
-            rawDistAngle = np.ndarray(list(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3)))
+            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3)))
             
             print(rawDistAngle.shape)
             
