@@ -52,7 +52,13 @@ class Main:
         self.lm = LiDARManager(Main.getRPM(), 100, -50, 50)
         self.onewayTime = 60 / (Main.getRPM() * 2)
         self.height = 0.3
+        self.velocity = 5.0
+        Main.goLeft = False
+        Main.main = self
                               
+    def getInstance():
+        return Main.main
+    
     # only develop at raspberry pi
     def getCommand(self):
         while True:
@@ -61,9 +67,6 @@ class Main:
 
     def postCommand(self):
         pass
-    
-    def getRPM():
-        return 120
     
     # need to be executed every oneway time.
     def lidarThreadRun(self):
@@ -85,7 +88,7 @@ class Main:
             
             # print(rawDistAngle)
             
-            #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
+            inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
             interval = end_time - start_time
