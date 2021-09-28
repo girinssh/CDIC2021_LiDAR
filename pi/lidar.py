@@ -37,7 +37,7 @@ class LiDAR:
             self.prev_ser.open()
         
         self.baud_indx = baud_indx
-        self.samp_rate = int(samp_rate * 1.1)
+        self.samp_rate = int(samp_rate * 1.5)
         self.ser = self.set_baudrate()
         
         self.set_samp_rate() # set sample rate 1-250
