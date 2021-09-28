@@ -147,7 +147,7 @@ class Main:
         print("Interval MAX: ", interval_max)
         print("Interval MIN: ", interval_min)
         print("Interval AVG: ", interval_avg)
-        ax.set_xlim([-1.0,1.0])
+        ax.set_xlim([-2.0,2.0])
         ax.set_ylim([0.0,8.0]) 
         ax.set_ylabel('Y Distance [m]',fontsize=16) 
         ax.set_xlabel('X Distance [m]',fontsize=16)
