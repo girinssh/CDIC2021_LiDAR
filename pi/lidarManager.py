@@ -42,7 +42,7 @@ class LiDARManager:
     def getRaws(self, start: float, POS: int, DIR: int):
         #  print("getRaws ", POS, DIR)
         rawArray = []
-        distYArray = []
+        angleArray = []
         last = -1
         t = 0
         while t < 0.23 :
@@ -54,6 +54,6 @@ class LiDARManager:
             # if last - start >= (index + 1) * self.secPerRaw:
             #     index += 1
             rawArray.append(self.lidars[POS].read_data())
-            distYArray.append((5*np.sin(2*t*self.DIR*np.pi)+2)*np.pi/9)
+            angleArray.append(self.angle_max * np.sin(2*t*self.DIR*np.pi) + self.angle_min)
 
-        return np.array([rawArray, distYArray])
+        return np.array([rawArray, angleArray])

@@ -48,8 +48,12 @@ import numpy as np
 
 class Main:
     def __init__(self):
-        self.lm = LiDARManager(Main.getRPM(), 100, -50, 50)
-        self.onewayTime = 60 / (Main.getRPM() * 2)
+        self.rpm = 120
+        self.samp_rate = 100
+        self.min_angle = 2*np.pi / 9
+        self.max_angle = 7*np.pi / 9
+        self.lm = LiDARManager(self.rpm, self.samp_rate, self.min_angle, self.max_angle)
+        self.onewayTime = 60 / (self.rpm * 2)
         self.height = 0.3
         self.velocity = 5.0
         Main.goLeft = False
@@ -87,7 +91,9 @@ class Main:
             
             # print(rawDistAngle)
             
-            inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
+            # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
+            
+            #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
             interval = end_time - start_time
