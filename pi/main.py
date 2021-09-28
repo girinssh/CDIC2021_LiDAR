@@ -7,6 +7,7 @@ Created on Thu Sep 23 18:58:26 2021
 
 from lidarManager import LiDARManager 
 from pi_ransac import dangerDetection
+import pi_method
 
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor as tpe
@@ -56,6 +57,8 @@ class Main:
         self.onewayTime = 60 / (self.rpm * 2)
         self.height = 0.3
         self.velocity = 5.0
+        self.serv_ang = 30
+        self.lidarHeight = 0.3
         Main.goLeft = False
         Main.main = self
                               
@@ -89,10 +92,12 @@ class Main:
             
             rawDistAngle = list(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3))
             
-            print(np.rad2deg(rawDistAngle[0][1]))
+            print(rawDistAngle[0].shape)
             
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
+            heightArray = list(tpe().map(pi_method.raw2height, rawDistAngle[:][0], (self.srvo_ang,)*3, (self.lidarHeight,)*3))
+            print(heightArray)
             #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
