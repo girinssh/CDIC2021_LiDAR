@@ -38,27 +38,22 @@ class LiDARManager:
         self.angle_range = maxAngle - minAngle
         self.angle_unit = self.angle_range / self.rawPerOneway
         
-    
-    def getRaws(self, POS: int, DIR: int):
+    # ret rawArray and dist Y array
+    def getRaws(self, start: float, POS: int, DIR: int):
         #  print("getRaws ", POS, DIR)
-        rawArray = [-1]*self.rawPerOneway
-        angleArray = [-1]*self.rawPerOneway
-        index = 0
+        rawArray = []
+        distYArray = []
         last = -1
-        start = time.time()
-        while index < self.rawPerOneway - 1:
+        t = 0
+        while t < 0.23 :
             last = time.time()
-            if (last - start)/self.secPerRaw < index:
-                continue
+            t = last - start    
             if POS == 0:
-                print(index, index * self.secPerRaw, last - start, sep='\t')
-                
+                print(t, sep='\t')
             # #time을 계산하면서 rawArray에 집어넣는다. 
             # if last - start >= (index + 1) * self.secPerRaw:
             #     index += 1
-            rawArray[index] = self.lidars[POS].read_data()
-            angleArray[index] =  DIR *(self.angle_unit * index) + (self.angle_min \
-                if DIR == LiDARManager.DIR_LEFT2RIGHT else self.angle_max)
-            index += 1
+            rawArray.append(self.lidars[POS].read_data())
+            distYArray.append((5*np.sin(2*t*self.DIR*np.pi)+2)*np.pi/9)
 
-        return np.array([rawArray, angleArray])
+        return np.array([rawArray, distYArray])
