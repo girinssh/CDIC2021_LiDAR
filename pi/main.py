@@ -90,14 +90,14 @@ class Main:
         for i in range(100):
             start_time = time.time()
             
-            rawDistAngle = list(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3))
+            rawDistAngle = np.array(list(tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3)))
             
-            print(rawDistAngle[0].shape)
+            print(rawDistAngle.shape)
             
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
-            heightArray = list(tpe().map(pi_method.raw2height, rawDistAngle[:][0], (self.srvo_ang,)*3, (self.lidarHeight,)*3))
-            print(heightArray)
+            # heightArray = list(tpe().map(pi_method.raw2height, rawDistAngle[:][0], (self.srvo_ang,)*3, (self.lidarHeight,)*3))
+            # print(heightArray)
             #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
