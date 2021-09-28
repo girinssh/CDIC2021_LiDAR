@@ -86,8 +86,11 @@ class Main:
     
     def convertRaw2Height(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, (self.height,)*3)}
-    def convertRaw2DistHori(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2horiDist, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3,  [raw[i][1] for i in raw.keys()])}
+    def convertRaw2YPOS(self, raw:dict)->dict:
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3,  [raw[i][1] for i in raw.keys()])}
+    def convertRaw2XPOS(self, raw:dict)->dict:
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3,  [raw[i][1] for i in raw.keys()])}
+    
     
     def run(self):
         print(self.onewayTime)
@@ -103,12 +106,16 @@ class Main:
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
-            heightList = tpe().submit(self.convertRaw2Height, rawDistAngle).result() 
-            distHoriList = tpe().submit(self.convertRaw2DistHori, rawDistAngle).result()
-            distVertList = tpe().submit(self.convertRaw2DistHori, rawDistAngle).result()
+            heightList = tpe().submit(self.convertRaw2Height, rawDistAngle)
+            xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngle)
+            yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngle)
+            
+            heightList = heightList.result()
+            xposList = xposList.result
+            yposList = yposList.result()
             
             # print(heightArray)
-            inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
+            #inlier, outlier, param = dangerDetection().RANSAC(rawDistAngle[0].T)
 
             end_time = time.time()
             interval = end_time - start_time
