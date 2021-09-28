@@ -62,6 +62,6 @@ class dangerDetection:
             if len(inliers) > len(maxInliers):
                 maxInliers = inliers.copy()
                 finOutliers = outliers.copy()
-                param = np.array([a, b, c])
+                param = np.array([a, b, c], dtype=float)
     
         return np.array(maxInliers), np.array(finOutliers), param

@@ -133,7 +133,7 @@ class Main:
             print(i, interval, yposList[0].shape)
             
             for i in range(3):
-                ax.scatter(xposList[i], yposList[i], color='b')
+                ax.scatter(xposList[i], yposList[i])
             
             total_time += interval
         
