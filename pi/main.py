@@ -93,7 +93,7 @@ class Main:
     def convertRaw2Height(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, (self.height,)*3)}
     def convertRaw2YPOS(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, (self.velocity,)*3, [raw[i][1] for i in raw.keys()])}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, [raw[i][1] for i in raw.keys()], (self.velocity,)*3)}
     def convertRaw2XPOS(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, [raw[i][1] for i in raw.keys()])}
     
