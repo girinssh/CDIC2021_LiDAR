@@ -243,6 +243,6 @@ if __name__ == '__main__':
 
         # 1초에 한번씩 display
         if cnt%100 == 0:
-            print("GyX,Y,Z_deg = ", GyX_deg, ',', GyY_deg, ',', GyZ_deg)
-            # print("AcX_deg, AcY_deg = ", AcX_deg, ',', AcY_deg)
+            # print("GyX,Y,Z_deg = ", GyX_deg, ',', GyY_deg, ',', GyZ_deg)
+            print("AcX_deg, AcY_deg = ", AcX_deg, ',', AcY_deg)
 
