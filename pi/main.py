@@ -130,8 +130,8 @@ class Main:
             
             heightList = heightList.result()
             xposList = xposList.result()
-            print(yposList[0])
             yposList = yposList.result()
+            print(yposList[0])
             
             #print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
             
