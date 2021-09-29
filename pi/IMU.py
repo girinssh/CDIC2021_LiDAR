@@ -112,8 +112,8 @@ class IMUController:
         return self.roll, self.pitch
         
     def caliSensor(self):
-        sumacc = np.array([0]*3)
-        sumgyro = np.array([0]*3)
+        sumacc = np.array([0]*3, dtype=float)
+        sumgyro = np.array([0]*3, dtype=float)
         
         self.getData()
         for i in range(10):
