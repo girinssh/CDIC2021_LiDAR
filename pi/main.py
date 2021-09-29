@@ -63,7 +63,6 @@ class Main:
         
         
         self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
-        print(np.rad2deg(self.srvo_ang))
         self.dangerLevel = 0
         self.srvo_level = 0
 
