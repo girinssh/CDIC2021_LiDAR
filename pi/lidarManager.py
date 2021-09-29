@@ -45,7 +45,7 @@ class LiDARManager:
         angleArray = []
         last = -1
         t = 0
-        while t < self.rawPerOneway * 0.9 / 150:
+        while t < self.rawPerOneway * 0.95 / 150:
             last = time.time()
             t = last - start    
             # if POS == 0:
