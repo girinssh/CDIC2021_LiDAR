@@ -109,7 +109,7 @@ class Main:
         plt.style.use('ggplot') # figure formatting
         fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
         
-        cycle = 1
+        cycle = 9
         
         for i in range(cycle):
             start_time = time.time()
@@ -124,7 +124,7 @@ class Main:
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
-            print(i, rawDistAngle)
+            # print(i, rawDistAngle)
             
             heightList = tpe().submit(self.convertRaw2Height, rawDistAngle)
             xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngle)
