@@ -6,6 +6,9 @@ Created on Sun Sep 26 14:42:41 2021
 """
 
 import smbus,time
+import numpy as np
+
+mappingRange = 2.0**15.0
 
 def MPU6050_start():
     # alter sample rate (stability)
@@ -66,13 +69,13 @@ def mpu6050_conv():
     gyro_z = read_raw_bits(GYRO_ZOUT_H)
 
     #convert to acceleration in g and gyro dps
-    a_x = (acc_x/(2.0**15.0))*accel_sens
-    a_y = (acc_y/(2.0**15.0))*accel_sens
-    a_z = (acc_z/(2.0**15.0))*accel_sens
+    a_x = (acc_x/mappingRange)*accel_sens
+    a_y = (acc_y/mappingRange)*accel_sens
+    a_z = (acc_z/mappingRange)*accel_sens
 
-    w_x = (gyro_x/(2.0**15.0))*gyro_sens
-    w_y = (gyro_y/(2.0**15.0))*gyro_sens
-    w_z = (gyro_z/(2.0**15.0))*gyro_sens
+    w_x = (gyro_x/mappingRange)*gyro_sens
+    w_y = (gyro_y/mappingRange)*gyro_sens
+    w_z = (gyro_z/mappingRange)*gyro_sens
 
 ##    temp = ((t_val)/333.87)+21.0 # uncomment and add below in return
     return a_x,a_y,a_z,w_x,w_y,w_z
@@ -154,13 +157,14 @@ print('recording data')
 while 1:
     try:
         ax,ay,az,wx,wy,wz = mpu6050_conv() # read and convert mpu6050 data
-        mx,my,mz = AK8963_conv() # read and convert AK8963 magnetometer data
+        #mx,my,mz = AK8963_conv() # read and convert AK8963 magnetometer data
     except:
         continue
+    # acc_pitch = np.arctan((wy - ax/mappingRange)/np.sqrt(wx**2 + wz**2))
     
     print('{}'.format('-'*30))
     print('accel [g]: x = {0:2.2f}, y = {1:2.2f}, z {2:2.2f}= '.format(ax,ay,az))
     print('gyro [dps]:  x = {0:2.2f}, y = {1:2.2f}, z = {2:2.2f}'.format(wx,wy,wz))
-    print('mag [uT]:   x = {0:2.2f}, y = {1:2.2f}, z = {2:2.2f}'.format(mx,my,mz))
+    #print('mag [uT]:   x = {0:2.2f}, y = {1:2.2f}, z = {2:2.2f}'.format(mx,my,mz))
     print('{}'.format('-'*30))
     time.sleep(1)
