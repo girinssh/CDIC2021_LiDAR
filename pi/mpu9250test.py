@@ -15,7 +15,7 @@ ACZOFFSET = 1.025
 
 def MPU6050_start():
     # alter sample rate (stability)
-    samp_rate_div = 0 # sample rate = 8 kHz/(1+samp_rate_div)
+    samp_rate_div = 79 # sample rate = 8 kHz/(1+samp_rate_div)
     bus.write_byte_data(MPU6050_ADDR, SMPLRT_DIV, samp_rate_div)
     time.sleep(0.1)
     # reset all sensors
@@ -72,9 +72,9 @@ def mpu6050_conv():
     gyro_z = read_raw_bits(GYRO_ZOUT_H)
 
     #convert to acceleration in g and gyro dps
-    a_x = (acc_x/mappingRange)*accel_sens - ACXOFFSET
-    a_y = (acc_y/mappingRange)*accel_sens - ACYOFFSET
-    a_z = (acc_z/mappingRange)*accel_sens - ACZOFFSET
+    a_x = (acc_x/mappingRange)*accel_sens
+    a_y = (acc_y/mappingRange)*accel_sens
+    a_z = (acc_z/mappingRange)*accel_sens
 
     w_x = (gyro_x/mappingRange)*gyro_sens
     w_y = (gyro_y/mappingRange)*gyro_sens

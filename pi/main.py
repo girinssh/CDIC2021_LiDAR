@@ -16,6 +16,8 @@ import serial,time
 import matplotlib.pyplot as plt
 import numpy as np
 
+from IMU import *
+
 # def plotter(plot_pts = 100):
 #     plt.style.use('ggplot') # plot formatting
 #     fig,axs = plt.subplots(1,1,figsize=(12,8)) # create figure
@@ -63,6 +65,8 @@ class Main:
         self.srvo_ang = np.arctan2(np.array([3, 5, 7]), self.height)
         self.dangerLevel = 0
         self.srvo_level = 0
+
+        self.imu = IMUController()
 
         Main.goLeft = False
         Main.main = self
@@ -128,7 +132,9 @@ class Main:
             xposList = xposList.result()
             yposList = yposList.result()
             
-            inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
+            print(self.imu.calc_angle())
+            
+            #inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
 
             end_time = time.time()
             interval = end_time - start_time
