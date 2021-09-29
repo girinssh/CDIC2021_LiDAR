@@ -93,7 +93,7 @@ class Main:
     def convertRaw2Height(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, (self.height,)*3)}
     def convertRaw2YPOS(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, [raw[i][1] for i in raw.keys()], (self.velocity,)*3)}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, [raw[i][1] for i in raw.keys()], [raw[i][2] for i in raw.keys()], (self.velocity,)*3)}
     def convertRaw2XPOS(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, [raw[i][1] for i in raw.keys()])}
     
@@ -117,7 +117,7 @@ class Main:
             rawDistAngle = {}
             
             try:
-                rawDistAngle = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3, timeout=0.25)}
+                rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3, timeout=0.25)}
             except:
                 print("EXCEPTION")
                 continue    

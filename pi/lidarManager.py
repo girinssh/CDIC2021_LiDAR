@@ -46,6 +46,7 @@ class LiDARManager:
         #  print("getRaws ", POS, DIR)
         rawArray = []
         angleArray = []
+        timeArray = []
         last = -1
         t = 0
         while t < self.secPerOneway * 0.9:
@@ -59,5 +60,5 @@ class LiDARManager:
             # if POS == 0: print(t)
             rawArray.append(self.lidars[POS].read_data())
             angleArray.append((self.angle_min if DIR == self.DIR_LEFT2RIGHT else self.angle_max) + DIR * self.angle_range * np.sin(2*t*np.pi))
-
-        return POS, np.array([rawArray, angleArray])
+            timeArray.append(t)
+        return POS, np.array([rawArray, angleArray, timeArray])
