@@ -1,174 +1,248 @@
 # -*- coding: utf-8 -*-
+
+# GPIO 라이브러리
+import smbus    # 많이 찾아봤는데... Python에서는 I2C 보다는 smbus를 I2C로 사용하더라
+                # 없다면, sudo apt-get install python-smbus로 설치
+import math
+import time
+
+'''
+기본코드 참조: http://practical.kr/?p=76   # 단, ACCEL을 이용한 각도계산만 수록됨
+이론설명 참조: https://blog.naver.com/codingbird/221766900497
+'''
+################################
+# MPU 레지스터 번호(필요한것만...)
+################################
+# MPU-6050 Register
+CONFIG       = 0x1A     # LowPassFilter bit 2:0
+GYRO_CONFIG  = 0x1B     # FS_SEL bit 4:3
+ACCEL_CONFIG = 0x1C     # FS_SEL bit 4:3
+PWR_MGMT_1   = 0x6B     # sleep bit 6, clk_select bit 2:0
+
+# CONFIG: Low Pass Filter 설정(bit 2:0)
+DLPF_BW_256 = 0x00      # Acc: BW-260Hz, Delay-0ms, Gyro: BW-256Hz, Delay-0.98ms
+DLPF_BW_188 = 0x01
+DLPF_BW_98  = 0x02
+DLPF_BW_42  = 0x03
+DLPF_BW_20  = 0x04
+DLPF_BW_10  = 0x05
+DLPF_BW_5   = 0x06      # Acc: BW-5Hz, Delay-19ms, Gyro: BW-5Hz, Delay-18.6ms
+
+# GYRO_CONFIG: Gyro의 Full Scale 설정(bit 4:3)
+GYRO_FS_250  = 0x00 << 3    # 250 deg/sec
+GYRO_FS_500  = 0x01 << 3
+GYRO_FS_1000 = 0x02 << 3
+GYRO_FS_2000 = 0x03 << 3    # 2000 deg/sec
+
+# ACCEL_CONFIG: 가속도센서의 Full Scale 설정(bit 4:3)
+ACCEL_FS_2  = 0x00 << 3     # 2g
+ACCEL_FS_4  = 0x01 << 3
+ACCEL_FS_8  = 0x02 << 3
+ACCEL_FS_16 = 0x03 << 3     # 16g
+
+# PWR_MGMT_1: sleep(bit 6)
+SLEEP_EN        = 0x01 << 6
+SLEEP_DIS       = 0x00 << 6
+# PWR_MGMT_1: clock(bit 2:0)
+CLOCK_INTERNAL  = 0x00  # internal clk(8KHz) 이용 (Not! Recommended)
+CLOCK_PLL_XGYRO = 0x01  # XGyro와 동기
+CLOCK_PLL_YGYRO = 0x02  # YGyro와 동기
+CLOCK_PLL_ZGYRO = 0x03  # ZGyro와 동기
+
+# Data 읽기
+ACCEL_XOUT_H = 0x3B     # Low는 0x3C
+ACCEL_YOUT_H = 0x3D     # Low는 0x3E
+ACCEL_ZOUT_H = 0x3F     # Low는 0x40
+GYRO_XOUT_H  = 0x43     # Low는 0x44
+GYRO_YOUT_H  = 0x45     # Low는 0x46
+GYRO_ZOUT_H  = 0x47     # Low는 0x48
+
+################################
+# I2C 읽고 쓰기
+################################
+# I2C Bus 초기화
+I2C_bus = smbus.SMBus(1)
+MPU6050_addr = 0x68
+
+# 한바이트 쓰기
+def write_byte(adr, data):
+    I2C_bus.write_byte_data(MPU6050_addr, adr, data)
+
+# 한바이트 읽기
+def read_byte(adr):
+    return I2C_bus.read_byte_data(MPU6050_addr, adr)
+
+# 두바이트 읽기
+def read_word(adr):
+    high = I2C_bus.read_byte_data(MPU6050_addr, adr)
+    low = I2C_bus.read_byte_data(MPU6050_addr, adr+1)
+    val = (high << 8) + low
+    return val
+
+# 두바이트를 2's complement로 읽기(-32768~32767)
+# 아두이노는 변수를 signed 16bit로 선언해서 처리하지만
+# 라즈베리파이는 이렇게 변환해 줘야 한다. 
+def read_word_2c(adr):
+    val = read_word(adr)
+    if (val >= 0x8000):
+        return -((65535 - val) + 1)
+    else:
+        return val             
+
+# 레지스터에서 raw data를 읽기
+def get_raw_data():
+    """
+    가속도(accel)와 각속도(gyro)의 현재 값 읽기
+    :return: accel x/y/z, gyro x/y/z
+    """
+    gyro_xout = read_word_2c(GYRO_XOUT_H)
+    gyro_yout = read_word_2c(GYRO_YOUT_H)
+    gyro_zout = read_word_2c(GYRO_ZOUT_H)
+    accel_xout = read_word_2c(ACCEL_XOUT_H)
+    accel_yout = read_word_2c(ACCEL_YOUT_H)
+    accel_zout = read_word_2c(ACCEL_ZOUT_H)
+    return accel_xout, accel_yout, accel_zout,\
+           gyro_xout, gyro_yout, gyro_zout
+
+
+""" 
+Accel값(가속도)만 이용해서 Y축과 X축 방향의 기울어진 각도 측정
+중력가속도를 기준으로 기울여졌을때의 각 방향의 크기를 이용(삼각함수)
+진동에 취약
 """
-Created on Sun Sep 26 14:42:41 2021
+def cal_angle_acc(AcX, AcY, AcZ):
+    """
+    Accel값만 이용해서 X, Y의 각도 측정
+    (고정 좌표 기준?)
+    그런데... 각도가 0 -> 90 -> 0 -> -90 -> 0으로 바뀐다. 왜?
+    0도 -> 90도 -> 180도 -> 270도 -> 360도
+    즉, 30도와 120도가 모두 30도로 표시된다. 왜?
+    :param AcX: Accel X
+    :param AcY: Accel Y
+    :param AcZ: Accel Z
+    :return: X, Y angle in degree
+    """
+    y_radians = math.atan2(AcX, math.sqrt((AcY*AcY) + (AcZ*AcZ)))
+    x_radians = math.atan2(AcY, math.sqrt((AcX*AcX) + (AcZ*AcZ)))
+    return math.degrees(x_radians), -math.degrees(y_radians)
 
-@author: tngus
-"""
+# 각도(deg) = Gyro값(step) / DEGREE_PER_SECOND(step*sec/deg) * dt(sec) 의 누적...
+DEGREE_PER_SECOND = 32767 / 250  # Gyro의 Full Scale이 250인 경우
+                                 # Full Scale이 1000인 경우 32767/1000
+past = 0      # 현재 시간(sec)
+baseAcX = 0   # 기준점(가만히 있어도 회전이 있나???)
+baseAcY = 0
+baseAcZ = 0
+baseGyX = 0
+baseGyY = 0
+baseGyZ = 0
 
-import smbus,time
-import numpy as np
+GyX_deg = 0   # 측정 각도
+GyY_deg = 0
+GyZ_deg = 0
 
-mappingRange = 2.0**15.0
-ACXOFFSET = 0.04
-ACYOFFSET = 0.005
-ACZOFFSET = 1.025
+def cal_angle_gyro(GyX, GyY, GyZ):
+    """
+    Gyro를 이용한 현재 각도 계산
+    누적 방식이라... 회전하는 방향에 따라 양수/음수가 정해진다.
+    :param y: 현재 Gyro 출력
+    :return: 현재 각도, 기준 시간 -> past
+    """
+    global GyX_deg, GyY_deg, GyZ_deg
 
-def MPU6050_start():
-    # alter sample rate (stability)
-    samp_rate_div = 79 # sample rate = 8 kHz/(1+samp_rate_div)
-    bus.write_byte_data(MPU6050_ADDR, SMPLRT_DIV, samp_rate_div)
-    time.sleep(0.1)
-    # reset all sensors
-    bus.write_byte_data(MPU6050_ADDR,PWR_MGMT_1,0x00)
-    time.sleep(0.1)
-    # power management and crystal settings
-    bus.write_byte_data(MPU6050_ADDR, PWR_MGMT_1, 0x01)
-    time.sleep(0.1)
-    #Write to Configuration register
-    bus.write_byte_data(MPU6050_ADDR, CONFIG, 0)
-    time.sleep(0.1)
-    #Write to Gyro configuration register
-    gyro_config_sel = [0b00000,0b010000,0b10000,0b11000] # byte registers
-    gyro_config_vals = [250.0,500.0,1000.0,2000.0] # degrees/sec
-    gyro_indx = 0
-    bus.write_byte_data(MPU6050_ADDR, GYRO_CONFIG, int(gyro_config_sel[gyro_indx]))
-    time.sleep(0.1)
-    #Write to Accel configuration register
-    accel_config_sel = [0b00000,0b01000,0b10000,0b11000] # byte registers
-    accel_config_vals = [2.0,4.0,8.0,16.0] # g (g = 9.81 m/s^2)
-    accel_indx = 0                            
-    bus.write_byte_data(MPU6050_ADDR, ACCEL_CONFIG, int(accel_config_sel[accel_indx]))
-    time.sleep(0.1)
-    # interrupt register (related to overflow of data [FIFO])
-    bus.write_byte_data(MPU6050_ADDR, INT_ENABLE, 1)
-    time.sleep(0.1)
-    return gyro_config_vals[gyro_indx],accel_config_vals[accel_indx]
-    
-def read_raw_bits(register):
-    # read accel and gyro values
-    high = bus.read_byte_data(MPU6050_ADDR, register)
-    low = bus.read_byte_data(MPU6050_ADDR, register+1)
+    now = time.time()
+    dt = now - past     # 초단위
 
-    # combine higha and low for unsigned bit value
-    value = ((high << 8) | low)
-    
-    # convert to +- value
-    if(value > 32768):
-        value -= 65536
-    return value
+    GyX_deg += ((GyX - baseGyX) / DEGREE_PER_SECOND) * dt
+    GyY_deg += ((GyY - baseGyY) / DEGREE_PER_SECOND) * dt
+    GyZ_deg += ((GyZ - baseGyZ) / DEGREE_PER_SECOND) * dt
 
-def mpu6050_conv():
-    # raw acceleration bits
-    acc_x = read_raw_bits(ACCEL_XOUT_H)
-    acc_y = read_raw_bits(ACCEL_YOUT_H)
-    acc_z = read_raw_bits(ACCEL_ZOUT_H)
+    return now      # 다음 계산을 위해 past로 저장되어야 한다.
 
-    # raw temp bits
-##    t_val = read_raw_bits(TEMP_OUT_H) # uncomment to read temp
-    
-    # raw gyroscope bits
-    gyro_x = read_raw_bits(GYRO_XOUT_H)
-    gyro_y = read_raw_bits(GYRO_YOUT_H)
-    gyro_z = read_raw_bits(GYRO_ZOUT_H)
+def sensor_calibration():
+    """
+    1초동안의 평균을 이용하여 기준점 계산
+    :return: Accel과 Gyro의 기준점 -> baseAcX ~ basGyZ
+    """
+    SumAcX = 0
+    SumAcY = 0
+    SumAcZ = 0
+    SumGyX = 0
+    SumGyY = 0
+    SumGyZ = 0
 
-    #convert to acceleration in g and gyro dps
-    a_x = (acc_x/mappingRange)*accel_sens
-    a_y = (acc_y/mappingRange)*accel_sens
-    a_z = (acc_z/mappingRange)*accel_sens
+    for i in range(10):
+        AcX, AcY, AcZ, GyX, GyY, GyZ = get_raw_data()
+        SumAcX += AcX
+        SumAcY += AcY
+        SumAcZ += AcZ
+        SumGyX += GyX
+        SumGyY += GyY
+        SumGyZ += GyZ
+        time.sleep(0.1)
 
-    w_x = (gyro_x/mappingRange)*gyro_sens
-    w_y = (gyro_y/mappingRange)*gyro_sens
-    w_z = (gyro_z/mappingRange)*gyro_sens
+    avgAcX = SumAcX / 10
+    avgAcY = SumAcY / 10
+    avgAcZ = SumAcZ / 10
+    avgGyX = SumGyX / 10
+    avgGyY = SumGyY / 10
+    avgGyZ = SumGyZ / 10
 
-##    temp = ((t_val)/333.87)+21.0 # uncomment and add below in return
-    return a_x,a_y,a_z,w_x,w_y,w_z
+    return avgAcX, avgAcY, avgAcZ, avgGyX, avgGyY, avgGyZ
 
-def AK8963_start():
-    bus.write_byte_data(AK8963_ADDR,AK8963_CNTL,0x00)
-    time.sleep(0.1)
-    AK8963_bit_res = 0b0001 # 0b0001 = 16-bit
-    AK8963_samp_rate = 0b0110 # 0b0010 = 8 Hz, 0b0110 = 100 Hz
-    AK8963_mode = (AK8963_bit_res <<4)+AK8963_samp_rate # bit conversion
-    bus.write_byte_data(AK8963_ADDR,AK8963_CNTL,AK8963_mode)
-    time.sleep(0.1)
-    
-def AK8963_reader(register):
-    # read magnetometer values
-    low = bus.read_byte_data(AK8963_ADDR, register-1)
-    high = bus.read_byte_data(AK8963_ADDR, register)
-    # combine higha and low for unsigned bit value
-    value = ((high << 8) | low)
-    # convert to +- value
-    if(value > 32768):
-        value -= 65536
-    return value
+# Now wake the 6050 up as it starts in sleep mode
+# MPU 6050 초기화
+def set_MPU6050_init(dlpf_bw=DLPF_BW_256,
+                     gyro_fs=GYRO_FS_250, accel_fs=ACCEL_FS_2,
+                     clk_pll=CLOCK_PLL_XGYRO):
+    global baseAcX, baseAcY, baseAcZ, baseGyX, baseGyY, baseGyZ, past
 
-def AK8963_conv():
-    # raw magnetometer bits
+    # MPU6050 초기값 setting
+    write_byte(PWR_MGMT_1, SLEEP_EN | clk_pll)      # sleep mode(bit6), clock(bit2:0)은 XGyro 동기
+    write_byte(CONFIG, dlpf_bw)                     # bit 2:0
+    write_byte(GYRO_CONFIG, gyro_fs)                # Gyro Full Scale bit 4:3
+    write_byte(ACCEL_CONFIG, accel_fs)              # Accel Full Scale Bit 4:3
+    write_byte(PWR_MGMT_1, SLEEP_DIS | clk_pll)     # Start
 
-    loop_count = 0
-    while 1:
-        mag_x = AK8963_reader(HXH)
-        mag_y = AK8963_reader(HYH)
-        mag_z = AK8963_reader(HZH)
+    # sensor 계산 초기화
+    baseAcX, baseAcY, baseAcZ, baseGyX, baseGyY, baseGyZ \
+        = sensor_calibration()
+    past = time.time()
 
-        # the next line is needed for AK8963
-        if bin(bus.read_byte_data(AK8963_ADDR,AK8963_ST2))=='0b10000':
-            break
-        loop_count+=1
-        
-    #convert to acceleration in g and gyro dps
-    m_x = (mag_x/(2.0**15.0))*mag_sens
-    m_y = (mag_y/(2.0**15.0))*mag_sens
-    m_z = (mag_z/(2.0**15.0))*mag_sens
+    return read_byte(PWR_MGMT_1)    # 정말 시작되었는지 확인
 
-    return m_x,m_y,m_z
-    
-# MPU6050 Registers
-MPU6050_ADDR = 0x68
-PWR_MGMT_1   = 0x6B
-SMPLRT_DIV   = 0x19
-CONFIG       = 0x1A
-GYRO_CONFIG  = 0x1B
-ACCEL_CONFIG = 0x1C
-INT_ENABLE   = 0x38
-ACCEL_XOUT_H = 0x3B
-ACCEL_YOUT_H = 0x3D
-ACCEL_ZOUT_H = 0x3F
-TEMP_OUT_H   = 0x41
-GYRO_XOUT_H  = 0x43
-GYRO_YOUT_H  = 0x45
-GYRO_ZOUT_H  = 0x47
-#AK8963 registers
-AK8963_ADDR   = 0x0C
-AK8963_ST1    = 0x02
-HXH          = 0x04
-HYH          = 0x06
-HZH          = 0x08
-AK8963_ST2   = 0x09
-AK8963_CNTL  = 0x0A
-mag_sens = 4900.0 # magnetometer sensitivity: 4800 uT
+########################################
+# 테스트 코드
+########################################
+if __name__ == '__main__':
+    ''' -----------------------------------'''
+    ''' Gyro 테스트 '''
+    ''' -----------------------------------'''
+    # 1) MPU 6050 초기화
+    test = set_MPU6050_init(dlpf_bw=DLPF_BW_98)   # BW만 변경, 나머지는 default 이용
+    print("Gyro PWR_MGMT_1 Register = ", test)
 
-# start I2C driver
-bus = smbus.SMBus(1) # start comm with i2c bus
-gyro_sens,accel_sens = MPU6050_start() # instantiate gyro/accel
-AK8963_start() # instantiate magnetometer
+    # 2) Gyro 기준값 계산(Gyro 이용시)
+    sensor_calibration()    # Gyro의 기준값 계산
 
-time.sleep(1) # delay necessary to allow mpu9250 to settle
+    cnt = 0
 
-print('recording data')
-while 1:
-    try:
-        ax,ay,az,wx,wy,wz = mpu6050_conv() # read and convert mpu6050 data
-        #mx,my,mz = AK8963_conv() # read and convert AK8963 magnetometer data
-    except:
-        continue
-    acc_pitch = np.arctan((ay - ACYOFFSET/mappingRange)/np.sqrt(ax**2 + az**2))*180/np.pi
-    acc_roll = -np.arctan((ax - ACXOFFSET/mappingRange)/np.sqrt(ay**2 + az**2))*180/np.pi
-    
-    print('{}'.format('-'*30))
-    print('accel [g]: x = {0:2.2f}, y = {1:2.2f}, z {2:2.2f}= '.format(ax,ay,az))
-    print('Rotation [DEG]:  roll = {0:2.2f}, pitch = {1:2.2f}'.format(acc_roll,acc_pitch))
-    #print('mag [uT]:   x = {0:2.2f}, y = {1:2.2f}, z = {2:2.2f}'.format(mx,my,mz))
-    print('{}'.format('-'*30))
-    time.sleep(1)
+    while True:
+        # 3) accel, gyro의 Raw data 읽기, 
+        AcX, AcY, AcZ, GyX, GyY, GyZ = get_raw_data()
+     
+        # 4-1) Accel을 이용한 각도 계산
+        AcX_deg, AcY_deg = cal_angle_acc(AcX, AcY, AcZ)
+
+        # 4-2) Gyro를 이용한 각도 계산 
+        past = cal_angle_gyro(GyX, GyY, GyZ)
+
+        # 5) 0.01초 간격으로 값 읽기
+        time.sleep(0.01)
+        cnt += 1
+
+        # 1초에 한번씩 display
+        if cnt%100 == 0:
+            print("GyX,Y,Z_deg = ", GyX_deg, ',', GyY_deg, ',', GyZ_deg)
+            # print("AcX_deg, AcY_deg = ", AcX_deg, ',', AcY_deg)
+

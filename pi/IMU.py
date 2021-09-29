@@ -24,6 +24,21 @@ GYRO_XOUT_H  = 0x43
 GYRO_YOUT_H  = 0x45
 GYRO_ZOUT_H  = 0x47
 
+# Low pass Filter
+DLPF_BW_256 = 0x00      # Acc: BW-260Hz, Delay-0ms, Gyro: BW-256Hz, Delay-0.98ms
+DLPF_BW_188 = 0x01
+DLPF_BW_98  = 0x02
+DLPF_BW_42  = 0x03
+DLPF_BW_20  = 0x04
+DLPF_BW_10  = 0x05
+DLPF_BW_5   = 0x06
+
+# GYRO_CONFIG: Gyro의 Full Scale 설정(bit 4:3)
+GYRO_FS_250  = 0x00 << 3    # 250 deg/sec
+GYRO_FS_500  = 0x01 << 3
+GYRO_FS_1000 = 0x02 << 3
+GYRO_FS_2000 = 0x03 << 3    # 2000 deg/sec
+
 mappingRange = 2**15
 
 DEG_PER_SEC = 32767 / 500
