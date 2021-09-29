@@ -15,8 +15,13 @@ class Gps{
     SoftwareSerial uart_gps(RXPIN, TXPIN);
     TinyGPS gps;
     float gps_velocity;
-      
+    int GPSBAUD;
+    
   public:
+    Gps(GPSBAUD){
+      this.GPSBAUD = GPSBAUD;
+    }
+    
     void setup_gps(){
       uart_gps.begin(GPSBAUD); // GPSBAUD = 9600
     }
