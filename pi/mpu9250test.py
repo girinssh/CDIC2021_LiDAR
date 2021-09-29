@@ -9,6 +9,9 @@ import smbus,time
 import numpy as np
 
 mappingRange = 2.0**15.0
+ACXOFFSET = 0.04
+ACYOFFSET = 0.005
+ACZOFFSET = 1.025
 
 def MPU6050_start():
     # alter sample rate (stability)
@@ -69,9 +72,9 @@ def mpu6050_conv():
     gyro_z = read_raw_bits(GYRO_ZOUT_H)
 
     #convert to acceleration in g and gyro dps
-    a_x = (acc_x/mappingRange)*accel_sens
-    a_y = (acc_y/mappingRange)*accel_sens
-    a_z = (acc_z/mappingRange)*accel_sens
+    a_x = (acc_x/mappingRange)*accel_sens - ACXOFFSET
+    a_y = (acc_y/mappingRange)*accel_sens - ACYOFFSET
+    a_z = (acc_z/mappingRange)*accel_sens - ACZOFFSET
 
     w_x = (gyro_x/mappingRange)*gyro_sens
     w_y = (gyro_y/mappingRange)*gyro_sens
@@ -160,11 +163,12 @@ while 1:
         #mx,my,mz = AK8963_conv() # read and convert AK8963 magnetometer data
     except:
         continue
-    # acc_pitch = np.arctan((wy - ax/mappingRange)/np.sqrt(wx**2 + wz**2))
+    acc_pitch = np.arctan((ay - ACYOFFSET/mappingRange)/np.sqrt(ax**2 + az**2))*180/np.pi
+    acc_roll = -np.arctan((ax - ACXOFFSET/mappingRange)/np.sqrt(ay**2 + az**2))*180/np.pi
     
     print('{}'.format('-'*30))
     print('accel [g]: x = {0:2.2f}, y = {1:2.2f}, z {2:2.2f}= '.format(ax,ay,az))
-    print('gyro [dps]:  x = {0:2.2f}, y = {1:2.2f}, z = {2:2.2f}'.format(wx,wy,wz))
+    print('Rotation [DEG]:  roll = {0:2.2f}, pitch = {1:2.2f}'.format(acc_roll,acc_pitch))
     #print('mag [uT]:   x = {0:2.2f}, y = {1:2.2f}, z = {2:2.2f}'.format(mx,my,mz))
     print('{}'.format('-'*30))
     time.sleep(1)
