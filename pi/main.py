@@ -122,8 +122,6 @@ class Main:
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
-            print(i, rawDistAngle[0][1])
-            
             heightList = tpe().submit(self.convertRaw2Height, rawDistAngle)
             xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngle)
             yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngle)
@@ -132,7 +130,7 @@ class Main:
             xposList = xposList.result()
             yposList = yposList.result()
             
-            print(self.imu.calc_angle())
+            print("Roll = {0f}, Pitch = {1f}".format(self.imu.calc_angle()))
             
             #inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
 
