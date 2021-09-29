@@ -132,7 +132,9 @@ class Main:
             xposList = xposList.result()
             yposList = yposList.result()
             
-            print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
+            print(i, yposList)
+            
+            #print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
             
             #inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
 
