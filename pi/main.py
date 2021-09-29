@@ -130,7 +130,7 @@ class Main:
             xposList = xposList.result()
             yposList = yposList.result()
             
-            print("Roll = {0f}, Pitch = {1f}".format(self.imu.calc_angle()))
+            print("Roll = {}, Pitch = {}".format(self.imu.calc_angle()))
             
             #inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
 
