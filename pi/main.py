@@ -114,7 +114,7 @@ class Main:
         for i in range(cycle):
             start_time = time.time()
             
-            rawDistAngle = {}
+            rawDistAngleTime= {}
             
             try:
                 rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3, timeout=0.25)}
@@ -124,9 +124,9 @@ class Main:
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
-            heightList = tpe().submit(self.convertRaw2Height, rawDistAngle)
-            xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngle)
-            yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngle)
+            heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
+            xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
+            yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngleTime)
             
             heightList = heightList.result()
             xposList = xposList.result()
