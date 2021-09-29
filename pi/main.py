@@ -141,7 +141,7 @@ class Main:
             interval = end_time - start_time
             interval_max = interval if interval > interval_max else interval_max
             interval_min = interval if interval < interval_min else interval_min
-            print(i, interval, yposList[0])
+            print(i, interval, yposList.keys())
             
             for i in range(3):
                 ax.scatter(xposList[i], yposList[i])
