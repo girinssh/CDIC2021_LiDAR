@@ -56,7 +56,7 @@ class LiDARManager:
             # #time을 계산하면서 rawArray에 집어넣는다. 
             # if last - start >= (index + 1) * self.secPerRaw:
             #     index += 1
-            if POS == 0: print(t)
+            # if POS == 0: print(t)
             rawArray.append(self.lidars[POS].read_data())
             angleArray.append((self.angle_min if DIR == self.DIR_LEFT2RIGHT else self.angle_max) + DIR * self.angle_range * np.sin(2*t*np.pi))
 
