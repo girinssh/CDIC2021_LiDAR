@@ -108,7 +108,7 @@ class Main:
         
         plt.style.use('ggplot') # figure formatting
         fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
-        
+        colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
         cycle = 9
         
         for i in range(cycle):
@@ -143,8 +143,8 @@ class Main:
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            for i in range(3):
-                ax.scatter(xposList[i], yposList[i])
+            for j in range(3):
+                ax.scatter(xposList[j], yposList[j], color=colorList[i%2][j])
             
             total_time += interval
         
