@@ -124,14 +124,13 @@ class Main:
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             
-            print(i, np.rad2deg(rawDistAngle[0][1]))
-            
             heightList = tpe().submit(self.convertRaw2Height, rawDistAngle)
             xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngle)
             yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngle)
             
             heightList = heightList.result()
             xposList = xposList.result()
+            print(xposList[0])
             yposList = yposList.result()
             
             #print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
