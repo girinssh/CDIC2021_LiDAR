@@ -62,7 +62,7 @@ class Main:
         self.velocity = 5.0 # m/s
         
         
-        self.srvo_ang = np.arctan2(np.array([3, 5, 7]), self.height)
+        self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
         print(np.rad2deg(self.srvo_ang))
         self.dangerLevel = 0
         self.srvo_level = 0
