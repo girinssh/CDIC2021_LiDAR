@@ -29,7 +29,7 @@ class LiDARManager:
             ]
         
         # 편도로 가는 동안 몇개의 데이터를 수집해야하는가.
-        self.rawPerOneway = int(60 / (self.rpm * 2) * samp_rate)
+        self.rawPerOneway = int(30 * samp_rate / self.rpm)
         
         # 1개의 데이터를 수집할 때 몇초를 소모해야하는가. 
         self.secPerRaw = (float)(1 / samp_rate)
@@ -45,7 +45,7 @@ class LiDARManager:
         angleArray = []
         last = -1
         t = 0
-        while t < 33 / 150:
+        while t < self.rawPerOneway * self.secPerRaw * 0.95:
             last = time.time()
             t = last - start    
             # if POS == 0:
