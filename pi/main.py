@@ -16,7 +16,7 @@ import serial,time
 import matplotlib.pyplot as plt
 import numpy as np
 
-from IMU import *
+import IMU
 
 # def plotter(plot_pts = 100):
 #     plt.style.use('ggplot') # plot formatting
@@ -66,7 +66,9 @@ class Main:
         self.dangerLevel = 0
         self.srvo_level = 0
 
-        self.imu = IMUController()
+        self.imu = IMU.IMUController()
+        print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
+        self.imu.sensor_calibration()
 
         Main.goLeft = False
         Main.main = self
@@ -101,7 +103,7 @@ class Main:
         
         interval_max = 0
         interval_min = 2
-        inlier, outlier, param = [], [], []
+        # inlier, outlier, param = [], [], []
         total_time = 0
         
         plt.style.use('ggplot') # figure formatting
@@ -130,7 +132,7 @@ class Main:
             xposList = xposList.result()
             yposList = yposList.result()
             
-            print("(Roll, Pitch) = {}".format(self.imu.calc_angle()))
+            print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
             
             #inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
 
