@@ -50,7 +50,7 @@ class LiDARManager:
         t = 0
         while t < self.secPerOneway * 0.9:
             last = time.time()
-            t = last - start    
+            t = last - start
             # if POS == 0:
             #     print(t, sep='\t')
             # #time을 계산하면서 rawArray에 집어넣는다. 
