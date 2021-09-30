@@ -107,7 +107,9 @@ class Main:
         total_time = 0
         
         plt.style.use('ggplot') # figure formatting
-        fig,ax = plt.subplots(figsize=(12,9)) # figure and axis
+        # figure and axis
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
         cycle = 9
         
@@ -135,7 +137,7 @@ class Main:
             
             #print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
             
-            #inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
+            # inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
 
             end_time = time.time()
             interval = end_time - start_time
@@ -144,7 +146,7 @@ class Main:
             print(i, interval, yposList.keys())
             
             for j in range(3):
-                ax.scatter(xposList[j], yposList[j], color=colorList[i%2][j])
+                ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[i%2][j])
             
             total_time += interval
         
@@ -156,6 +158,7 @@ class Main:
         print("Interval AVG: ", interval_avg)
         #ax.set_xlim([-2.0,2.0])
         #ax.set_ylim([0.0,8.0]) 
+        ax.set_zlabel('Z Height [m]',fontsize=16) 
         ax.set_ylabel('Y Distance [m]',fontsize=16) 
         ax.set_xlabel('X Distance [m]',fontsize=16)
         ax.set_title('TF-Luna Ranging Test',fontsize=18)
@@ -173,11 +176,11 @@ class Main:
         # print(param)
         
         # t = np.linspace(2*np.pi/9, 7*np.pi/9, 50)
-        # #x = param[0] * np.cos(t)
-        # y = param[0]* np.sin(t) + param[1] * t + param[2]
+        # x = param[0] * np.cos(t)
+        # y = param[0] * np.sin(t) + param[1] * t + param[2]
         # ax.scatter(np.rad2deg(t) - 90, y, color='g')
-        # ax.set_ylabel('Distance [m]',fontsize=16) 
-        # ax.set_xlabel('Angle [DEG]',fontsize=16)
+        # ax.set_ylabel('Distance [m]',fontsize=16)       
+        # ax.set_xlabel('Distance [m]',fontsize=16)
         # ax.set_title('TF-Luna Ranging Test',fontsize=18)
         # plt.show()
         
