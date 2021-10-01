@@ -38,7 +38,8 @@ void loop() {
   
   //control led
   if(prev_warn_case != warn_case){
-    led.set(led_num, warn_case);
+    //led.set(led_num, warn_case);
+    ledsp_loop(warn_case);
     
     led_cur_time = millis();
     led_pre_time = led_cur_time;
@@ -59,7 +60,7 @@ void led_control(){
       ledsp_blinkLED(false);
       isledOn = false;
     }
-    else{
+    else{ //turn off -> on
       ledsp_blinkLED(true);
       isledOn = true;
     }
