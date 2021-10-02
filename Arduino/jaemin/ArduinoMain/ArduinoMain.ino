@@ -1,6 +1,12 @@
 #include <Adafruit_NeoPixel.h>
 #include "setup.h"
 #include "loop.h"
+#include "SerMo.h"
+#include <SoftwareSerial.h>
+
+SoftwareSerial subArduino(2, 3); 
+SoftwareSerial rasberry(4, 5);
+
 
 #define GPSBAUD 115200
 int servo_pin[] = {A0, A1, A2};
