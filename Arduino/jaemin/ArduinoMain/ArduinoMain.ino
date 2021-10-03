@@ -4,7 +4,7 @@
 #include "SerMo.h"
 #include <SoftwareSerial.h>
 
-SoftwareSerial subArduino(2, 3); 
+SoftwareSerial subArduino(10, 11); 
 SoftwareSerial rasberry(4, 5);
 
 
@@ -13,34 +13,52 @@ int servo_pin[] = {A0, A1, A2};
 int step_pin[] = {A7, A8, A9, A10, A11, A12};
 int step_speed[] = {1000, 400};
 
-Gps gps(GPSBAUD);
+//Gps gps(GPSBAUD);
 SerMo servo_moter = SerMo(servo_pin);
-StepM step_moter = StepM(step_pin, step_speed);
+
 
 int led_spd;
 int led_pre_time = 0, led_cur_time;
 boolean isLedOn = false;
-
+String getstr = "";
 String pre_warn_case= "", warn_case;
 
 void setup() {
   //led, speaker init
   ledsp_setup();
-  Serial.begin(115200);
+  Serial.begin(9600);
   //step_moter init
   //step_moter.stepMmove();
+  subArduino.begin(9600);
+
+  Serial.println("start");
+  
+  while(!Serial.available()){
+  }
+
+  if(Serial.available()){
+    String c = Serial.readStringUntil('\n');
+    for(int i =0; i< c.length(); i++)
+      subArduino.write(c.charAt(i));
+  }
+  
+  while(subArduino.available()){
+    getstr = subArduino.readStringUntil('\n');
+  }
+  Serial.println(getstr);
+  
 }
 
 void loop() {
   
-  float gps_velocity = gps.getVelocity();
+//  float gps_velocity = gps.getVelocity();
   //send data(gps_velocity (+ imu(roll, pitch)))
   if(Serial.available() == 0){
     Serial.println();
   }
   
-  //waiting & led initial
-  while(!Serial.available())(
+  //waiting 
+  while(!Serial.available()){
   }
 
   //recive data
@@ -49,12 +67,12 @@ void loop() {
   
   
   //servo setting
-  servo_moter.SerMotorMove(srvo_deg);
+//  servo_moter.SerMotorMove(srvo_deg);
   
 
   
   //warn_case = Serial.readString();
-  warn_case = "led101010101010spd1kind1010";
+ // warn_case = "led101010101010spd1kind1010";
 
   
   led_spd = warn_case[18] - '0';
