@@ -20,13 +20,14 @@ void setup() {
   // put your setup code here, to run once:
   
   mySerial.begin(9600);
-
+  Serial.begin(9600);
   //stepMoter.init_endstop(endstop_status);
   
   //send to Main
   while(!mySerial.available()){
     
   }
+  Serial.println("not");
   for(int i = 0; i < str.length(); i++)
     mySerial.write(str.charAt(i));
 }
@@ -34,16 +35,20 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   stepMoter.stepMove();
-
+  is_on();
 }
 
-//void is_on(){
-//  String str = "";
-//  if(mySerial.available()){
-//    str = mySerial.readStringUntil('\n');
-//    if(str.equals("on")){
-//      for(int i = 0; i < str.length(); i++)
-//        mySerial.write(str.charAt(i));
-//    }
-//  }
-//}
+void is_on(){
+  String temp = "";
+  if(mySerial.available()){
+    Serial.println("available");
+    temp = mySerial.readStringUntil('\n');
+    temp.trim();
+    Serial.println(str);
+    if(temp.equals("on")){
+      Serial.println(temp);
+      for(int i = 0; i < str.length(); i++)
+        mySerial.write(str.charAt(i));
+    }
+  }
+}
