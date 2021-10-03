@@ -2,7 +2,7 @@
 #include "StepM.h"
 #include <SoftwareSerial.h>
 
-SoftwareSerial mainArduino(2, 3);
+SoftwareSerial mySerial(10, 11);
 const int endstopPin1 = 6;
 const int endstopPin2 = 7;
 const int endstopPin3 = 8;
@@ -14,20 +14,41 @@ bool endstop_status[] = {false, false, false};
 
 StepM stepMoter = StepM(step_pin, step_speed);
 
+String str = "initialize success";
+
 void setup() {
   // put your setup code here, to run once:
-
-  mainArduino.begin(115200);
-
-  //motor initialize
+  
+  mySerial.begin(9600);
+  Serial.begin(9600);
   //stepMoter.init_endstop(endstop_status);
-
+  
   //send to Main
-  mainArduino.write("initialize success");
+  while(!mySerial.available()){
+    
+  }
+  Serial.println("not");
+  for(int i = 0; i < str.length(); i++)
+    mySerial.write(str.charAt(i));
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  mainArduino.write("initialize success");
   stepMoter.stepMove();
+  is_on();
+}
+
+void is_on(){
+  String temp = "";
+  if(mySerial.available()){
+    Serial.println("available");
+    temp = mySerial.readStringUntil('\n');
+    temp.trim();
+    Serial.println(str);
+    if(temp.equals("on")){
+      Serial.println(temp);
+      for(int i = 0; i < str.length(); i++)
+        mySerial.write(str.charAt(i));
+    }
+  }
 }
