@@ -59,7 +59,10 @@ class LiDARManager:
             # if last - start >= (index + 1) * self.secPerRaw:
             #     index += 1
             # if POS == 0: print(t)
-            rawArray.append(self.lidars[POS].read_data())
+            val = self.lidars[POS].read_data()
+            if val >= 8 or val < 0.2:
+                continue
+            rawArray.append()
             angleArray.append((self.angle_min if DIR == self.DIR_LEFT2RIGHT else self.angle_max) + DIR * self.angle_range * np.sin(2*t*np.pi))
             timeArray.append(t)
         return POS, np.array([rawArray, angleArray, timeArray])
