@@ -12,6 +12,8 @@ import pi_method
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor as tpe
 
+import threading
+
 import serial,time
 import matplotlib.pyplot as plt
 import numpy as np
@@ -58,9 +60,9 @@ class Main:
         self.lm = LiDARManager(self.rpm, self.samp_rate, self.min_angle, self.max_angle)
         self.onewayTime = 60 / (self.rpm * 2) # sec
         
+        self.width = 0.3 # m
         self.height = 0.3 # m
         self.velocity = 5.0 # m/s
-        
         
         self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
         self.dangerLevel = 0
@@ -70,6 +72,8 @@ class Main:
         print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
         self.imu.sensor_calibration()
 
+        self.serArdu = serial.Serial('/dev/ttyAMA0', 9600)
+
         Main.goLeft = False
         Main.main = self
                               
@@ -78,16 +82,19 @@ class Main:
     
     # only develop at raspberry pi
     def getCommand(self):
-        while True:
+        command = []
+        while self.serArdu.is_open:
+            if self.serArdu.inWaiting() > 0:
+                com = self.serArdu.readUntil().decode('utf-8').rstrip()
+                
             pass
         pass
 
     def postCommand(self):
+        
         pass
     
-    # need to be executed every oneway time.
-    def lidarThreadRun(self):
-        self.lm.getRaws(0)
+    def getVelocity(self):
         pass
     
     def convertRaw2Height(self, raw:dict)->dict:
@@ -97,6 +104,15 @@ class Main:
     def convertRaw2XPOS(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, [raw[i][1] for i in raw.keys()])}
     
+    def changeDataAxis(self, xposList, yposList, heightList):
+        xlist = np.vstack((xposList[0] - self.width/2,xposList[1]+ self.width/2))
+        ylist = np.vstack((yposList[0],yposList[1]))
+        hlist = np.vstack((heightList[0], heightList[1]))
+        
+        pos3dList = np.hstack((xlist, ylist, hlist))
+        pos3dList.sort(kind='timsort')
+        
+        return pos3dList
     
     def run(self):
         print(self.onewayTime)
@@ -113,6 +129,9 @@ class Main:
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
         cycle = 9
         
+        threading.Thread(target=self.getCommand).start()
+        
+        
         for i in range(cycle):
             start_time = time.time()
             
@@ -121,11 +140,11 @@ class Main:
             try:
                 rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3, timeout=0.25)}
             except:
-                print("EXCEPTION")
+                print("TIMEOUT EXCEPTION")
                 continue    
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
-            
+            # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
             heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
             xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
             yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngleTime)
@@ -133,6 +152,13 @@ class Main:
             heightList = heightList.result()
             xposList = xposList.result()
             yposList = yposList.result()
+            
+            frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
+            
+            backXList = xposList[2]
+            backYList = yposList[2]
+            backHList = heightList[2]
+            
             #print(yposList[0])
             
             #print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
@@ -145,8 +171,7 @@ class Main:
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            for j in range(3):
-                ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[i%2][j])
+            ax.scatter(frontXList, frontYList, frontHList, color=colorList[i%2])
             
             total_time += interval
         
