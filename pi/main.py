@@ -182,7 +182,7 @@ class Main:
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i//2)][i%3])
+            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i//3)][i%3])
             # for j in range(self.lidarCnt):
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
