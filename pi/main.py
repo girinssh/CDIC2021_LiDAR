@@ -73,7 +73,31 @@ class Main:
         self.imu.sensor_calibration()
 
         self.serArdu = serial.Serial('/dev/ttyAMA0', 9600)
-
+        self.open()
+        
+        while not self.serArdu.is_open:
+            print('waiting...')
+            time.sleep(0.5)
+            
+        self.serArdu.flush()
+        while True:
+            s = self.serArdu.readline()
+            if s is str:
+                print(s)
+                if s == "start":
+                    self.serArdu.flushInput()
+                    break
+        self.serArdu.writelines(str(self.srvo_ang[0]) + ',' +str(self.srvo_ang[1])+','+str(self.srvo_ang[2]))
+        self.serArdu.flushOutput()
+        
+        while True:
+            s = self.serArdu.readline()
+            if s is str:
+                print(s)
+                if s == "success":
+                    self.serArdu.flushInput()
+                    break
+        
         Main.goLeft = False
         Main.main = self
                               
