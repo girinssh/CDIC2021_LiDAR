@@ -178,7 +178,8 @@ class Main:
             print(i, interval, yposList.keys())
             
             #ax.scatter(frontXList, frontYList, frontHList, color=colorList[i//2][i%2])
-            ax.scatter(xposList, yposList, heightList, color=colorList[i//2][i%2])
+            for j in range(self.lidarCnt):
+                ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
             total_time += interval
         
