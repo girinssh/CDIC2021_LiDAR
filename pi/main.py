@@ -120,7 +120,7 @@ class Main:
         
         posList = np.vstack((xlist, ylist, hlist))
         #pos3dList.astype(dtype)
-        pos3dList = np.sort(posList.T, axis=0)        
+        pos3dList = np.sort(posList.T, axis=-1)        
         print(pos3dList)
         
         return pos3dList
