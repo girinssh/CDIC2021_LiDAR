@@ -35,23 +35,23 @@ void setup() {
   Serial.println("start");
 
   //rasbarrypi init
-//  while(!Serial.available()){
-//  }
-//  String get_serv_deg;
-//  while(Serial.available())
-//    get_serv_deg = Serial.readStringUntil('\n');
-//  setting_serv_deg(get_serv_deg);
-
+  while(!Serial.available()){
+  }
+  String get_serv_deg;
+  while(Serial.available())
+    get_serv_deg = Serial.readStringUntil('\n');
+  setting_serv_deg(get_serv_deg);
+  
 
   
-//  while(!Serial.available()){
-//  }
-//
-//  if(Serial.available()){
-//    String c = Serial.readStringUntil('\n');
-//    for(int i =0; i< c.length(); i++)
-//      subArduino.write(c.charAt(i));
-//  }
+  while(!Serial.available()){
+  }
+
+  if(Serial.available()){
+    String c = Serial.readStringUntil('\n');
+    for(int i =0; i< c.length(); i++)
+      subArduino.write(c.charAt(i));
+  }
   String c= "on";
 
   for(int i =0; i< c.length(); i++)
@@ -69,32 +69,37 @@ void setup() {
   Serial.println(getstr);
 
   //send raspi (init)
-//  String info = "success";
-//  for(int i =0; i< info.lengto(); i++)
-//    Serial.write(info.charAt(i));
+  String info = "success";
+  for(int i =0; i< info.length(); i++)
+    Serial.write(info.charAt(i));
 }
 
 void loop() {
   
 //  float gps_velocity = gps.getVelocity();
-  //send data(gps_velocity (+ imu(roll, pitch)))
+  float gps_velocity = 5.01;
+  
+  //send data to rasberry(gps_velocity)
   if(Serial.available()){
-    Serial.println();
+    String temp = String(gps_velocity);
+    for(int i =0; i < temp.length(); i++)
+      Serial.write(temp.charAt(i));
   }
   
   //waiting 
   while(!Serial.available()){
   }
 
-  //recive data
+  // rasberry (recive data)
+  String recv_data = "";
+  while(Serial.available())
+    recv_data = Serial.readStringUntil('\n');
   
-  
-  
-  String recv_data = Serial.readString();
   //parsing
+  //String recv_data = "00141010";
   recv_data.trim();
   String neo_info = recv_data.substring(0, 4);
-  String spd_info = recv_data.charAt(4);
+  String spd_info = String(recv_data.charAt(3));
   String led_info = recv_data.substring(5);
 
   if(neo_info.equals("001"))
@@ -110,17 +115,16 @@ void loop() {
   int spd = spd_info.toInt();
   
   //servo setting
-//  servo_moter.SerMotorMove(srvo_deg(spd));
+  servo_moter.SerMotorMove(serv_deg[spd]);
   String warn_case = "led" + neo_info + "spd" + spd_info + "kind" + led_info;
   
   //warn_case = Serial.readString();
  // warn_case = "led101010101010spd1kind1010";
 
   
-  led_spd = warn_case[18] - '0';
+  led_spd = spd +1;
 
   if(pre_warn_case != warn_case){
-    //led.set(led_num, warn_case);
     ledsp_loop(warn_case);
     
     led_cur_time = millis();
