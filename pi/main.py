@@ -116,8 +116,7 @@ class Main:
         
         pos3dList = np.column_stack((xlist, ylist, hlist))
         print(pos3dList)
-        pos3dList = np.sort(pos3dList)
-        
+        pos3dList = np.sort(pos3dList, axis=2)        
         
         return pos3dList[:][0], pos3dList[:][1], pos3dList[:][2]
     
