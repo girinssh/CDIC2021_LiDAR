@@ -137,7 +137,7 @@ class Main:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
-        cycle = 3
+        cycle = 1
         
         # threading.Thread(target=self.getCommand).start()
         
@@ -160,7 +160,7 @@ class Main:
             xposList = xposList.result()
             yposList = yposList.result()
             
-            #frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
+            frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
             #print(frontXList)
             
             if self.lidarCnt == 3:
@@ -180,9 +180,9 @@ class Main:
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            #ax.scatter(frontXList, frontYList, frontHList, color=colorList[i//2][i%2])
-            for j in range(self.lidarCnt):
-                ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
+            ax.scatter(frontXList, frontYList, frontHList, color=colorList[i//2][i%2])
+            # for j in range(self.lidarCnt):
+            #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
             total_time += interval
         
