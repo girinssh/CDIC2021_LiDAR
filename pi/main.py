@@ -120,11 +120,11 @@ class Main:
         
         posList = np.column_stack((xlist, ylist, hlist))
         #pos3dList.astype(dtype)
-        print(posList.shape, posList.dim)
-        pos3dList = np.sort(posList, order=['f0'], axis=0)        
+        print(posList.shape, posList.row)
+        pos3dList = np.sort(posList.T, order=['f0'], axis=0)        
         print(pos3dList)
         
-        return pos3dList.T
+        return pos3dList
     
     def run(self):
         print(self.onewayTime)
