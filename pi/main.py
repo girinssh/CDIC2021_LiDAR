@@ -105,21 +105,22 @@ class Main:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()])}
     
     def changeDataAxis(self, xposList, yposList, heightList):
-        
+        dtype = [('x', float), ('y', float), ('z', float)]
         print(xposList[0].shape, xposList[1].shape)
         print(yposList[0].shape, yposList[1].shape)
         print(heightList[0].shape, heightList[1].shape)
         
-        xposList[0] -= self.width/2
-        xposList[1] += self.width/2
+        xposList[0] = xposList[0] - self.width/2
+        xposList[1] = xposList[1] + self.width/2
         
         #xlist = np.hstack((xposList[0] - self.width/2, xposList[1]+ self.width/2))
         xlist = np.hstack((xposList[0], xposList[1]))
         ylist = np.hstack((yposList[0],yposList[1]))
         hlist = np.hstack((heightList[0], heightList[1]))
         
-        pos3dList = np.column_stack((xlist, ylist, hlist))
-        pos3dList = np.sort(pos3dList, axis=-1)        
+        pos3dList = np.array((xlist, ylist, hlist), dtype=dtype)
+        print(pos3dList.shape)
+        pos3dList = np.sort(pos3dList, order='x')        
         print(pos3dList)
         
         return pos3dList.T
