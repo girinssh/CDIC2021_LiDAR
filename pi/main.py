@@ -72,7 +72,7 @@ class Main:
         print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
         self.imu.sensor_calibration()
 
-        # self.serArdu = serial.Serial('/dev/ttyAMA0', 9600)
+        self.serArdu = serial.Serial('/dev/ttyAMA0', 9600)
 
         Main.goLeft = False
         Main.main = self
