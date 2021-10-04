@@ -18,7 +18,7 @@ import serial,time
 import matplotlib.pyplot as plt
 import numpy as np
 
-# import IMU
+import IMU
 
 # def plotter(plot_pts = 100):
 #     plt.style.use('ggplot') # plot formatting
@@ -68,9 +68,9 @@ class Main:
         self.dangerLevel = 0
         self.srvo_level = 0
 
-        # self.imu = IMU.IMUController()
-        # print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
-        # self.imu.sensor_calibration()
+        self.imu = IMU.IMUController()
+        print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
+        self.imu.sensor_calibration()
 
         # self.serArdu = serial.Serial('/dev/ttyAMA0', 9600)
 
@@ -143,7 +143,7 @@ class Main:
         
         # threading.Thread(target=self.getCommand).start()
         
-        self.lidarCnt = 2
+        self.lidarCnt = 3
         
         for i in range(cycle):
             start_time = time.time()
@@ -163,7 +163,7 @@ class Main:
             yposList = yposList.result()
             
             frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
-            print(frontXList)
+            #print(frontXList)
             
             if self.lidarCnt == 3:
                 backXList = xposList[2]
@@ -172,7 +172,7 @@ class Main:
             
             #print(yposList[0])
             
-            #print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
+            print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
             
             # inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
 
@@ -182,7 +182,7 @@ class Main:
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i//3)][i%3])
+            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             # for j in range(self.lidarCnt):
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
