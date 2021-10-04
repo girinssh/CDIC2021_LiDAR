@@ -110,8 +110,8 @@ class Main:
         print(yposList[0].shape, yposList[1].shape)
         print(heightList[0].shape, heightList[1].shape)
         
-        xposList[0] = xposList[0] - self.width/2
-        xposList[1] = xposList[1] + self.width/2
+        xposList[0] = np.array([x - self.width/2 for x in xposList[0]], dtype=['x', np.float32])
+        xposList[1] = np.array([x + self.width/2 for x in xposList[1]], dtype=['x', np.float32])
         
         #xlist = np.hstack((xposList[0] - self.width/2, xposList[1]+ self.width/2))
         xlist = np.hstack((xposList[0], xposList[1]))
