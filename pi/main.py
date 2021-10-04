@@ -133,7 +133,7 @@ class Main:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
-        cycle = 9
+        cycle = 3
         
         # threading.Thread(target=self.getCommand).start()
         
