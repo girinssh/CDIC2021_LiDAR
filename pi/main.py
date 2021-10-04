@@ -143,7 +143,7 @@ class Main:
         
         # threading.Thread(target=self.getCommand).start()
         
-        self.lidarCnt = 3
+        self.lidarCnt = 2
         
         for i in range(cycle):
             start_time = time.time()

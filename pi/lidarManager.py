@@ -25,7 +25,7 @@ class LiDARManager:
         self.lidars = [
                 LiDAR("/dev/serial0", samp_rate=self.samp_rate),
                 LiDAR("/dev/ttyAMA1", samp_rate=self.samp_rate),
-                LiDAR("/dev/ttyAMA2", samp_rate=self.samp_rate)
+                #LiDAR("/dev/ttyAMA2", samp_rate=self.samp_rate)
             ]
         
         # 편도로 가는 동안 몇개의 데이터를 수집해야하는가.
