@@ -118,13 +118,13 @@ class Main:
         ylist = np.hstack((yposList[0], yposList[1]))
         hlist = np.hstack((heightList[0], heightList[1]))
         
-        posList = np.vstack((xlist, ylist, hlist)).T
-        # posList.astype(dtype=({'names':['x', 'y', 'z'], 'formats': [np.float32,]*3}))
-        #pos3dList.astype(dtype)
-        print(posList)
-        pos3dList = np.sort(posList, order='x')  
+        # posList = np.vstack((xlist, ylist, hlist)).T
+        # # posList.astype(dtype=({'names':['x', 'y', 'z'], 'formats': [np.float32,]*3}))
+        # #pos3dList.astype(dtype)
+        # print(posList)
+        # pos3dList = np.sort(posList, order='x')  
         
-        return pos3dList[:][0], pos3dList[:][1], pos3dList[:][2]
+        return xlist, ylist, hlist
     
     def run(self):
         print(self.onewayTime)
