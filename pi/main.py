@@ -89,6 +89,8 @@ class Main:
         print(srvo_ang_str)
         self.serArdu.writelines(srvo_ang_str.encode('utf-8'))
         
+        self.serArdu.writelines("hello".encode('utf-8'))
+        
         while True:
             s = self.serArdu.readline().decode('utf-8').rstrip()
             print(s)
