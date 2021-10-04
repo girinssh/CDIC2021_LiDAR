@@ -157,9 +157,8 @@ class Main:
             xposList = xposList.result()
             yposList = yposList.result()
             
-            frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
-            
-            print(frontXList)
+            #frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
+            #print(frontXList)
             
             if self.lidarCnt == 3:
                 backXList = xposList[2]
@@ -178,7 +177,8 @@ class Main:
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            ax.scatter(frontXList, frontYList, frontHList, color=colorList[i//2][i%2])
+            #ax.scatter(frontXList, frontYList, frontHList, color=colorList[i//2][i%2])
+            ax.scatter(xposList, yposList, heightList, color=colorList[i//2][i%2])
             
             total_time += interval
         
