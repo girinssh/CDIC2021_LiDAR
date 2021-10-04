@@ -115,7 +115,7 @@ class Main:
         hlist = np.hstack((heightList[0], heightList[1]))
         
         pos3dList = np.column_stack((xlist, ylist, hlist))
-        pos3dList.sort()
+        pos3dList = pos3dList.sort()
         
         print(pos3dList)
         
@@ -158,6 +158,8 @@ class Main:
             yposList = yposList.result()
             
             frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
+            
+            print(frontXList)
             
             if self.lidarCnt == 3:
                 backXList = xposList[2]
