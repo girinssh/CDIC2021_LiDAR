@@ -115,7 +115,7 @@ class Main:
         hlist = np.vstack((heightList[0], heightList[1]))
         
         pos3dList = np.hstack((xlist, ylist, hlist))
-        pos3dList.sort(kind='timsort')
+        pos3dList.sort()
         
         return pos3dList
     
