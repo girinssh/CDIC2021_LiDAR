@@ -18,7 +18,7 @@ import serial,time
 import matplotlib.pyplot as plt
 import numpy as np
 
-import IMU
+# import IMU
 
 # def plotter(plot_pts = 100):
 #     plt.style.use('ggplot') # plot formatting
@@ -68,11 +68,11 @@ class Main:
         self.dangerLevel = 0
         self.srvo_level = 0
 
-        self.imu = IMU.IMUController()
-        print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
-        self.imu.sensor_calibration()
+        # self.imu = IMU.IMUController()
+        # print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
+        # self.imu.sensor_calibration()
 
-        self.serArdu = serial.Serial('/dev/ttyAMA0', 9600)
+        # self.serArdu = serial.Serial('/dev/ttyAMA0', 9600)
 
         Main.goLeft = False
         Main.main = self
@@ -83,11 +83,11 @@ class Main:
     # only develop at raspberry pi
     def getCommand(self):
         command = []
-        while self.serArdu.is_open:
-            if self.serArdu.inWaiting() > 0:
-                com = self.serArdu.readUntil().decode('utf-8').rstrip()
+        # while self.serArdu.is_open:
+        #     if self.serArdu.inWaiting() > 0:
+        #         com = self.serArdu.readUntil().decode('utf-8').rstrip()
                 
-            pass
+        #     pass
         pass
 
     def postCommand(self):
@@ -129,7 +129,7 @@ class Main:
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
         cycle = 9
         
-        threading.Thread(target=self.getCommand).start()
+        # threading.Thread(target=self.getCommand).start()
         
         
         for i in range(cycle):
@@ -155,9 +155,9 @@ class Main:
             
             frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
             
-            backXList = xposList[2]
-            backYList = yposList[2]
-            backHList = heightList[2]
+            # backXList = xposList[2]
+            # backYList = yposList[2]
+            # backHList = heightList[2]
             
             #print(yposList[0])
             
