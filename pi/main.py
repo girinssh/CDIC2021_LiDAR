@@ -74,17 +74,15 @@ class Main:
 
         self.serArdu = serial.Serial('/dev/ttyACM0', 9600)
         
-        self.serArdu.open()
-        
         while not self.serArdu.is_open:
             print('waiting...')
             self.serArdu.open()
             time.sleep(0.5)
             
         while True:
-            s = self.serArdu.readline()
+            s = self.serArdu.readline().decode('utf-8').rstrip()
+            print(s)
             if s is str:
-                print(s)
                 if s == "start":
                     self.serArdu.flushInput()
                     break
@@ -92,9 +90,9 @@ class Main:
         self.serArdu.flushOutput()
         
         while True:
-            s = self.serArdu.readline()
+            s = self.serArdu.readline().decode('utf-8').rstrip()
+            print(s)
             if s is str:
-                print(s)
                 if s == "success":
                     self.serArdu.flushInput()
                     break
