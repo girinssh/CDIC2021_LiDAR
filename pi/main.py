@@ -119,7 +119,7 @@ class Main:
         
         print(pos3dList.shape)
         
-        return pos3dList[:][0], pos3dList[:][1], pos3dList[:][2]
+        return pos3dList[0][:], pos3dList[1][:], pos3dList[2][:]
     
     def run(self):
         print(self.onewayTime)
