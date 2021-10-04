@@ -49,5 +49,5 @@ class dangerDetection:
                 finOutliers = outliers
                 param = [a, b]
 
-    return maxInliers, finOutliers, param
+        return maxInliers, finOutliers, param
 
