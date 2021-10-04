@@ -110,11 +110,11 @@ class Main:
         print(yposList[0].shape, yposList[1].shape)
         print(heightList[0].shape, heightList[1].shape)
         
-        xlist = np.vstack((xposList[0] - self.width/2,xposList[1]+ self.width/2))
-        ylist = np.vstack((yposList[0],yposList[1]))
-        hlist = np.vstack((heightList[0], heightList[1]))
+        xlist = np.hstack((xposList[0] - self.width/2,xposList[1]+ self.width/2))
+        ylist = np.hstack((yposList[0],yposList[1]))
+        hlist = np.hstack((heightList[0], heightList[1]))
         
-        pos3dList = np.hstack((xlist, ylist, hlist))
+        pos3dList = np.vstack((xlist, ylist, hlist))
         pos3dList.sort()
         
         return pos3dList
