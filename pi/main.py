@@ -98,11 +98,11 @@ class Main:
         pass
     
     def convertRaw2Height(self, raw:dict)->dict:
-        return {i[0]: i[1].astype([('z', np.float32)]) for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, (self.height,)*3)}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, (self.height,)*3)}
     def convertRaw2YPOS(self, raw:dict)->dict:
-        return {i[0]: i[1].astype([('y', np.float32)])  for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()], [raw[i][2] for i in raw.keys()], (self.velocity,)*self.lidarCnt)}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()], [raw[i][2] for i in raw.keys()], (self.velocity,)*self.lidarCnt)}
     def convertRaw2XPOS(self, raw:dict)->dict:
-        return {i[0]: i[1].astype([('x', np.float32)])  for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()])}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()])}
     
     def changeDataAxis(self, xposList, yposList, heightList):
         #dtype = [('x', np.float32), ('y', np.float32), ('z', np.float32)]
@@ -118,10 +118,10 @@ class Main:
         ylist = np.hstack((yposList[0], yposList[1]))
         hlist = np.hstack((heightList[0], heightList[1]))
         
-        pos3dList = np.column_stack((xlist, ylist, hlist))
+        posList = np.column_stack((xlist, ylist, hlist))
         #pos3dList.astype(dtype)
-        print(pos3dList.shape)
-        pos3dList = np.sort(pos3dList, order='x')        
+        print(posList.shape)
+        pos3dList = np.sort(posList, order=['f1'])        
         print(pos3dList)
         
         return pos3dList.T
