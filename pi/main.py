@@ -86,8 +86,8 @@ class Main:
                 self.serArdu.flushInput()
                 break
         srvo_ang_str = str(self.srvo_ang[0]) + ',' +str(self.srvo_ang[1])+','+str(self.srvo_ang[2])
-        print(srvo_ang_str.encode('utf-8'))
-        self.serArdu.writelines(srvo_ang_str)
+        print(srvo_ang_str)
+        self.serArdu.writelines(srvo_ang_str.encode('utf-8'))
         
         while True:
             s = self.serArdu.readline().decode('utf-8').rstrip()
