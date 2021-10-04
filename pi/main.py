@@ -73,11 +73,10 @@ class Main:
         self.imu.sensor_calibration()
 
         self.serArdu = serial.Serial('/dev/ttyACM0', 9600)
-        if not self.serArdu.is_open:
-            self.serArdu.open()
         
         while not self.serArdu.is_open:
             print('waiting...')
+            self.serArdu.open()
             time.sleep(0.5)
             
         self.serArdu.flush()
