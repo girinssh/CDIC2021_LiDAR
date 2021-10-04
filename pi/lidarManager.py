@@ -34,10 +34,11 @@ class LiDARManager:
         # 1개의 데이터를 수집할 때 몇초를 소모해야하는가. 
         self.secPerRaw = (float)(1 / samp_rate)
         
-        self.secLimit = self.secPerOneway * 0.9
         
         # 편도에 몇초가 걸리는가
         self.secPerOneway = 30 / self.rpm
+        self.secLimit = self.secPerOneway * 0.9
+        
         self.angle_min = minAngle
         self.angle_max = maxAngle
         self.angle_range = maxAngle - minAngle
