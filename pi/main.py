@@ -117,7 +117,7 @@ class Main:
         pos3dList = np.vstack((xlist, ylist, hlist))
         pos3dList.sort()
         
-        return pos3dList
+        return pos3dList[:][0], pos3dList[:][1], pos3dList[:][2]
     
     def run(self):
         print(self.onewayTime)
