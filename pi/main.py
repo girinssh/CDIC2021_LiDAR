@@ -138,7 +138,7 @@ class Main:
             rawDistAngleTime= {}
             
             try:
-                rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3, timeout=0.25)}
+                rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3)}
             except:
                 print("TIMEOUT EXCEPTION")
                 continue    
