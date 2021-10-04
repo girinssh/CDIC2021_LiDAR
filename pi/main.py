@@ -115,11 +115,11 @@ class Main:
         
         #xlist = np.hstack((xposList[0] - self.width/2, xposList[1]+ self.width/2))
         xlist = np.hstack((xposList[0], xposList[1]))
-        ylist = np.hstack((yposList[0],yposList[1]))
+        ylist = np.hstack((yposList[0], yposList[1]))
         hlist = np.hstack((heightList[0], heightList[1]))
         
         pos3dList = np.column_stack((xlist, ylist, hlist))
-        pos3dList = pos3dList.astype(dtype)
+        pos3dList.astype(dtype)
         print(pos3dList.shape)
         pos3dList = np.sort(pos3dList, order='x')        
         print(pos3dList)
