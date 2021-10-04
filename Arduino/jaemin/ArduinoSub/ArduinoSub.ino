@@ -27,7 +27,6 @@ void setup() {
   while(!mySerial.available()){
     
   }
-  Serial.println("not");
   for(int i = 0; i < str.length(); i++)
     mySerial.write(str.charAt(i));
 }
@@ -41,7 +40,6 @@ void loop() {
 void is_on(){
   String temp = "";
   if(mySerial.available()){
-    Serial.println("available");
     temp = mySerial.readStringUntil('\n');
     temp.trim();
     Serial.println(str);
