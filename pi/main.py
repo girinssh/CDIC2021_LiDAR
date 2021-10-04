@@ -73,7 +73,7 @@ class Main:
         self.imu.sensor_calibration()
 
         self.serArdu = serial.Serial('/dev/ttyAMA0', 9600)
-        self.open()
+        self.serArdu.open()
         
         while not self.serArdu.is_open:
             print('waiting...')
