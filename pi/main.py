@@ -105,7 +105,7 @@ class Main:
         return {i[0]: i[1].astype([('x', np.float32)])  for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()])}
     
     def changeDataAxis(self, xposList, yposList, heightList):
-        dtype = [('x', np.float32), ('y', np.float32), ('z', np.float32)]
+        #dtype = [('x', np.float32), ('y', np.float32), ('z', np.float32)]
         print(xposList[0].shape, xposList[1].shape)
         print(yposList[0].shape, yposList[1].shape)
         print(heightList[0].shape, heightList[1].shape)
