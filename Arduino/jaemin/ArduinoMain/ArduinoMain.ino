@@ -32,10 +32,11 @@ void setup() {
 
   subArduino.begin(9600);
 
-  Serial.println("start");
 
   //rasbarrypi init
-  while(!Serial.available()){
+  while(!Serial.available()){  
+    Serial.println("start");
+    delay(100);
   }
   String get_serv_deg;
   while(Serial.available())
