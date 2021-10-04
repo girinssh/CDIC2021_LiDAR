@@ -82,12 +82,12 @@ class Main:
         while True:
             s = self.serArdu.readline().decode('utf-8').rstrip()
             print(s)
-            if s is str:
-                if s == "start":
-                    self.serArdu.flushInput()
-                    break
-        self.serArdu.writelines(str(self.srvo_ang[0]) + ',' +str(self.srvo_ang[1])+','+str(self.srvo_ang[2]))
-        self.serArdu.flushOutput()
+            if s == "start":
+                self.serArdu.flushInput()
+                break
+        srvo_ang_str = str(self.srvo_ang[0]) + ',' +str(self.srvo_ang[1])+','+str(self.srvo_ang[2])
+        print(srvo_ang_str)
+        self.serArdu.writelines(srvo_ang_str)
         
         while True:
             s = self.serArdu.readline().decode('utf-8').rstrip()
