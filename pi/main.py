@@ -118,9 +118,9 @@ class Main:
         ylist = np.hstack((yposList[0], yposList[1]))
         hlist = np.hstack((heightList[0], heightList[1]))
         
-        posList = np.column_stack((xlist, ylist, hlist))
+        posList = np.vstack((xlist, ylist, hlist))
         #pos3dList.astype(dtype)
-        pos3dList = np.sort(posList.T, order=['f0'], axis=0)        
+        pos3dList = np.sort(posList.T, axis=1)        
         print(pos3dList)
         
         return pos3dList
