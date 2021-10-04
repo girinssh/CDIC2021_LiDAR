@@ -69,17 +69,18 @@ class Main:
         self.srvo_level = 0
 
         self.imu = IMU.IMUController()
-        print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
+        #print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
         self.imu.sensor_calibration()
 
         self.serArdu = serial.Serial('/dev/ttyACM0', 9600)
+        
+        self.serArdu.open()
         
         while not self.serArdu.is_open:
             print('waiting...')
             self.serArdu.open()
             time.sleep(0.5)
             
-        self.serArdu.flush()
         while True:
             s = self.serArdu.readline()
             if s is str:
