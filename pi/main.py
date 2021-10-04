@@ -177,7 +177,7 @@ class Main:
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            ax.scatter(frontXList, frontYList, frontHList, color=colorList[i/2][i%2])
+            ax.scatter(frontXList, frontYList, frontHList, color=colorList[i//2][i%2])
             
             total_time += interval
         
