@@ -161,7 +161,7 @@ class Main:
             yposList = yposList.result()
             
             frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
-            #print(frontXList)
+            print(frontXList)
             
             if self.lidarCnt == 3:
                 backXList = xposList[2]
