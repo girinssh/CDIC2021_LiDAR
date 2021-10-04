@@ -98,11 +98,11 @@ class Main:
         pass
     
     def convertRaw2Height(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, (self.height,)*3)}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, (self.height,)*3)}
     def convertRaw2YPOS(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, [raw[i][1] for i in raw.keys()], [raw[i][2] for i in raw.keys()], (self.velocity,)*3)}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2YPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()], [raw[i][2] for i in raw.keys()], (self.velocity,)*self.lidarCnt)}
     def convertRaw2XPOS(self, raw:dict)->dict:
-        return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*3, [raw[i][1] for i in raw.keys()])}
+        return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()])}
     
     def changeDataAxis(self, xposList, yposList, heightList):
         xlist = np.vstack((xposList[0] - self.width/2,xposList[1]+ self.width/2))
@@ -131,17 +131,14 @@ class Main:
         
         # threading.Thread(target=self.getCommand).start()
         
+        self.lidarCnt = 2
         
         for i in range(cycle):
             start_time = time.time()
+
             
-            rawDistAngleTime= {}
-            
-            try:
-                rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*3, (0, 1, 2), (1 - 2 * (i%2),)*3)}
-            except:
-                print("TIMEOUT EXCEPTION")
-                continue    
+            rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
+
 
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
@@ -155,9 +152,10 @@ class Main:
             
             frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
             
-            # backXList = xposList[2]
-            # backYList = yposList[2]
-            # backHList = heightList[2]
+            if self.lidarCnt == 3:
+                backXList = xposList[2]
+                backYList = yposList[2]
+                backHList = heightList[2]
             
             #print(yposList[0])
             
