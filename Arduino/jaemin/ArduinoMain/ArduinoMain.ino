@@ -77,24 +77,27 @@ void setup() {
 void loop() {
   
 //  float gps_velocity = gps.getVelocity();
-  //send data(gps_velocity (+ imu(roll, pitch)))
+  //send data to rasberry(gps_velocity)
   if(Serial.available()){
-    Serial.println();
+    String temp = String(gps_velocity);
+    for(int i =0; i < temp.length(); i++)
+      Serial.write(temp.charAt(i));
   }
   
   //waiting 
   while(!Serial.available()){
   }
 
-  //recive data
-  
-  
-  
-  String recv_data = Serial.readString();
+  // rasberry (recive data)
+//  String recv_data = "";
+//  while(Serial.available())
+//    recv_data = readStringUntil('\n');
+//  
   //parsing
+  String recv_data = "00141010";
   recv_data.trim();
   String neo_info = recv_data.substring(0, 4);
-  String spd_info = recv_data.charAt(4);
+  String spd_info = String(recv_data.charAt(3));
   String led_info = recv_data.substring(5);
 
   if(neo_info.equals("001"))
@@ -117,7 +120,7 @@ void loop() {
  // warn_case = "led101010101010spd1kind1010";
 
   
-  led_spd = warn_case[18] - '0';
+  led_spd = spd +1;
 
   if(pre_warn_case != warn_case){
     //led.set(led_num, warn_case);
