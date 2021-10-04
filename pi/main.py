@@ -120,7 +120,7 @@ class Main:
         
         posList = np.column_stack((xlist, ylist, hlist))
         #pos3dList.astype(dtype)
-        print(posList.shape)
+        print(posList.shape, posList.dim)
         pos3dList = np.sort(posList, order=['f0'], axis=0)        
         print(pos3dList)
         
