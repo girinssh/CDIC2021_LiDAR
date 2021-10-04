@@ -143,7 +143,7 @@ class Main:
         
         # threading.Thread(target=self.getCommand).start()
         
-        self.lidarCnt = 2
+        self.lidarCnt = 6
         
         for i in range(cycle):
             start_time = time.time()
@@ -182,7 +182,7 @@ class Main:
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            ax.scatter(frontXList, frontYList, frontHList, color=colorList[i//2][i%2])
+            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i//2)][i%3])
             # for j in range(self.lidarCnt):
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
