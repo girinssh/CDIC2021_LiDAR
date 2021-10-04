@@ -139,11 +139,11 @@ class Main:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
-        cycle = 1
+        cycle = 6
         
         # threading.Thread(target=self.getCommand).start()
         
-        self.lidarCnt = 6
+        self.lidarCnt = 2
         
         for i in range(cycle):
             start_time = time.time()
