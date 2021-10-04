@@ -121,8 +121,8 @@ class Main:
         posList = np.vstack((xlist, ylist, hlist)).T
         posList.astype(dtype=({'names':['x', 'y', 'z'], 'formats': [np.float32,]*3}))
         #pos3dList.astype(dtype)
+        print(posList.dtype)
         pos3dList = np.sort(posList, order='x')  
-        print(pos3dList)
         
         return pos3dList[:][0], pos3dList[:][1], pos3dList[:][2]
     
