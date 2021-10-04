@@ -118,7 +118,7 @@ class Main:
         pos3dList = np.sort(pos3dList, axis=-1)        
         print(pos3dList)
         
-        return pos3dList.T()
+        return pos3dList.T
     
     def run(self):
         print(self.onewayTime)
