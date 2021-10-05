@@ -58,14 +58,14 @@ class Main:
         self.lm = LiDARManager(self.rpm, self.samp_rate, self.min_angle, self.max_angle)
         self.onewayTime = 60 / (self.rpm * 2) # sec
         
-        self.width = 0.3 # m
-        self.height = 0.3 # m
+        self.width = 2.0 # m
+        self.height = 1.0 # m
         self.velocity = 5.0 # m/s
         self.new_velo = -1
         
         self.velo_range = [0.0, 2.4, 4.0, 5.56]     
         
-        self.srvo_ang = np.arctan2(self.height, np.array([1, 2, 3]))
+        self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
         self.srvo_level = 0
         self.danger_states = [0]*7
 
