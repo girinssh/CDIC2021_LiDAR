@@ -242,5 +242,8 @@ class dangerDetection:
         _, pictoPit, pictoRol, ledPit, ledRol = dangerDetection.estiSlope(POS, ud , lr)
         
         _, obspicto, obsled = dangerDetection.Obstacle(POS, outlier, XPOS, H)
-        return POS, dangerDetection.finalPictoLed(pictoRol, obspicto, ledPit, ledRol, obsled)
+        
+        result = dangerDetection.finalPictoLed(pictoRol, obspicto, ledPit, ledRol, obsled)
+        
+        return POS, result
         
