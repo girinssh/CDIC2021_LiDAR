@@ -120,9 +120,11 @@ class dangerDetection:
             estRol=abs(rol_ang-carRol) 
         else: estRol=abs(rol_ang+carRol)
 
-        pitTh = 2*np.pi/9 # pitch 위험 기준 각도 40[deg] = 2pi/9[rad]
+        pitTh = 1*np.pi/9 # pitch 위험 기준 각도 40[deg] = 2pi/9[rad]
         rolTh = np.pi/6 # roll 위험 기준 각도 30[deg] = pi/6[rad]
 
+        print("ESTI Pitch: ", estPit)
+        print("ESTI Roll: ", estRol)
         
         if estPit > pitTh:
             dangerDetection.state[UD] = 1
@@ -215,8 +217,8 @@ class dangerDetection:
         t.start()
         ud = dangerDetection.udSlope(param)
         lr = dangerDetection.lrSlope(param)
-        # print("UD: ", np.rad2deg(ud))
-        # print("LR: ",np.rad2deg(lr))
+        print("UD: ", np.rad2deg(ud))
+        print("LR: ",np.rad2deg(lr))
         # print("Ro: ",carRol)
         # print("Pi: ",carPit)
         dangerDetection.estiSlope(POS, ud , lr, np.deg2rad(carRol), np.deg2rad(carPit))
