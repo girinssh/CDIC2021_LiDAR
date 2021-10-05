@@ -63,6 +63,7 @@ class Main:
         self.width = 2.0 # m
         self.height = 1.0 # m
         self.velocity = 5.0 # m/s
+        self.new_velo = -1
         
         self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
         self.dangerLevel = 0
@@ -96,11 +97,12 @@ class Main:
         #self.serArdu.writelines("hello".encode('utf-8'))
         
         while True:
-            s = self.serArdu.readline().decode('utf-8').rstrip()
-            print(s)
-            if s == "success":
-                self.serArdu.flushInput()
-                break
+            if self.serArdu.inWaiting() > 0:
+                s = self.serArdu.readline().decode('utf-8').rstrip()
+                print(s)
+                if s == "success":
+                    self.serArdu.flushInput()
+                    break
     
         Main.goLeft = False
         Main.main = self
@@ -111,15 +113,14 @@ class Main:
     # only develop at raspberry pi
     def getCommand(self):
         command = []
-        # while self.serArdu.is_open:
-        #     if self.serArdu.inWaiting() > 0:
-        #         com = self.serArdu.readUntil().decode('utf-8').rstrip()
-                
-        #     pass
-        pass
+        while self.serArdu.is_open:
+            if self.serArdu.inWaiting() > 0:
+                com = self.serArdu.readline().decode('utf-8').rstrip()
+                if "velocity" in com:
+                    self.new_velo = float(com.split(':')[1])
+            time.sleep(0.1)
 
     def postCommand(self):
-        
         pass
     
     def getVelocity(self):
@@ -215,6 +216,9 @@ class Main:
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
             total_time += interval
+            if self.new_velo != -1:
+                self.velocity = self.new_velo
+                self.new_velo = -1
         
         interval_avg = total_time / cycle
            
