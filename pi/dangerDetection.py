@@ -151,13 +151,13 @@ class dangerDetection:
         packet = []
         tmp = []
 
-        v = finOutliers.pop(0)
+        v = finOutliers.pop(0)[0]
         tmp.append(v)
         
         print("TYPE: ", v)
 
         while len(finOutliers) > 0:
-            vv = finOutliers.pop(0)
+            vv = finOutliers.pop(0)[0]
             if v+1 == vv:
                 tmp.append(vv)
                 v = vv
