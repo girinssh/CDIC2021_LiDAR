@@ -213,7 +213,7 @@ class Main:
                 dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                 
             self.danger_states = dangerDetection.getState()
-            print("LED: ", self.danger_states)
+            # print("LED: ", self.danger_states)
             
             if sum(self.danger_states) > 0:
                 self.danger_trigger = True
@@ -249,7 +249,7 @@ class Main:
             total_time += interval
         
         interval_avg = total_time / cycle
-        #self.serArdu.close()  
+        self.serArdu.close()  
         print("Total Time: ", total_time)
         print("Interval MAX: ", interval_max)
         print("Interval MIN: ", interval_min)
