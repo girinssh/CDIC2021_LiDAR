@@ -1,13 +1,22 @@
 import numpy as np
 import IMU
 
+LEFT = 0
+RIGHT = 1
+BACK = 2
+LR = 3
+UD = 4
+DOBS = 5
+UOBS = 6
 
 class dangerDetection:
 
     imu = IMU.IMUController()
     imu.sensor_calibration()
     
-    def RANSAC(POS, XPOS, YPOS, H): #XH 평면을 바라보고
+    state = [0]*7
+    
+    def RANSAC(XPOS, YPOS, H): #XH 평면을 바라보고
         #XPOS : 라이다에서 측정 포인트까지의 x축 방향 distance
         #YPOS :
         #H = heightList : 지면에서 측정 포인트까지의 높이 #1차원 리스트
@@ -21,21 +30,17 @@ class dangerDetection:
         for i in range(14):
             while True: 
                 i1, i2, i3 = np.random.randint(0, l, size=3)
-                if (i1 != i2 != i3):
+                if i1 != i2 and i2 != i3 and i1 != i3:
                     p = np.array([[XPOS[i1], YPOS[i1], H[i1]],
                                   [XPOS[i2], YPOS[i2], H[i2]],
                                   [XPOS[i3], YPOS[i3], H[i3]]])
                     break
-            # a 계산 시 분모가 0이 되는 걸 방지
 
-            #두 점을 지나는 직선 (z=)f(x)=ax+b 구하기 
-            
-            
             param = np.array([sum([p[j][k] * (p[j-2][k+1] - p[j-1][k+1]) for j in range(3)]) for k in range(-2, 1, 1)])
             
             # np.append(param, -sum([p[j][0] * (p[j-2][1]*p[j-1][2] - p[j-2][2]*p[j-1][1]) for j in range(3)]))
             
-            print("param: ", param)
+            #print("param: ", param)
 
             inliers = []
             outliers = []
@@ -65,12 +70,12 @@ class dangerDetection:
                 maxInliers = inliers
                 finOutliers = outliers
 
-        return POS, maxInliers, finOutliers
+        return maxInliers, finOutliers
     
     # Least Square Method 
     # inliers들로 구성된 기준식 하나 구하기 (=a, b 구하기)
     # inliersList는 RANSAC이 return한 maxInliers = [i]
-    def LSM(POS, maxInliers, XPOS, YPOS, H):
+    def LSM( maxInliers, XPOS, YPOS, H):
         A=np.empty((0,3), dtype=np.float32) # A = [x, y, 1] (mx2)
         B=np.empty((0,1), dtype=np.float32) # B = [z] (mx1)
 
@@ -84,25 +89,25 @@ class dangerDetection:
 
         X=np.linalg.inv(A.T@A)@A.T@B # X 업데이트
 
-        return POS, X # np.array X = [a, b, c]를 return
+        return X # np.array X = [a, b, c]를 return
 
     # 후면 라이다일 때 좌우 상하 판단 다시
     # 좌우 경사 판단 Method # roll 각도 구하기 # [x, z] # 전면 라이다에서만 진행됨
-    def lrSlope(POS, plane): # inliers = inliers에 해당하는 인덱스 리스트
+    def lrSlope(plane): # inliers = inliers에 해당하는 인덱스 리스트
 
         # p1=[XPOS[inliers[0]], H[inliers[0]]] # 첫번째 inlier의 [x,z] 값 
         # p2=[XPOS[inliers[-1]], H[inliers[-1]]] # 마지막 inlier의 [x,z] 값 
         # rol_ang = np.arctan((p2[1]-p1[1])/(p2[0]-p1[0])) # [rad] # 항상 p2[0] != p1[0] 
-        return POS, np.arctan(-plane[0]/plane[2])
+        return np.arctan(-plane[0]/plane[2])
     
     # 상하 경사 판단 Method # pitch 각도 구하기  # [y, z] 
-    def udSlope(POS, plane):
+    def udSlope(plane):
 
         # p1=[YPOS[inliers[0]], H[inliers[0]]]
         # p2=[YPOS[inliers[-1]], H[inliers[-1]]]
 
         # pit_ang = np.arctan((p2[1]-p1[1])/(p2[0]-p1[0]))
-        return POS, np.arctan(-plane[1]/plane[2])
+        return np.arctan(-plane[1]/plane[2])
     
     # 예상되는 roll, pitch를 계산해서 상하, 좌우 picto 번호와 led 번호를 반환
     def estiSlope(POS, pit_ang, rol_ang):
@@ -119,26 +124,25 @@ class dangerDetection:
         pitTh = 2*np.pi/9 # pitch 위험 기준 각도 40[deg] = 2pi/9[rad]
         rolTh = np.pi/6 # roll 위험 기준 각도 30[deg] = pi/6[rad]
 
+        
         if estPit > pitTh:
-            pictoPit = "1000"
-            if POS == 2: ledPit="001"
-            else: ledPit="110"
+            dangerDetection.state[UD] = 1
+            if POS == 2: dangerDetection.state[BACK] = 1
+            else: dangerDetection.state[LEFT] = dangerDetection.state[RIGHT] = 1
 
         if estRol > rolTh:
-            pictoRol = "0100"
-            if POS==2: ledRol="001"
-            if rol_ang < 0: ledRol="100"
-            elif rol_ang > 0: ledRol="010"
+            dangerDetection.state[LR] = 1
+            if POS==2: dangerDetection.state[BACK] = 1
+            if rol_ang < 0: dangerDetection.state[LEFT] = 1
+            elif rol_ang > 0: dangerDetection.state[RIGHT] = 1
             else: 
-                if carRol < 0: ledRol="010"
-                elif carRol > 0: ledRol="100"
-
-        return POS, pictoPit, pictoRol, ledPit, ledRol
+                if carRol < 0: dangerDetection.state[RIGHT] = 1
+                elif carRol > 0: dangerDetection.state[LEFT] = 1
 
     def Obstacle(POS, finOutliers, XPOS, H):
         
         if len(finOutliers) < 2:
-            return POS, [0]*4, [0]*3
+            return 
         
         minpwid = 2 # outliers 인덱스가 최소 몇개 이상 연속돼야하는지 기준값
         zth = 2 # 장애물끼리의 높이 차 허용 기준값
@@ -171,6 +175,8 @@ class dangerDetection:
 
         # 1개의 장애물을 구성하는 인덱스들끼리 z값 비교하여 큰 차이 없으면 취함
         for i in range(len(packet)):
+            if sum(dangerDetection.state) == 7:
+                break
             tmpack = np.array(packet[i])
             tmph=[]
             tmpx=[]
@@ -180,74 +186,56 @@ class dangerDetection:
                 finobs.append(packet[i])
 
                 # 오목인지 볼록인지 판단
-                if all(np.array(tmph)>0): pictopos.append("0001")
-                elif all(np.array(tmph)<0): pictopos.append("0010")
-                else: pictopos.append("0000")
+                if all(np.array(tmph)>0): dangerDetection.state[UOBS] = 1
+                elif all(np.array(tmph)<0): dangerDetection.state[DOBS] = 1
+                else: continue
 
                 # 장애물 좌/우/전방 위치 판단
                 if POS == 2:
-                    ledpos.append("001")
+                    dangerDetection.state[BACK] = 1
                 else:
+                    if sum(dangerDetection.state[LEFT:RIGHT+1]) == 2:
+                        continue
                     for k in tmpack:
                         tmpx.append(XPOS[k])
-                    if all(np.array(tmpx)>0): ledpos.append("010")
-                    elif all(np.array(tmpx)<0): ledpos.append("100")
-                    else: ledpos.append("110")
-        
-        obspicto=[0,0,0,0]
-        obsled=[0,0,0]
+                    if all(np.array(tmpx)>0): dangerDetection.state[RIGHT] = 1
+                    elif all(np.array(tmpx)<0): dangerDetection.state[LEFT] = 1
+                    else: dangerDetection.state[RIGHT] = dangerDetection.state[LEFT] = 1
+        return
 
-        # 장애물이 여러개일 때 picto, led 합치기
-        for i in range(len(pictopos)):
-            for j in range(4):
-                tmppicto = pictopos[i]
-                obspicto[j] += int(tmppicto[j])
-                if obspicto[j] != 0: 
-                    obspicto[j] = 1
+#     #roll, pitch, obstacle 각각의 picto, led 결합하여 아두이노로 넘겨줄 최종 picto, led 구하기
+#     def finalPictoLed(pictoPit:str, pictoRol:str, obspicto:list, ledPit:str, ledRol:str, obsled:list):
+#         finpicto=[0,0,0,0]
+#         finled=[0,0,0]
+#         repicto="" #아두이노로 return할 picto num ex. "0001"
+#         reled="" #아두이노로 return할 led num ex. "100"
 
-        for i in range(len(ledpos)):
-            for j in range(3):
-                tmpled = ledpos[i]
-                obsled[j] += int(tmpled[j])
-                if obsled[i] != 0: 
-                    obsled[i] = 1
+#         #print(type(pictoPit), type(pictoRol), type(obspicto), type(ledPit),type(ledRol), type(obsled))
 
-        print("OBS: ", type(obspicto), type(obsled))
+#         for i in range(4):
+#             finpicto[i] = int(pictoPit[i])+int(pictoRol[i])+obspicto[i]
+#             if finpicto[i]!=0: finpicto[i]=1
+#             repicto+=str(finpicto[i])
+# 	    #print(finpicto)
+# 	    #print(repicto)
 
-        return POS, obspicto, obsled
-
-    #roll, pitch, obstacle 각각의 picto, led 결합하여 아두이노로 넘겨줄 최종 picto, led 구하기
-    def finalPictoLed(pictoPit:str, pictoRol:str, obspicto:list, ledPit:str, ledRol:str, obsled:list):
-        finpicto=[0,0,0,0]
-        finled=[0,0,0]
-        repicto="" #아두이노로 return할 picto num ex. "0001"
-        reled="" #아두이노로 return할 led num ex. "100"
-
-        print(type(pictoPit), type(pictoRol), type(obspicto), type(ledPit),type(ledRol), type(obsled))
-
-        for i in range(4):
-            finpicto[i] = int(pictoPit[i])+int(pictoRol[i])+obspicto[i]
-            if finpicto[i]!=0: finpicto[i]=1
-            repicto+=str(finpicto[i])
-	    #print(finpicto)
-	    #print(repicto)
-
-        for i in range(3):
-            finled[i] = int(ledPit[i])+int(ledRol[i])+obsled[i]
-            if finled[i]!=0: finled[i]=1
-            reled+=str(finled[i])
-	    #print(finled)
-	    #print(reled)
-        return repicto, reled
+#         for i in range(3):
+#             finled[i] = int(ledPit[i])+int(ledRol[i])+obsled[i]
+#             if finled[i]!=0: finled[i]=1
+#             reled+=str(finled[i])
+# 	    #print(finled)
+# 	    #print(reled)
+#         return repicto, reled
         
     def estimate(POS, XPOS, YPOS, H):
+        dangerDetection.state = [0]*7
         _, inlier, outlier = dangerDetection.RANSAC(POS, XPOS, YPOS, H)
-        _, param = dangerDetection.LSM(POS, inlier, XPOS, YPOS, H)
-        _, ud = dangerDetection.udSlope(POS, param)
-        _, lr = dangerDetection.lrSlope(POS, param)
-        _, pictoPit, pictoRol, ledPit, ledRol = dangerDetection.estiSlope(POS, ud , lr)
+        param = dangerDetection.LSM(POS, inlier, XPOS, YPOS, H)
         
-        _, obspicto, obsled = dangerDetection.Obstacle(POS, outlier, XPOS, H)
+        ud = dangerDetection.udSlope(POS, param)
+        lr = dangerDetection.lrSlope(POS, param)
+        dangerDetection.estiSlope(POS, ud , lr)
+        dangerDetection.Obstacle(POS, outlier, XPOS, H)
         
-        return POS, dangerDetection.finalPictoLed(pictoPit, pictoRol, obspicto, ledPit, ledRol, obsled)
+        return POS, dangerDetection.state
         
