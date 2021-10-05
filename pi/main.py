@@ -174,7 +174,7 @@ class Main:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
-        cycle = 3
+        cycle = 9
         
         X = np.arange(-2.0, 2.0, 0.1)
         Y = np.arange(-1.0, 5.0, 0.1)
@@ -240,8 +240,8 @@ class Main:
             ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
             ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=1.0)
 
-            ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
-            ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
+            # ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
+            # ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
             # for j in range(self.lidarCnt):
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
