@@ -214,8 +214,8 @@ class dangerDetection:
 
     #roll, pitch, obstacle 각각의 picto, led 결합하여 아두이노로 넘겨줄 최종 picto, led 구하기
     def finalPictoLed(pictoPit:str, pictoRol:str, obspicto:list, ledPit:str, ledRol:str, obsled:list):
-        finpicto=[0,0,0,0]
-        finled=[0,0,0]
+        finpicto=[0]*4
+        finled=[0]*3
         repicto="" #아두이노로 return할 picto num ex. "0001"
         reled="" #아두이노로 return할 led num ex. "100"
 
@@ -234,13 +234,13 @@ class dangerDetection:
 	    #print(reled)
         return repicto, reled
         
-    def estimate(cls, POS, XPOS, YPOS, H):
-        _, inlier, outlier = cls.RANSAC(POS, XPOS, YPOS, H)
-        _, param = cls.LSM(POS, inlier, XPOS, YPOS, H)
-        _, ud = cls.udSlope(POS, param)
-        _, lr = cls.lrSlope(POS, param)
-        _, pictoPit, pictoRol, ledPit, ledRol = cls.estiSlope(POS, ud , lr)
+    def estimate(POS, XPOS, YPOS, H):
+        _, inlier, outlier = dangerDetection.RANSAC(POS, XPOS, YPOS, H)
+        _, param = dangerDetection.LSM(POS, inlier, XPOS, YPOS, H)
+        _, ud = dangerDetection.udSlope(POS, param)
+        _, lr = dangerDetection.lrSlope(POS, param)
+        _, pictoPit, pictoRol, ledPit, ledRol = dangerDetection.estiSlope(POS, ud , lr)
         
-        _, obspicto, obsled = cls.Obstacle(POS, outlier, XPOS, H)
-        return POS, cls.finalPictoLed(pictoRol, obspicto, ledPit, ledRol, obsled)
+        _, obspicto, obsled = dangerDetection.Obstacle(POS, outlier, XPOS, H)
+        return POS, dangerDetection.finalPictoLed(pictoRol, obspicto, ledPit, ledRol, obsled)
         
