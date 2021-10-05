@@ -45,14 +45,14 @@ void setup() {
   
 
   
-  while(!Serial.available()){
-  }
-
-  if(Serial.available()){
-    String c = Serial.readStringUntil('\n');
-    for(int i =0; i< c.length(); i++)
-      subArduino.write(c.charAt(i));
-  }
+//  while(!Serial.available()){
+//  }
+//
+//  if(Serial.available()){
+//    String c = Serial.readStringUntil('\n');
+//    for(int i =0; i< c.length(); i++)
+//      subArduino.write(c.charAt(i));
+//  }
   String c= "on";
 
   for(int i =0; i< c.length(); i++)
@@ -67,7 +67,7 @@ void setup() {
     getstr = subArduino.readStringUntil('\n');
   }
   getstr.trim();
-  Serial.println(getstr);
+//  Serial.println(getstr);
 
   //send raspi (init)
   String info = "success";
