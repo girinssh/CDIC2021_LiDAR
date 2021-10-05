@@ -51,7 +51,7 @@ import numpy as np
 
 class Main:
     def __init__(self):
-        self.rpm = 120
+        self.rpm = 60
         self.samp_rate = 100
         self.min_angle = 2*np.pi / 9
         self.max_angle = 7*np.pi / 9
