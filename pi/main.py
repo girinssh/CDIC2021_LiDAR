@@ -174,7 +174,7 @@ class Main:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
-        cycle = 1
+        cycle = 3
         
         X = np.arange(-2.0, 2.0, 0.1)
         Y = np.arange(-1.0, 5.0, 0.1)
