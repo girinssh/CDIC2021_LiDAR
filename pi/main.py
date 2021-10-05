@@ -80,7 +80,8 @@ class Main:
             time.sleep(0.5)
         
         self.serArdu.flush()
-        srvo_ang_str = str(self.srvo_ang[0]) + ',' +str(self.srvo_ang[1])+','+str(self.srvo_ang[2])+'\n'
+        ang = np.rad2deg(self.srvo_ang)
+        srvo_ang_str = '{:.2f}, {:.2f}, {:.2f}'.format(ang[0], ang[1], ang[2])
         print(srvo_ang_str)
         self.serArdu.write(srvo_ang_str.encode('utf-8'))
         
