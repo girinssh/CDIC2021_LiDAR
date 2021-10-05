@@ -20,6 +20,7 @@ class dangerDetection:
         
         maxInliers = []
         finOutliers = [] # final outliers list #[i1, i2, …, in] 인덱스 번호
+        retParam = []
         
         l = len(XPOS)
         
@@ -67,8 +68,9 @@ class dangerDetection:
             if len(inliers) > len(maxInliers):
                 maxInliers = inliers
                 finOutliers = outliers
+                retParam = param
 
-        return maxInliers, finOutliers
+        return maxInliers, finOutliers, retParam
     
     # Least Square Method 
     # inliers들로 구성된 기준식 하나 구하기 (=a, b 구하기)
@@ -226,7 +228,7 @@ class dangerDetection:
 #         return repicto, reled
         
     def estimate(POS, XPOS, YPOS, H, carRol, carPit):
-        inlier, outlier = dangerDetection.RANSAC(XPOS, YPOS, H)
+        inlier, outlier, _ = dangerDetection.RANSAC(XPOS, YPOS, H)
         param = dangerDetection.LSM(inlier, XPOS, YPOS, H)
         t = threading.Thread(target=dangerDetection.Obstacle, args=(POS, outlier, XPOS, H))
         t.start()

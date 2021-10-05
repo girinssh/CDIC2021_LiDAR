@@ -202,8 +202,8 @@ class Main:
             
             frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
             #print(frontXList)
-            
-            param = dangerDetection.LSM(dangerDetection.RANSAC(frontXList, frontYList, frontHList)[0], frontXList, frontYList, frontHList)
+            inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
+            paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
             
             roll, pitch = rp.result()
             
@@ -237,8 +237,11 @@ class Main:
             
             ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
-            Z = param[0] * X + param[1] * Y + param[2]
-            ax.plot_surface(X, Y, Z, rstride=4, cstride=4, alpha=0.4)
+            ZR = paramR[0] * X + paramR[1] * Y + paramR[2]
+            ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=0.4)
+
+            ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
+            ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
             # for j in range(self.lidarCnt):
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
