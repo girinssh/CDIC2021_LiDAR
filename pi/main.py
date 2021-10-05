@@ -199,7 +199,8 @@ class Main:
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
-            if all(len([rawDistAngleTime[i][2] for i in range(self.lidarCnt)])> 0) :
+            
+            if sum([len([rawDistAngleTime[i][2]]) for i in range(self.lidarCnt)]) > 0 :
                 rp = tpe().submit(self.imu.getRollPitch)
                 heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
                 xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
