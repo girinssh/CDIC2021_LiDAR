@@ -131,7 +131,7 @@ class Main:
             time.sleep(0.1)
 
     def postCommand(self):
-        while True:
+        while self.serArdu.is_open:
             if self.post_trigger:       
                 ts = str(self.danger_states[0:3]) + str(self.srvo_level) + str(self.danger_states[3:]) + '\n'
                 if self.velo_trigger:
@@ -249,7 +249,7 @@ class Main:
             self.post_trigger = self.velo_trigger or self.danger_trigger
         
         interval_avg = total_time / cycle
-           
+        self.serArdu.close()  
         print("Total Time: ", total_time)
         print("Interval MAX: ", interval_max)
         print("Interval MIN: ", interval_min)
@@ -261,6 +261,7 @@ class Main:
         ax.set_xlabel('X Distance [m]',fontsize=16)
         ax.set_title('TF-Luna Ranging Test',fontsize=18)
         plt.show()
+    
         
         # # print(inlier, outlier)
 
