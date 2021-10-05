@@ -153,6 +153,8 @@ class dangerDetection:
 
         v = finOutliers.pop(0)
         tmp.append(v)
+        
+        print("TYPE: ", type(v))
 
         while len(finOutliers) > 0:
             vv = finOutliers.pop(0)

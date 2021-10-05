@@ -184,60 +184,62 @@ class Main:
         
         i = 0
         while self.serArdu.is_open:
-            start_time = time.time()
-            dangerDetection.resetState()
-            rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
-            # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
-            # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
-            rp = tpe().submit(self.imu.getRollPitch)
-            heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
-            xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
-            yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngleTime)
-            
-            heightList = heightList.result()
-            xposList = xposList.result()
-            yposList = yposList.result()
-            
-            frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
-            #print(frontXList)
-            # inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
-            # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
-            
-            roll, pitch = rp.result()
-            
-            if self.lidarCnt == 3:
-                backXList = xposList[2]
-                backYList = yposList[2]
-                backHList = heightList[2]
-                tpe.map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
-            else :
-                dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
+            try:
+                start_time = time.time()
+                dangerDetection.resetState()
+                rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
+                # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
+                # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
+                rp = tpe().submit(self.imu.getRollPitch)
+                heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
+                xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
+                yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngleTime)
                 
-            new_danger_states = dangerDetection.getState()
-            # print("LED: ", self.danger_states)
-            
-            if sum([ 1 if new_danger_states[i] == self.danger_states[i] else 0 for i in range(7)]) > 1:
-                self.danger_states = new_danger_states
-                self.danger_trigger = True
-            
-            if self.new_velo != -1:
-                self.velocity = self.new_velo
-                self.new_velo = -1
-                for i in range(3):
-                    if self.velo_range[i] < self.velocity < self.velo_range[i+1]:
-                        step = i
-                        break
-                if step != self.srvo_level:
-                    self.srvo_level = step
-                    self.velo_trigger = True
+                heightList = heightList.result()
+                xposList = xposList.result()
+                yposList = yposList.result()
                 
-            self.post_trigger = self.velo_trigger or self.danger_trigger
-            end_time = time.time()
-            interval = end_time - start_time
-            interval_max = interval if interval > interval_max else interval_max
-            interval_min = interval if interval < interval_min else interval_min
-            print(i, interval, yposList.keys())
-            
+                frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
+                #print(frontXList)
+                # inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
+                # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
+                
+                roll, pitch = rp.result()
+                
+                if self.lidarCnt == 3:
+                    backXList = xposList[2]
+                    backYList = yposList[2]
+                    backHList = heightList[2]
+                    tpe.map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
+                else :
+                    dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
+                    
+                new_danger_states = dangerDetection.getState()
+                # print("LED: ", self.danger_states)
+                
+                if sum([ 1 if new_danger_states[i] == self.danger_states[i] else 0 for i in range(7)]) > 1:
+                    self.danger_states = new_danger_states
+                    self.danger_trigger = True
+                
+                if self.new_velo != -1:
+                    self.velocity = self.new_velo
+                    self.new_velo = -1
+                    for i in range(3):
+                        if self.velo_range[i] < self.velocity < self.velo_range[i+1]:
+                            step = i
+                            break
+                    if step != self.srvo_level:
+                        self.srvo_level = step
+                        self.velo_trigger = True
+                    
+                self.post_trigger = self.velo_trigger or self.danger_trigger
+                end_time = time.time()
+                interval = end_time - start_time
+                interval_max = interval if interval > interval_max else interval_max
+                interval_min = interval if interval < interval_min else interval_min
+                print(i, interval, yposList.keys())
+            except:   
+                self.serArdu.close()  
             # ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
             # ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
@@ -252,7 +254,8 @@ class Main:
             i+=1
         
         interval_avg = total_time / (i+1)
-        self.serArdu.close()  
+        if self.serArdu.is_open:
+            self.serArdu.close()  
         print("Total Time: ", total_time)
         print("Interval MAX: ", interval_max)
         print("Interval MIN: ", interval_min)
