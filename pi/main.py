@@ -211,7 +211,8 @@ class Main:
                 backYList = yposList[2]
                 backHList = heightList[2]
             
-            print("LED", dangerDetection().estimate(0, frontXList, frontYList, frontHList)[1])
+            pos, led = dangerDetection().estimate(0, frontXList, frontYList, frontHList)[1]
+            print("LED: ", led)
             
             end_time = time.time()
             interval = end_time - start_time
