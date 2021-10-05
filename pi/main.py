@@ -65,9 +65,18 @@ class Main:
         self.velocity = 5.0 # m/s
         self.new_velo = -1
         
+        self.velo_range = [0.0, 2.4, 4.0, 5.56]     
+        
+        
         self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
-        self.dangerLevel = 0
         self.srvo_level = 0
+        self.danger_states = [False]*7
+
+
+        self.velo_trigger = True
+        self.danger_trigger = False
+        self.post_trigger = True
+
 
         self.imu = IMU.IMUController()
         #print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
@@ -118,13 +127,24 @@ class Main:
                 com = self.serArdu.readline().decode('utf-8').rstrip()
                 if "velocity" in com:
                     self.new_velo = float(com.split(':')[1])
+                    print('get:', self.new_velo)
             time.sleep(0.1)
 
     def postCommand(self):
-        pass
-    
-    def getVelocity(self):
-        pass
+        while True:
+            if self.post_trigger:       
+                ts = '0'*8 + '\n'
+                if self.velo_trigger:
+                    self.velo_trigger = False
+                ts[3] = str(self.srvo_level)
+                if self.danger_trigger:
+                    self.danger_trigger = False
+                ts[0:3] = [int(i) for i in self.danger_states[0:3]]
+                ts[4:] = [int(i) for i in self.danger_states[3:]]
+                threading.thread(self.serArdu.write, ts).start()
+                print('post: ', ts)
+                self.post_trigger = False
+            time.sleep(0.01)
     
     def convertRaw2Height(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, (self.height,)*3)}
@@ -170,13 +190,13 @@ class Main:
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
         cycle = 6
         
-        # threading.Thread(target=self.getCommand).start()
+        threading.Thread(target=self.getCommand).start()
+        threading.Thread(target=self.postCommand).start()
         
         self.lidarCnt = 2
         
         for i in range(cycle):
             start_time = time.time()
-
             
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
 
@@ -219,6 +239,15 @@ class Main:
             if self.new_velo != -1:
                 self.velocity = self.new_velo
                 self.new_velo = -1
+                for i in range(3):
+                    if self.velo_range[i] < self.velocity < self.velo_range[i+1]:
+                        step = i
+                        break
+                if step != self.srvo_level:
+                    self.srvo_level = step
+                    self.velo_trigger = True
+                
+            self.post_trigger = self.velo_trigger or self.danger_trigger
         
         interval_avg = total_time / cycle
            
