@@ -37,7 +37,7 @@ class dangerDetection:
 
             param = np.array([sum([p[j][k] * (p[j-2][k+1] - p[j-1][k+1]) for j in range(3)]) for k in range(-2, 1, 1)])
             
-            np.append(param, -sum([p[j][0] * (p[j-2][1]*p[j-1][2] - p[j-2][2]*p[j-1][1]) for j in range(3)]))
+            param = np.append(param, -sum([p[j][0] * (p[j-2][1]*p[j-1][2] - p[j-2][2]*p[j-1][1]) for j in range(3)]))
             
             #print("param: ", param)
 
