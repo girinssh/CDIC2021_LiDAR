@@ -92,11 +92,12 @@ class Main:
                 self.serArdu.flushInput()
                 break
         
-        self.serArdu.flush()
+        self.serArdu.flushInput()
         
         ang = np.rad2deg(self.srvo_ang)
         srvo_ang_str = '{:.2f}, {:.2f}, {:.2f}\n'.format(ang[0], ang[1], ang[2])
         #print(srvo_ang_str)
+        self.serArdu.flushOutput()
         self.serArdu.write(srvo_ang_str.encode('utf-8'))
         
         while True:
