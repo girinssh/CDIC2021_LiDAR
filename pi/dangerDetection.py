@@ -25,13 +25,12 @@ class dangerDetection:
         
         # algo rotation num is already set: 14
         for i in range(10):
-            i1 = np.random.randint(0, l/3)
-            i2 = np.random.randint(l/3, l*2/3)
-            i3 = np.random.randint(l*2//3, l)
+            i1 = np.random.randint(0, l/2)
+            i2 = np.random.randint(l/2, l)
                 
             p = np.array([[XPOS[i1], YPOS[i1], H[i1]],
                           [XPOS[i2], YPOS[i2], H[i2]],
-                          [XPOS[i3], YPOS[i3], H[i3]]])
+                          [0, 0, 0]])
                     
 
             param = np.array([sum([p[j][k] * (p[j-2][k+1] - p[j-1][k+1]) for j in range(3)]) for k in range(-2, 1, 1)])
@@ -44,7 +43,7 @@ class dangerDetection:
             outliers = []
     
             for j in range(l) :
-                if j == i1 or j == i2 or j == i3:
+                if j == i1 or j == i2:
                     continue
 
                 pt = np.array([XPOS[j], YPOS[j], H[j]])
