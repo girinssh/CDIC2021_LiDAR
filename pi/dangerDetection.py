@@ -229,11 +229,11 @@ class dangerDetection:
         
     def estimate(POS, XPOS, YPOS, H):
         dangerDetection.state = [0]*7
-        _, inlier, outlier = dangerDetection.RANSAC(POS, XPOS, YPOS, H)
-        param = dangerDetection.LSM(POS, inlier, XPOS, YPOS, H)
+        _, inlier, outlier = dangerDetection.RANSAC(XPOS, YPOS, H)
+        param = dangerDetection.LSM(inlier, XPOS, YPOS, H)
         
-        ud = dangerDetection.udSlope(POS, param)
-        lr = dangerDetection.lrSlope(POS, param)
+        ud = dangerDetection.udSlope( param)
+        lr = dangerDetection.lrSlope(param)
         dangerDetection.estiSlope(POS, ud , lr)
         dangerDetection.Obstacle(POS, outlier, XPOS, H)
         
