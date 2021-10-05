@@ -228,7 +228,7 @@ class Main:
                 dangerDetection.resetState()
                 # print("LED: ", self.danger_states)
                 
-                if len([i for i in range(7) if new_danger_states[i] != self.danger_states[i]]) > 0:
+                if not all(new_danger_states == self.danger_states):
                     self.danger_states = new_danger_states
                     self.danger_trigger = True
                     print("DANGER_TRIGGER_ON")
