@@ -150,26 +150,16 @@ class Main:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2XPOS, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, [raw[i][1] for i in raw.keys()])}
     
     def changeDataAxis(self, xposList, yposList, heightList):
-        #dtype = [('x', np.float32), ('y', np.float32), ('z', np.float32)]
-        print(xposList[0].shape, xposList[1].shape)
-        print(yposList[0].shape, yposList[1].shape)
-        print(heightList[0].shape, heightList[1].shape)
-        
         xposList[0] = np.array([x - self.width/2 for x in xposList[0]])
         xposList[1] = np.array([x + self.width/2 for x in xposList[1]])
         
-        #xlist = np.hstack((xposList[0] - self.width/2, xposList[1]+ self.width/2))
         xlist = np.hstack((xposList[0], xposList[1]))
         ylist = np.hstack((yposList[0], yposList[1]))
         hlist = np.hstack((heightList[0], heightList[1]))
         
-        # posList = np.vstack((xlist, ylist, hlist)).T
-        # # posList.astype(dtype=({'names':['x', 'y', 'z'], 'formats': [np.float32,]*3}))
-        # #pos3dList.astype(dtype)
-        # print(posList)
-        # pos3dList = np.sort(posList, order='x')  
+        a = xlist.argsort()
         
-        return xlist, ylist, hlist
+        return xlist[a], ylist[a], hlist[a]
     
     def run(self):
         print(self.onewayTime)
@@ -216,7 +206,7 @@ class Main:
                 backYList = yposList[2]
                 backHList = heightList[2]
             
-            dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
+            tpe.map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
             led = dangerDetection.getState()
             # print("LED: ", led)
             if self.new_velo != -1:

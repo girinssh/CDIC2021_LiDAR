@@ -37,7 +37,7 @@ class LiDARManager:
         
         # 편도에 몇초가 걸리는가
         self.secPerOneway = 30 / self.rpm
-        self.secLimit = self.secPerOneway * 0.9
+        self.secLimit = self.secPerOneway * 0.8
         
         self.angle_min = minAngle
         self.angle_max = maxAngle

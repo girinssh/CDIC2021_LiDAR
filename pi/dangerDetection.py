@@ -25,13 +25,14 @@ class dangerDetection:
         
         # algo rotation num is already set: 14
         for i in range(14):
-            while True: 
-                i1, i2, i3 = np.random.randint(0, l, size=3)
-                if i1 != i2 and i2 != i3 and i1 != i3:
-                    p = np.array([[XPOS[i1], YPOS[i1], H[i1]],
-                                  [XPOS[i2], YPOS[i2], H[i2]],
-                                  [XPOS[i3], YPOS[i3], H[i3]]])
-                    break
+            i1, i2, i3 = np.random.randint(0, l, size=3)
+            while i1 == i2 or i2 == i3 or i1 == i3: 
+                i2, i3 = np.random.randint(0, l, size=2)
+                
+            p = np.array([[XPOS[i1], YPOS[i1], H[i1]],
+                          [XPOS[i2], YPOS[i2], H[i2]],
+                          [XPOS[i3], YPOS[i3], H[i3]]])
+                    
 
             param = np.array([sum([p[j][k] * (p[j-2][k+1] - p[j-1][k+1]) for j in range(3)]) for k in range(-2, 1, 1)])
             
@@ -151,7 +152,7 @@ class dangerDetection:
         v = finOutliers.pop(0)
         tmp.append(v)
 
-        while(len(finOutliers)>0):
+        while len(finOutliers) > 0:
             vv = finOutliers.pop(0)
             if v+1 == vv:
                 tmp.append(vv)
