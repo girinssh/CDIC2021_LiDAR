@@ -182,7 +182,8 @@ class Main:
         
         self.lidarCnt = 2
         
-        for i in range(cycle):
+        i = 0
+        while self.serArdu.is_open:
             start_time = time.time()
             dangerDetection.resetState()
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
@@ -247,8 +248,9 @@ class Main:
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
             total_time += interval
+            i+=1
         
-        interval_avg = total_time / cycle
+        interval_avg = total_time / (i+1)
         self.serArdu.close()  
         print("Total Time: ", total_time)
         print("Interval MAX: ", interval_max)
