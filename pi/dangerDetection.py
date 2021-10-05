@@ -25,9 +25,9 @@ class dangerDetection:
         
         # algo rotation num is already set: 14
         for i in range(10):
-            i1 = np.random.randint(0, l/3, size=3)
-            i2 = np.random.randint(l/3, l*2/3, size=3)
-            i3 = np.random.randint(l*2/3, l, size=3)
+            i1 = np.random.randint(0, l/3, size=1)
+            i2 = np.random.randint(l/3, l*2/3, size=1)
+            i3 = np.random.randint(l*2/3, l, size=1)
                 
             p = np.array([[XPOS[i1], YPOS[i1], H[i1]],
                           [XPOS[i2], YPOS[i2], H[i2]],
