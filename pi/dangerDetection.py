@@ -7,7 +7,7 @@ class dangerDetection:
     imu = IMU.IMUController()
     imu.sensor_calibration()
     
-    def RANSAC(cls, POS, XPOS, YPOS, H): #XH 평면을 바라보고
+    def RANSAC(POS, XPOS, YPOS, H): #XH 평면을 바라보고
         #XPOS : 라이다에서 측정 포인트까지의 x축 방향 distance
         #YPOS :
         #H = heightList : 지면에서 측정 포인트까지의 높이 #1차원 리스트
@@ -70,7 +70,7 @@ class dangerDetection:
     # Least Square Method 
     # inliers들로 구성된 기준식 하나 구하기 (=a, b 구하기)
     # inliersList는 RANSAC이 return한 maxInliers = [i]
-    def LSM(cls, POS, maxInliers, XPOS, YPOS, H):
+    def LSM(POS, maxInliers, XPOS, YPOS, H):
         A=np.empty((0,3), dtype=np.float32) # A = [x, y, 1] (mx2)
         B=np.empty((0,1), dtype=np.float32) # B = [z] (mx1)
 
@@ -88,7 +88,7 @@ class dangerDetection:
 
     # 후면 라이다일 때 좌우 상하 판단 다시
     # 좌우 경사 판단 Method # roll 각도 구하기 # [x, z] # 전면 라이다에서만 진행됨
-    def lrSlope(cls, POS, plane): # inliers = inliers에 해당하는 인덱스 리스트
+    def lrSlope(POS, plane): # inliers = inliers에 해당하는 인덱스 리스트
 
         # p1=[XPOS[inliers[0]], H[inliers[0]]] # 첫번째 inlier의 [x,z] 값 
         # p2=[XPOS[inliers[-1]], H[inliers[-1]]] # 마지막 inlier의 [x,z] 값 
@@ -96,7 +96,7 @@ class dangerDetection:
         return POS, np.arctan(-plane[0]/plane[2])
     
     # 상하 경사 판단 Method # pitch 각도 구하기  # [y, z] 
-    def udSlope(cls, POS, plane):
+    def udSlope(POS, plane):
 
         # p1=[YPOS[inliers[0]], H[inliers[0]]]
         # p2=[YPOS[inliers[-1]], H[inliers[-1]]]
@@ -105,8 +105,8 @@ class dangerDetection:
         return POS, np.arctan(-plane[1]/plane[2])
     
     # 예상되는 roll, pitch를 계산해서 상하, 좌우 picto 번호와 led 번호를 반환
-    def estiSlope(cls, POS, pit_ang, rol_ang):
-        carRol, carPit = cls.imu.getRollPitch() # car roll, pitch 받아오기
+    def estiSlope(POS, pit_ang, rol_ang):
+        carRol, carPit = dangerDetection.imu.getRollPitch() # car roll, pitch 받아오기
         
         if pit_ang*carPit > 0:
             estPit=abs(pit_ang-carPit) # 차의 현재 각도와 라이다의 예상 각도의 부호가 같을 때 (내리막 > 내리막, 오르막 > 오르막)
@@ -135,7 +135,7 @@ class dangerDetection:
 
         return POS, pictoPit, pictoRol, ledPit, ledRol
 
-    def Obstacle(cls, POS, finOutliers, XPOS, H):
+    def Obstacle(POS, finOutliers, XPOS, H):
         
         if len(finOutliers) < 2:
             return POS, 0, 0
