@@ -135,13 +135,15 @@ class Main:
                     for i in self.danger_states[3:]:
                         ts += str(i)
                     ts += '\n'
+    
+                    print('post: ', ts)
+                    
                     if self.velo_trigger:
                         self.velo_trigger = False
     
                     if self.danger_trigger:
                         self.danger_trigger = False
     
-                    print('post: ', ts)
                     threading.Thread(target=self.serArdu.write, args=(ts.encode('utf-8'),)).start()
                     self.post_trigger = False
             except Exception as e:
@@ -197,7 +199,7 @@ class Main:
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
-            if all(len(rawDistAngleTime[:][2])> 0) :
+            if all(len(rawDistAngleTime[i][2] for i in range(self.lidarCnt))> 0) :
                 rp = tpe().submit(self.imu.getRollPitch)
                 heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
                 xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
