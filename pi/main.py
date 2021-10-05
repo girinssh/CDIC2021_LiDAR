@@ -79,6 +79,8 @@ class Main:
     
         self.serArdu = serial.Serial('/dev/ttyACM0', 9600, timeout=1.0)
         
+        self.serArdu.close()
+        
         while not self.serArdu.is_open:
             print('waiting...')
             self.serArdu.open()
