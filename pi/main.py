@@ -147,7 +147,7 @@ class Main:
                     self.danger_trigger = False
 
                 print('post: ', ts)
-                threading.Thread(target=self.serArdu.write, args=ts.encode('utf-8')).start()
+                threading.Thread(target=self.serArdu.write, args=(ts.encode('utf-8')),).start()
                 self.post_trigger = False
             time.sleep(0.01)
     
