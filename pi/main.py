@@ -74,9 +74,9 @@ class Main:
         self.post_trigger = True
 
         self.imu = IMUController()
+        self.imu.set_MPU6050_init(dlpf_bw=0x02)
         self.imu.sensor_calibration()
     
-
         self.serArdu = serial.Serial('/dev/ttyACM0', 9600, timeout=1.0)
         
         while not self.serArdu.is_open:
