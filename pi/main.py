@@ -133,7 +133,13 @@ class Main:
     def postCommand(self):
         while self.serArdu.is_open:
             if self.post_trigger:       
-                ts = str(self.danger_states[0:3]) + str(self.srvo_level) + str(self.danger_states[3:]) + '\n'
+                ts = ''
+                for i in self.danger_states[0:3]:
+                    ts += str(i)
+                ts += str(self.srvo_level)
+                for i in self.danger_states[3:]:
+                    ts += str(i)
+                ts += '\n'
                 if self.velo_trigger:
                     self.velo_trigger = False
 
