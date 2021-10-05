@@ -133,7 +133,7 @@ class Main:
     def postCommand(self):
         while True:
             if self.post_trigger:       
-                ts = str(chr(i) for i in self.danger_states[0:3]) + str(self.srvo_level) + str(chr(i) for i in self.danger_states[3:])
+                ts = str(self.danger_states[0:3]) + str(self.srvo_level) + str(self.danger_states[3:]) + '\n'
                 if self.velo_trigger:
                     self.velo_trigger = False
 
