@@ -237,9 +237,9 @@ class Main:
                 if self.new_velo != -1 and self.new_velo != self.velocity:
                     self.velocity = self.new_velo
                     self.new_velo = -1
-                    for i in range(3):
-                        if self.velo_range[i] < self.velocity < self.velo_range[i+1]:
-                            step = i
+                    for j in range(3):
+                        if self.velo_range[j] < self.velocity < self.velo_range[j+1]:
+                            step = j
                             break
                     if step != self.srvo_level:
                         self.srvo_level = step
@@ -247,7 +247,7 @@ class Main:
                     print("VELO_TRIGGER_ON")
                 else:
                     self.new_velo = -1
-                self.post_trigger = self.velo_trigger or self.danger_trigger
+            self.post_trigger = self.velo_trigger or self.danger_trigger
             
             end_time = time.time()
             interval = end_time - start_time
