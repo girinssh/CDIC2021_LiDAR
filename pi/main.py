@@ -176,6 +176,10 @@ class Main:
         colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
         cycle = 1
         
+        X = np.arange(-2.0, 2.0, 0.1)
+        Y = np.arange(-1.0, 5.0, 0.1)
+        X, Y = np.meshgrid(X, Y)
+        
         # threading.Thread(target=self.getCommand).start()
         # threading.Thread(target=self.postCommand).start()
         
@@ -232,6 +236,9 @@ class Main:
             print(i, interval, yposList.keys())
             
             ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
+            
+            Z = param[0] * X + param[1] * Y + param[2]
+            ax.plot_surface(X, Y, Z, rstride=4, cstride=4, alpha=0.4)
             # for j in range(self.lidarCnt):
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
@@ -239,11 +246,6 @@ class Main:
         
         
         
-        X = np.arange(-2.0, 2.0, 0.1)
-        Y = np.arange(-1.0, 5.0, 0.1)
-        X, Y = np.meshgrid(X, Y)
-        Z = param[0] * X + param[1] * Y + param[2]
-        ax.plot_surface(X, Y, Z, rstride=4, cstride=4, alpha=0.4)
 
         
         interval_avg = total_time / cycle
