@@ -207,29 +207,6 @@ class dangerDetection:
                     else: dangerDetection.state[RIGHT] = dangerDetection.state[LEFT] = 1
         return
 
-#     #roll, pitch, obstacle 각각의 picto, led 결합하여 아두이노로 넘겨줄 최종 picto, led 구하기
-#     def finalPictoLed(pictoPit:str, pictoRol:str, obspicto:list, ledPit:str, ledRol:str, obsled:list):
-#         finpicto=[0,0,0,0]
-#         finled=[0,0,0]
-#         repicto="" #아두이노로 return할 picto num ex. "0001"
-#         reled="" #아두이노로 return할 led num ex. "100"
-
-#         #print(type(pictoPit), type(pictoRol), type(obspicto), type(ledPit),type(ledRol), type(obsled))
-
-#         for i in range(4):
-#             finpicto[i] = int(pictoPit[i])+int(pictoRol[i])+obspicto[i]
-#             if finpicto[i]!=0: finpicto[i]=1
-#             repicto+=str(finpicto[i])
-# 	    #print(finpicto)
-# 	    #print(repicto)
-
-#         for i in range(3):
-#             finled[i] = int(ledPit[i])+int(ledRol[i])+obsled[i]
-#             if finled[i]!=0: finled[i]=1
-#             reled+=str(finled[i])
-# 	    #print(finled)
-# 	    #print(reled)
-#         return repicto, reled
         
     def estimate(POS, XPOS, YPOS, H, carRol, carPit):
         inlier, outlier, param = dangerDetection.RANSAC(XPOS, YPOS, H)
@@ -237,7 +214,9 @@ class dangerDetection:
         t = threading.Thread(target=dangerDetection.Obstacle, args=(POS, outlier, XPOS, H))
         t.start()
         ud = dangerDetection.udSlope(param)
+        print("UD: ", np.rad2deg(ud))
         lr = dangerDetection.lrSlope(param)
+        print("LR: ",np.rad2deg(lr))
         dangerDetection.estiSlope(POS, ud , lr, carRol, carPit)
         t.join()
         return
