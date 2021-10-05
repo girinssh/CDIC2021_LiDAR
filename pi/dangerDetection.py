@@ -83,6 +83,7 @@ class dangerDetection:
             B = np.append(B, np.array([[tmph]], dtype=np.float32))
 
         print(A.shape, B.shape)
+        A = A.T
 
         X=np.linalg.inv(A.T@A)@A.T@B # X 업데이트
 
