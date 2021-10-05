@@ -72,7 +72,7 @@ class Main:
         #print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
         self.imu.sensor_calibration()
 
-        self.serArdu = serial.Serial('/dev/ttyACM0', 9600)
+        self.serArdu = serial.Serial('/dev/ttyACM0', 9600, timeout=1.0)
         
         while not self.serArdu.is_open:
             print('waiting...')
