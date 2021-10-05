@@ -37,7 +37,7 @@ class dangerDetection:
 
             param = np.array([sum([p[j][k] * (p[j-2][k+1] - p[j-1][k+1]) for j in range(3)]) for k in range(-2, 1, 1)])
             
-            # np.append(param, -sum([p[j][0] * (p[j-2][1]*p[j-1][2] - p[j-2][2]*p[j-1][1]) for j in range(3)]))
+            np.append(param, -sum([p[j][0] * (p[j-2][1]*p[j-1][2] - p[j-2][2]*p[j-1][1]) for j in range(3)]))
             
             #print("param: ", param)
 
@@ -56,7 +56,7 @@ class dangerDetection:
 
                 z_th = 0.05 # threshold value [m]
 
-                d = np.abs(np.dot(param,w))/np.linalg.norm(param)
+                d = np.abs(np.dot(param[:-1],w))/np.linalg.norm(param[:-1])
 
                 #pz = a*x+b # p1, p2로 만든 식에 만족하는 z값
 

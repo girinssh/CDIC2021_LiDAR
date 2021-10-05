@@ -237,7 +237,7 @@ class Main:
             
             ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
-            ZR = paramR[0] * X + paramR[1] * Y + paramR[2]
+            ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
             ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=1.0)
 
             ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
@@ -246,10 +246,6 @@ class Main:
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
             total_time += interval
-        
-        
-        
-
         
         interval_avg = total_time / cycle
         #self.serArdu.close()  
