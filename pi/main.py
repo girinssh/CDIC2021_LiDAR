@@ -239,7 +239,8 @@ class Main:
                 interval_min = interval if interval < interval_min else interval_min
                 total_time += interval
                 print(i, interval, yposList.keys())
-            except:   
+            except Exception as e:  
+                print(e)
                 self.serArdu.close()  
             finally:               
                 i+=1
