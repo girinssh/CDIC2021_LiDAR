@@ -232,7 +232,7 @@ class dangerDetection:
         
     def estimate(cls, POS, XPOS, YPOS, H):
         _, inlier, outlier = cls.RANSAC(POS, XPOS, YPOS, H)
-        param = cls.LSM(POS, inlier, XPOS, YPOS, H)
+        _, param = cls.LSM(POS, inlier, XPOS, YPOS, H)
         _, ud = cls.udSlope(POS, param)
         _, lr = cls.lrSlope(POS, param)
         _, pictoPit, pictoRol, ledPit, ledRol = cls.estiSlope(POS, ud , lr)
