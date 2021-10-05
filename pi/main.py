@@ -79,7 +79,13 @@ class Main:
             self.serArdu.open()
             time.sleep(0.5)
         
-        time.sleep(0.5)
+        while True:
+            s = self.serArdu.readline().decode('utf-8').rstrip()
+            print(s)
+            if s == "start":
+                self.serArdu.flushInput()
+                break
+        
         self.serArdu.flush()
         
         ang = np.rad2deg(self.srvo_ang)
