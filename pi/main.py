@@ -65,10 +65,9 @@ class Main:
         
         self.velo_range = [0.0, 2.4, 4.0, 5.56]     
         
-        self.srvo_ang = np.arctan2(self.height, np.array([1.3, 1.5, 1.7]))
+        self.srvo_ang = np.arctan2(self.height, np.array([1, 2, 3]))
         self.srvo_level = 0
         self.danger_states = [0]*7
-
 
         self.velo_trigger = True
         self.danger_trigger = False

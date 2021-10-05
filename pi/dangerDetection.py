@@ -1,5 +1,4 @@
 import numpy as np
-import IMU
 import threading
 
 LEFT = 0
@@ -61,9 +60,9 @@ class dangerDetection:
                 #pz = a*x+b # p1, p2로 만든 식에 만족하는 z값
 
                 if d > z_th:
-                    outliers.append([i])
+                    outliers.append(i)
                 else:
-                    inliers.append([i])
+                    inliers.append(i)
 
             if len(inliers) > len(maxInliers):
                 maxInliers = inliers
@@ -132,12 +131,17 @@ class dangerDetection:
 
         if estRol > rolTh:
             dangerDetection.state[LR] = 1
-            if POS==2: dangerDetection.state[BACK] = 1
-            if rol_ang < 0: dangerDetection.state[LEFT] = 1
-            elif rol_ang > 0: dangerDetection.state[RIGHT] = 1
+            if POS==2: 
+                dangerDetection.state[BACK] = 1
+            if rol_ang < 0: 
+                dangerDetection.state[LEFT] = 1
+            elif rol_ang > 0: 
+                dangerDetection.state[RIGHT] = 1
             else: 
-                if carRol < 0: dangerDetection.state[RIGHT] = 1
-                elif carRol > 0: dangerDetection.state[LEFT] = 1
+                if carRol < 0: 
+                    dangerDetection.state[RIGHT] = 1
+                elif carRol > 0: 
+                    dangerDetection.state[LEFT] = 1
 
     def Obstacle(POS, finOutliers, XPOS, H):
         
@@ -151,11 +155,11 @@ class dangerDetection:
         packet = []
         tmp = []
 
-        v = finOutliers.pop(0)[0]
+        v = finOutliers.pop(0)
         tmp.append(v)
         
         while len(finOutliers) > 0:
-            vv = finOutliers.pop(0)[0]
+            vv = finOutliers.pop(0)
             if v+1 == vv:
                 tmp.append(vv)
                 v = vv
@@ -169,21 +173,19 @@ class dangerDetection:
         if len(tmp) > minpwid:
             packet.append(tmp)
             
-        finobs=[]
-        ledpos=[]
-        pictopos=[]
+        # finobs=[]
+        # ledpos=[]
+        # pictopos=[]
 
         # 1개의 장애물을 구성하는 인덱스들끼리 z값 비교하여 큰 차이 없으면 취함
         for i in range(len(packet)):
-            if sum(dangerDetection.state) == 7:
-                break
             tmpack = np.array(packet[i])
             tmph=[]
             tmpx=[]
             for j in tmpack:
                 tmph.append(H[j])
             if all((np.array(tmph)-tmph[0])<zth): 
-                finobs.append(packet[i])
+                #finobs.append(packet[i])
 
                 # 오목인지 볼록인지 판단
                 if all(np.array(tmph)>0): dangerDetection.state[UOBS] = 1
@@ -194,7 +196,7 @@ class dangerDetection:
                 if POS == 2:
                     dangerDetection.state[BACK] = 1
                 else:
-                    if sum(dangerDetection.state[LEFT:RIGHT+1]) == 2:
+                    if dangerDetection.state[LEFT] + dangerDetection.state[RIGHT] == 2:
                         continue
                     for k in tmpack:
                         tmpx.append(XPOS[k])
