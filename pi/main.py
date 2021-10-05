@@ -78,12 +78,13 @@ class Main:
             print('waiting...')
             self.serArdu.open()
             time.sleep(0.5)
-            
-        srvo_ang_str = str(self.srvo_ang[0]) + ',' +str(self.srvo_ang[1])+','+str(self.srvo_ang[2])
-        print(srvo_ang_str)
-        self.serArdu.writelines(srvo_ang_str.encode('utf-8'))
         
-        self.serArdu.writelines("hello".encode('utf-8'))
+        self.serArdu.flush()
+        srvo_ang_str = str(self.srvo_ang[0]) + ',' +str(self.srvo_ang[1])+','+str(self.srvo_ang[2])+'\n'
+        print(srvo_ang_str)
+        self.serArdu.write(srvo_ang_str.encode('utf-8'))
+        
+        #self.serArdu.writelines("hello".encode('utf-8'))
         
         while True:
             s = self.serArdu.readline().decode('utf-8').rstrip()
