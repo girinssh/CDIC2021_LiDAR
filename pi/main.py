@@ -202,7 +202,7 @@ class Main:
             # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
             dangerDetection.resetState()
             if sum([len([rawDistAngleTime[i][2]]) for i in range(self.lidarCnt)]) > 0 :
-                rp = tpe().submit(self.imu.getRollPitch)
+                roll, pitch = self.imu.getRollPitch()
                 heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
                 xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
                 yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngleTime)
@@ -216,7 +216,6 @@ class Main:
                 inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
                 # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
                 
-                roll, pitch = rp.result()
                 print(roll, pitch)
                 
                 if self.lidarCnt == 3:
