@@ -110,6 +110,7 @@ class Main:
     
     # only develop at raspberry pi
     def getCommand(self):
+        self.serArdu.flushInput()
         while self.serArdu.is_open:
             if self.serArdu.inWaiting() > 0:
                 com = self.serArdu.readline().decode('utf-8').rstrip()
@@ -119,6 +120,7 @@ class Main:
             time.sleep(0.1)
 
     def postCommand(self):
+        self.serArdu.flushOutput()
         while self.serArdu.is_open:
             if self.post_trigger:       
                 ts = ''
