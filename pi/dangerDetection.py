@@ -202,13 +202,17 @@ class dangerDetection:
             for j in range(4):
                 tmppicto = pictopos[i]
                 obspicto[j] += int(tmppicto[j])
-                if obspicto[j]!=0: obspicto[j]=1
+                if obspicto[j] != 0: 
+                    obspicto[j] = 1
 
         for i in range(len(ledpos)):
             for j in range(3):
                 tmpled = ledpos[i]
                 obsled[j] += int(tmpled[j])
-                if obsled[i]!=0: obsled[i]=1
+                if obsled[i] != 0: 
+                    obsled[i] = 1
+
+        print("OBS: ", type(obspicto), type(obsled))
 
         return POS, obspicto, obsled
 
