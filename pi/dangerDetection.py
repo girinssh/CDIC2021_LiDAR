@@ -1,9 +1,13 @@
 import numpy as np
-import Main
+import IMU
+
 
 class dangerDetection:
 
-    def RANSAC(cls, POS, XPOS, H): #XH 평면을 바라보고
+    imu = IMU.IMUController()
+    imu.sensor_calibration()
+    
+    def RANSAC(cls, POS, XPOS, YPOS, H): #XH 평면을 바라보고
         #XPOS : 라이다에서 측정 포인트까지의 x축 방향 distance
         #YPOS :
         #H = heightList : 지면에서 측정 포인트까지의 높이 #1차원 리스트
@@ -11,35 +15,50 @@ class dangerDetection:
         maxInliers = []
         finOutliers = [] # final outliers list #[i1, i2, …, in] 인덱스 번호
         
+        l = len(XPOS)
+        indices = [0, 1, 2]
+        
         # algo rotation num is already set: 14
-        for i in range(0, 14):
+        for i in range(14):
             while True: 
-                i1, i2 = np.random.randint(0, len(XPOS), size=2)
-                if (i1 != i2):
-                    p1 = np.array([XPOS[i1], H[i1]])
-                    p2 = np.array([XPOS[i2], H[i2]])
+                i1, i2, i3 = np.random.randint(0, l, size=3)
+                if (i1 != i2 != i3):
+                    p = np.array([[XPOS[i1], YPOS[i1], H[i1]],
+                                  [XPOS[i2], YPOS[i2], H[i2]],
+                                  [XPOS[i3], YPOS[i3], H[i3]]])
                     break
             # a 계산 시 분모가 0이 되는 걸 방지
 
             #두 점을 지나는 직선 (z=)f(x)=ax+b 구하기 
-            a = (p2[1]-p1[1])/(p2[0]-p1[0])
-            b = p1[1]-a*p1[0]
+            
+            
+            param = np.array([
+                sum([p[j][k] * (p[j-2][k-2] - p[j-1][k-2]) for j in range(3)]) for k in indices[-2]])
+            
+            # np.append(param, -sum([p[j][0] * (p[j-2][1]*p[j-1][2] - p[j-2][2]*p[j-1][1]) for j in range(3)]))
+            
+            print(param)
 
             inliers = []
             outliers = []
     
-            for i in range(len(XPOS)) :
-                x = XPOS[i] # x value of ith point
-                z = H[i] # height of ith point
+            for j in range(l) :
+                if j == i1 or j == i2 or j == i3:
+                    continue
 
+                pt = np.array([XPOS[j], YPOS[j], H[j]])
+    
+                w = pt - p[0]
                 # 임계값 넘어가면 outlier 
                 # 임계값 내에 있으면 inlier
 
                 z_th = 0.3 # threshold value [m]
 
-                pz = a*x+b # p1, p2로 만든 식에 만족하는 z값
+                d = np.abs(param.dot(w))/np.linalg.norm(param)
 
-                if abs(z - pz) > z_th:
+                #pz = a*x+b # p1, p2로 만든 식에 만족하는 z값
+
+                if d > z_th:
                     outliers.append([i])
                 else:
                     inliers.append([i])
@@ -47,50 +66,50 @@ class dangerDetection:
             if len(inliers) > len(maxInliers):
                 maxInliers = inliers
                 finOutliers = outliers
-                param = [a, b]
+                #param = [a, b]
 
-        return POS, maxInliers, finOutliers, param
+        return POS, maxInliers, finOutliers#, param
     
     # Least Square Method 
     # inliers들로 구성된 기준식 하나 구하기 (=a, b 구하기)
     # inliersList는 RANSAC이 return한 maxInliers = [i]
-    def LSM(cls, POS, maxInliers, XPOS, H):
-        A=np.empty((0,2), float) # A = [x, 1] (mx2)
+    def LSM(cls, POS, maxInliers, XPOS, YPOS, H):
+        A=np.empty((0,3), float) # A = [x, y, 1] (mx2)
         B=np.empty((0,1), float) # B = [z] (mx1)
 
         # A, B 행렬 만들기
         for i in maxInliers:
             tmpx=XPOS[i]
+            tmpy=YPOS[i]
             tmph=H[i]
-            A = np.append(A, np.array([[tmpx, 1]]), axis=0)
+            A = np.append(A, np.array([[tmpx, tmpy, 1]]), axis=0)
             B = np.append(B, np.array([[tmph]]))
 
         X=np.linalg.inv(A.T@A)@A.T@B # X 업데이트
 
-        return POS, X # np.array X = [a, b]를 return
+        return POS, X # np.array X = [a, b, c]를 return
 
     # 후면 라이다일 때 좌우 상하 판단 다시
     # 좌우 경사 판단 Method # roll 각도 구하기 # [x, z] # 전면 라이다에서만 진행됨
-    def lrSlope(POS, inliers, XPOS, H): # inliers = inliers에 해당하는 인덱스 리스트
+    def lrSlope(cls, POS, plane): # inliers = inliers에 해당하는 인덱스 리스트
 
-        p1=[XPOS[inliers[0]], H[inliers[0]]] # 첫번째 inlier의 [x,z] 값 
-        p2=[XPOS[inliers[-1]], H[inliers[-1]]] # 마지막 inlier의 [x,z] 값 
-    
-        rol_ang = np.arctan((p2[1]-p1[1])/(p2[0]-p1[0])) # [rad] # 항상 p2[0] != p1[0] 
-        return POS, rol_ang
+        # p1=[XPOS[inliers[0]], H[inliers[0]]] # 첫번째 inlier의 [x,z] 값 
+        # p2=[XPOS[inliers[-1]], H[inliers[-1]]] # 마지막 inlier의 [x,z] 값 
+        # rol_ang = np.arctan((p2[1]-p1[1])/(p2[0]-p1[0])) # [rad] # 항상 p2[0] != p1[0] 
+        return POS, np.arctan(-plane[0]/plane[2])
     
     # 상하 경사 판단 Method # pitch 각도 구하기  # [y, z] 
-    def udSlope(cls, POS, inliers, YPOS, H):
+    def udSlope(cls, POS, plane):
 
-        p1=[YPOS[inliers[0]], H[inliers[0]]]
-        p2=[YPOS[inliers[-1]], H[inliers[-1]]]
+        # p1=[YPOS[inliers[0]], H[inliers[0]]]
+        # p2=[YPOS[inliers[-1]], H[inliers[-1]]]
 
-        pit_ang = np.arctan((p2[1]-p1[1])/(p2[0]-p1[0]))
-        return POS, pit_ang
+        # pit_ang = np.arctan((p2[1]-p1[1])/(p2[0]-p1[0]))
+        return POS, np.arctan(-plane[1]/plane[2])
     
     # 예상되는 roll, pitch를 계산해서 상하, 좌우 picto 번호와 led 번호를 반환
     def estiSlope(cls, POS, pit_ang, rol_ang):
-        carRol, carPit = getRollPitch() # car roll, pitch 받아오기
+        carRol, carPit = cls.imu.getRollPitch() # car roll, pitch 받아오기
         
         if pit_ang*carPit > 0:
             estPit=abs(pit_ang-carPit) # 차의 현재 각도와 라이다의 예상 각도의 부호가 같을 때 (내리막 > 내리막, 오르막 > 오르막)
@@ -162,7 +181,7 @@ class dangerDetection:
                 # 오목인지 볼록인지 판단
                 if all(np.array(tmph)>0): pictopos.append("0001")
                 elif all(np.array(tmph)<0): pictopos.append("0010")
-                else: pitcopos.append("0000")
+                else: pictopos.append("0000")
 
                 # 장애물 좌/우/전방 위치 판단
                 if POS == 2:
@@ -213,3 +232,12 @@ class dangerDetection:
 	    #print(finled)
 	    #print(reled)
         return repicto, reled
+        
+    def estimate(cls, POS, XPOS, YPOS, H):
+        inlier, outlier = cls.RANSAC(POS, XPOS, YPOS, H)
+        param = cls.LSM(POS, inlier, XPOS, YPOS, H)
+        _, pictoPit, pictoRol, ledPit, ledRol = cls.estiSlope(POS, cls.udSlope(POS, param), cls.lrSlope(POS, param))
+        
+        _, obspicto, obsled = cls.Obstacle(POS, outlier, XPOS, H)
+        return POS, cls.finalPictoLed(pictoRol, obspicto, ledPit, ledRol, obsled)
+        

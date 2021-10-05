@@ -6,10 +6,9 @@ Created on Thu Sep 23 18:58:26 2021
 """
 
 from lidarManager import LiDARManager 
-from pi_ransac import dangerDetection
 import pi_method
+from dangerDetection import dangerDetection
 
-import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor as tpe
 
 import threading
@@ -17,8 +16,6 @@ import threading
 import serial,time
 import matplotlib.pyplot as plt
 import numpy as np
-
-import IMU
 
 # def plotter(plot_pts = 100):
 #     plt.style.use('ggplot') # plot formatting
@@ -78,9 +75,6 @@ class Main:
         self.post_trigger = True
 
 
-        self.imu = IMU.IMUController()
-        #print(self.imu.set_MPU6050_init(dlpf_bw=IMU.DLPF_BW_98))
-        self.imu.sensor_calibration()
 
         # self.serArdu = serial.Serial('/dev/ttyACM0', 9600, timeout=1.0)
         
@@ -112,12 +106,7 @@ class Main:
         #         if s == "success":
         #             self.serArdu.flushInput()
         #             break
-    
-        Main.goLeft = False
-        Main.main = self
-                              
-    def getInstance():
-        return Main.main
+
     
     # only develop at raspberry pi
     # def getCommand(self):
@@ -222,19 +211,15 @@ class Main:
                 backYList = yposList[2]
                 backHList = heightList[2]
             
-            #print(yposList[0])
+            print(dangerDetection().estimate(0, frontXList, frontYList, frontHList))
             
-            print("(Roll, Pitch) = {}".format(self.imu.getRollPitch()))
-            
-            # inlier, outlier, param = dangerDetection().RANSAC(np.vstack((xposList[0], yposList[0])))
-
             end_time = time.time()
             interval = end_time - start_time
             interval_max = interval if interval > interval_max else interval_max
             interval_min = interval if interval < interval_min else interval_min
             print(i, interval, yposList.keys())
             
-            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
+            #ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             # for j in range(self.lidarCnt):
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
