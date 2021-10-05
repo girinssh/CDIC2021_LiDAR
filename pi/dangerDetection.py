@@ -243,7 +243,5 @@ class dangerDetection:
         
         _, obspicto, obsled = dangerDetection.Obstacle(POS, outlier, XPOS, H)
         
-        result = dangerDetection.finalPictoLed(pictoRol, obspicto, ledPit, ledRol, obsled)
-        
-        return POS, result
+        return POS, dangerDetection.finalPictoLed(pictoPit, pictoRol, obspicto, ledPit, ledRol, obsled)
         
