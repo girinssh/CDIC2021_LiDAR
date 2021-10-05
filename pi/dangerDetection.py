@@ -137,7 +137,7 @@ class dangerDetection:
 
     def Obstacle(cls, POS, finOutliers, XPOS, H):
         
-        if finOutliers.shape[0] < 2:
+        if len(finOutliers) < 2:
             return POS, 0, 0
         
         minpwid = 2 # outliers 인덱스가 최소 몇개 이상 연속돼야하는지 기준값
