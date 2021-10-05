@@ -186,7 +186,6 @@ class Main:
         while self.serArdu.is_open:
             try:
                 start_time = time.time()
-                dangerDetection.resetState()
                 rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
                 # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
                 # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
@@ -214,12 +213,14 @@ class Main:
                 else :
                     dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                     
-                new_danger_states = dangerDetection.getState()
+                new_danger_states = dangerDetection.getState().copy()
+                dangerDetection.resetState()
                 # print("LED: ", self.danger_states)
                 
                 if sum([ 1 if new_danger_states[i] != self.danger_states[i] else 0 for i in range(7)]) > 0:
                     self.danger_states = new_danger_states
                     self.danger_trigger = True
+                    print("DANGER_TRIGGER_ON")
                 
                 if self.new_velo != -1:
                     self.velocity = self.new_velo
@@ -231,6 +232,7 @@ class Main:
                     if step != self.srvo_level:
                         self.srvo_level = step
                         self.velo_trigger = True
+                    print("VELO_TRIGGER_ON")
                     
                 self.post_trigger = self.velo_trigger or self.danger_trigger
                 
