@@ -228,8 +228,8 @@ class dangerDetection:
 #         return repicto, reled
         
     def estimate(POS, XPOS, YPOS, H, carRol, carPit):
-        inlier, outlier, _ = dangerDetection.RANSAC(XPOS, YPOS, H)
-        param = dangerDetection.LSM(inlier, XPOS, YPOS, H)
+        inlier, outlier, param = dangerDetection.RANSAC(XPOS, YPOS, H)
+        #param = dangerDetection.LSM(inlier, XPOS, YPOS, H)
         t = threading.Thread(target=dangerDetection.Obstacle, args=(POS, outlier, XPOS, H))
         t.start()
         ud = dangerDetection.udSlope(param)

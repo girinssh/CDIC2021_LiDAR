@@ -67,7 +67,7 @@ class Main:
         
         self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
         self.srvo_level = 0
-        self.danger_states = [False]*7
+        self.danger_states = [0]*7
 
 
         self.velo_trigger = True
@@ -78,69 +78,67 @@ class Main:
         self.imu.sensor_calibration()
     
 
-        # self.serArdu = serial.Serial('/dev/ttyACM0', 9600, timeout=1.0)
+        self.serArdu = serial.Serial('/dev/ttyACM0', 9600, timeout=1.0)
         
-        # while not self.serArdu.is_open:
-        #     print('waiting...')
-        #     self.serArdu.open()
-        #     time.sleep(0.5)
+        while not self.serArdu.is_open:
+            print('waiting...')
+            self.serArdu.open()
+            time.sleep(0.5)
         
-        # while True:
-        #     s = self.serArdu.readline().decode('utf-8').rstrip()
-        #     print(s)
-        #     if s == "start":
-        #         self.serArdu.flushInput()
-        #         break
+        while True:
+            s = self.serArdu.readline().decode('utf-8').rstrip()
+            print(s)
+            if s == "start":
+                self.serArdu.flushInput()
+                break
         
-        # self.serArdu.flush()
+        self.serArdu.flush()
         
-        # ang = np.rad2deg(self.srvo_ang)
-        # srvo_ang_str = '{:.2f}, {:.2f}, {:.2f}\n'.format(ang[0], ang[1], ang[2])
-        # print(srvo_ang_str)
-        # self.serArdu.write(srvo_ang_str.encode('utf-8'))
+        ang = np.rad2deg(self.srvo_ang)
+        srvo_ang_str = '{:.2f}, {:.2f}, {:.2f}\n'.format(ang[0], ang[1], ang[2])
+        #print(srvo_ang_str)
+        self.serArdu.write(srvo_ang_str.encode('utf-8'))
         
-        # #self.serArdu.writelines("hello".encode('utf-8'))
-        
-        # while True:
-        #     if self.serArdu.inWaiting() > 0:
-        #         s = self.serArdu.readline().decode('utf-8').rstrip()
-        #         print(s)
-        #         if s == "success":
-        #             self.serArdu.flushInput()
-        #             break
+        while True:
+            if self.serArdu.inWaiting() > 0:
+                s = self.serArdu.readline().decode('utf-8').rstrip()
+                print(s)
+                if s == "success":
+                    self.serArdu.flushInput()
+                    break
 
     
     # only develop at raspberry pi
-    # def getCommand(self):
-    #     command = []
-    #     while self.serArdu.is_open:
-    #         if self.serArdu.inWaiting() > 0:
-    #             com = self.serArdu.readline().decode('utf-8').rstrip()
-    #             if "velocity" in com:
-    #                 self.new_velo = float(com.split(':')[1])
-    #                 print('get: ', self.new_velo)
-    #         time.sleep(0.1)
+    def getCommand(self):
+        command = []
+        while self.serArdu.is_open:
+            if self.serArdu.inWaiting() > 0:
+                com = self.serArdu.readline().decode('utf-8').rstrip()
+                if "velocity" in com:
+                    self.new_velo = float(com.split(':')[1])
+                    print('get: ', self.new_velo)
+            time.sleep(0.1)
 
-    # def postCommand(self):
-    #     while self.serArdu.is_open:
-    #         if self.post_trigger:       
-    #             ts = ''
-    #             for i in self.danger_states[0:3]:
-    #                 ts += '1' if i else '0'
-    #             ts += str(self.srvo_level)
-    #             for i in self.danger_states[3:]:
-    #                 ts += '1' if i else '0'
-    #             ts += '\n'
-    #             if self.velo_trigger:
-    #                 self.velo_trigger = False
+    def postCommand(self):
+        while self.serArdu.is_open:
+            if self.post_trigger:       
+                ts = ''
+                for i in self.danger_states[0:3]:
+                    ts += str(i)
+                ts += str(self.srvo_level)
+                for i in self.danger_states[3:]:
+                    ts += str(i)
+                ts += '\n'
+                if self.velo_trigger:
+                    self.velo_trigger = False
 
-    #             if self.danger_trigger:
-    #                 self.danger_trigger = False
+                if self.danger_trigger:
+                    self.danger_trigger = False
 
-    #             print('post: ', ts)
-    #             threading.Thread(target=self.serArdu.write, args=(ts.encode('utf-8'),)).start()
-    #             self.post_trigger = False
-    #         time.sleep(0.01)
+                print('post: ', ts)
+                threading.Thread(target=self.serArdu.write, args=(ts.encode('utf-8'),)).start()
+                self.post_trigger = False
+            time.sleep(0.01)
     
     def convertRaw2Height(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, (self.height,)*3)}
@@ -207,16 +205,20 @@ class Main:
             
             roll, pitch = rp.result()
             
-            # if self.lidarCnt == 3:
-            #     backXList = xposList[2]
-            #     backYList = yposList[2]
-            #     backHList = heightList[2]
-            #     tpe.map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
-            # else :
-            #     dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
+            if self.lidarCnt == 3:
+                backXList = xposList[2]
+                backYList = yposList[2]
+                backHList = heightList[2]
+                tpe.map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
+            else :
+                dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                 
-            # led = dangerDetection.getState()
-            # print("LED: ", led)
+            self.danger_states = dangerDetection.getState()
+            print("LED: ", self.danger_states)
+            
+            if sum(self.danger_states) > 0:
+                self.danger_trigger = True
+            
             if self.new_velo != -1:
                 self.velocity = self.new_velo
                 self.new_velo = -1
