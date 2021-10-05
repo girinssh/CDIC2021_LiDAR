@@ -79,7 +79,9 @@ class Main:
             self.serArdu.open()
             time.sleep(0.5)
         
+        time.sleep(0.5)
         self.serArdu.flush()
+        
         ang = np.rad2deg(self.srvo_ang)
         srvo_ang_str = '{:.2f}, {:.2f}, {:.2f}\n'.format(ang[0], ang[1], ang[2])
         print(srvo_ang_str)
