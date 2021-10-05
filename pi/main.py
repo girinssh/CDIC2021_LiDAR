@@ -213,10 +213,11 @@ class Main:
             else :
                 dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                 
-            self.danger_states = dangerDetection.getState()
+            new_danger_states = dangerDetection.getState()
             # print("LED: ", self.danger_states)
             
-            if sum(self.danger_states) > 0:
+            if sum([ 1 if new_danger_states[i] == self.danger_states[i] else 0 for i in range(7)]) > 1:
+                self.danger_states = new_danger_states
                 self.danger_trigger = True
             
             if self.new_velo != -1:
