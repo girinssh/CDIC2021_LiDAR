@@ -141,7 +141,7 @@ class Main:
                     self.danger_trigger = False
                 ts[0:3] = [int(i) for i in self.danger_states[0:3]]
                 ts[4:] = [int(i) for i in self.danger_states[3:]]
-                threading.thread(self.serArdu.write, ts).start()
+                threading.thread(self.serArdu.write, ts.encode('utf-8')).start()
                 print('post: ', ts)
                 self.post_trigger = False
             time.sleep(0.01)
