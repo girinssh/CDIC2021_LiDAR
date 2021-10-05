@@ -136,7 +136,7 @@ class Main:
                 ts = '0'*8 + '\n'
                 if self.velo_trigger:
                     self.velo_trigger = False
-                ts[3] = str(self.srvo_level)
+                ts[3] = chr(self.srvo_level)
                 if self.danger_trigger:
                     self.danger_trigger = False
                 ts[0:3] = [int(i) for i in self.danger_states[0:3]]
