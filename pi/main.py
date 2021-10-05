@@ -184,69 +184,67 @@ class Main:
         
         i = 0
         while self.serArdu.is_open:
-            try:
-                start_time = time.time()
-                rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
-                # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
-                # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
-                rp = tpe().submit(self.imu.getRollPitch)
-                heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
-                xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
-                yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngleTime)
+            start_time = time.time()
+            rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
+            # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
+            # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
+            rp = tpe().submit(self.imu.getRollPitch)
+            heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
+            xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
+            yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngleTime)
+            
+            heightList = heightList.result()
+            xposList = xposList.result()
+            yposList = yposList.result()
+            
+            frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
+            #print(frontXList)
+            # inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
+            # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
+            
+            roll, pitch = rp.result()
+            
+            if self.lidarCnt == 3:
+                backXList = xposList[2]
+                backYList = yposList[2]
+                backHList = heightList[2]
+                tpe.map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
+            else :
+                dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                 
-                heightList = heightList.result()
-                xposList = xposList.result()
-                yposList = yposList.result()
-                
-                frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
-                #print(frontXList)
-                # inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
-                # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
-                
-                roll, pitch = rp.result()
-                
-                if self.lidarCnt == 3:
-                    backXList = xposList[2]
-                    backYList = yposList[2]
-                    backHList = heightList[2]
-                    tpe.map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
-                else :
-                    dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
-                    
-                new_danger_states = dangerDetection.getState().copy()
-                dangerDetection.resetState()
-                # print("LED: ", self.danger_states)
-                
-                if sum([ 1 if new_danger_states[i] != self.danger_states[i] else 0 for i in range(7)]) > 0:
-                    self.danger_states = new_danger_states
-                    self.danger_trigger = True
-                    print("DANGER_TRIGGER_ON")
-                
-                if self.new_velo != -1:
-                    self.velocity = self.new_velo
-                    self.new_velo = -1
-                    for i in range(3):
-                        if self.velo_range[i] < self.velocity < self.velo_range[i+1]:
-                            step = i
-                            break
-                    if step != self.srvo_level:
-                        self.srvo_level = step
-                        self.velo_trigger = True
-                    print("VELO_TRIGGER_ON")
-                    
-                self.post_trigger = self.velo_trigger or self.danger_trigger
-                
-                end_time = time.time()
-                interval = end_time - start_time
-                interval_max = interval if interval > interval_max else interval_max
-                interval_min = interval if interval < interval_min else interval_min
-                total_time += interval
-                print(i, interval, yposList.keys())
-            except Exception as e:  
-                print(e)
-                self.serArdu.close()  
-            finally:               
-                i+=1
+            new_danger_states = dangerDetection.getState().copy()
+            dangerDetection.resetState()
+            # print("LED: ", self.danger_states)
+            
+            if len([i for i in range(7) if new_danger_states[i] != self.danger_states[i]]) > 0:
+                self.danger_states = new_danger_states
+                self.danger_trigger = True
+                print("DANGER_TRIGGER_ON")
+            
+            if self.new_velo != -1 and self.new_velo != self.velocity:
+                self.velocity = self.new_velo
+                self.new_velo = -1
+                for i in range(3):
+                    if self.velo_range[i] < self.velocity < self.velo_range[i+1]:
+                        step = i
+                        break
+                if step != self.srvo_level:
+                    self.srvo_level = step
+                    self.velo_trigger = True
+                print("VELO_TRIGGER_ON")
+            else:
+                self.new_velo = -1
+            self.post_trigger = self.velo_trigger or self.danger_trigger
+            
+            end_time = time.time()
+            interval = end_time - start_time
+            interval_max = interval if interval > interval_max else interval_max
+            interval_min = interval if interval < interval_min else interval_min
+            total_time += interval
+            print(i, interval, yposList.keys())
+
+        
+            i+=1
             # ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
             # ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
