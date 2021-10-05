@@ -217,7 +217,8 @@ class dangerDetection:
         print("UD: ", np.rad2deg(ud))
         lr = dangerDetection.lrSlope(param)
         print("LR: ",np.rad2deg(lr))
-        dangerDetection.estiSlope(POS, ud , lr, carRol, carPit)
+        
+        dangerDetection.estiSlope(POS, ud , lr, np.deg2rad(carRol), np.deg2rad(carPit))
         t.join()
         return
     
