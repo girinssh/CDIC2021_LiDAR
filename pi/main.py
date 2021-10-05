@@ -58,14 +58,14 @@ class Main:
         self.lm = LiDARManager(self.rpm, self.samp_rate, self.min_angle, self.max_angle)
         self.onewayTime = 60 / (self.rpm * 2) # sec
         
-        self.width = 2.0 # m
-        self.height = 1.0 # m
+        self.width = 0.3 # m
+        self.height = 0.3 # m
         self.velocity = 5.0 # m/s
         self.new_velo = -1
         
         self.velo_range = [0.0, 2.4, 4.0, 5.56]     
         
-        self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
+        self.srvo_ang = np.arctan2(self.height, np.array([1.3, 1.5, 1.7]))
         self.srvo_level = 0
         self.danger_states = [0]*7
 
@@ -196,10 +196,11 @@ class Main:
         i = 0
         while self.serArdu.is_open:
             start_time = time.time()
+            
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
-            
+            dangerDetection.resetState()
             if sum([len([rawDistAngleTime[i][2]]) for i in range(self.lidarCnt)]) > 0 :
                 rp = tpe().submit(self.imu.getRollPitch)
                 heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
@@ -226,7 +227,6 @@ class Main:
                     dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                     
                 new_danger_states = dangerDetection.getState().copy()
-                dangerDetection.resetState()
                 # print("LED: ", self.danger_states)
                 
                 for j in range(7):
