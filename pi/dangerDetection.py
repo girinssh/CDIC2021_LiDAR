@@ -113,8 +113,8 @@ class dangerDetection:
         # car roll, pitch 받아오기
         
         if pit_ang*carPit > 0:
-            estPit=abs(pit_ang-carPit) # 차의 현재 각도와 라이다의 예상 각도의 부호가 같을 때 (내리막 > 내리막, 오르막 > 오르막)
-        else: estPit=abs(pit_ang+carPit) # 각도가 0이거나 두 각도의 부호가 다를 때 (내리막 > 오르막, 오르막 > 내리막)
+            estPit=abs(pit_ang+carPit) # 차의 현재 각도와 라이다의 예상 각도의 부호가 같을 때 (내리막 > 내리막, 오르막 > 오르막)
+        else: estPit=abs(pit_ang-carPit) # 각도가 0이거나 두 각도의 부호가 다를 때 (내리막 > 오르막, 오르막 > 내리막)
 
         if rol_ang*carRol > 0:
             estRol=abs(rol_ang-carRol) 
@@ -123,8 +123,8 @@ class dangerDetection:
         pitTh = 1*np.pi/9 # pitch 위험 기준 각도 40[deg] = 2pi/9[rad]
         rolTh = np.pi/6 # roll 위험 기준 각도 30[deg] = pi/6[rad]
 
-        print("ESTI Pitch: ", estPit)
-        print("ESTI Roll: ", estRol)
+        print("ESTI Pitch: ", np.rad2deg(estPit))
+        print("ESTI Roll: ", np.rad2deg(estRol))
         
         if estPit > pitTh:
             dangerDetection.state[UD] = 1
