@@ -133,14 +133,13 @@ class Main:
     def postCommand(self):
         while True:
             if self.post_trigger:       
-                ts = '0'*8 + '\n'
+                ts = str(chr(i) for i in self.danger_states[0:3]) + str(self.srvo_level) + str(chr(i) for i in self.danger_states[3:])
                 if self.velo_trigger:
                     self.velo_trigger = False
-                ts[3] = chr(self.srvo_level)
+
                 if self.danger_trigger:
                     self.danger_trigger = False
-                ts[0:3] = [int(i) for i in self.danger_states[0:3]]
-                ts[4:] = [int(i) for i in self.danger_states[3:]]
+
                 threading.thread(self.serArdu.write, ts.encode('utf-8')).start()
                 print('post: ', ts)
                 self.post_trigger = False
