@@ -219,6 +219,8 @@ class dangerDetection:
         repicto="" #아두이노로 return할 picto num ex. "0001"
         reled="" #아두이노로 return할 led num ex. "100"
 
+        print(type(pictoPit), type(pictoRol), type(obspicto), type(ledPit),type(ledRol), type(obsled))
+
         for i in range(4):
             finpicto[i] = int(pictoPit[i])+int(pictoRol[i])+obspicto[i]
             if finpicto[i]!=0: finpicto[i]=1
