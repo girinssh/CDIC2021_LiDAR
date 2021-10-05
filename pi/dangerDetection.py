@@ -37,7 +37,7 @@ class dangerDetection:
             
             # np.append(param, -sum([p[j][0] * (p[j-2][1]*p[j-1][2] - p[j-2][2]*p[j-1][1]) for j in range(3)]))
             
-            print(param)
+            print("param: ", param)
 
             inliers = []
             outliers = []
