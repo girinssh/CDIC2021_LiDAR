@@ -217,6 +217,7 @@ class Main:
                 # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
                 
                 roll, pitch = rp.result()
+                print(roll, pitch)
                 
                 if self.lidarCnt == 3:
                     backXList = xposList[2]
