@@ -229,10 +229,12 @@ class Main:
                 dangerDetection.resetState()
                 # print("LED: ", self.danger_states)
                 
-                if not all(new_danger_states == self.danger_states):
-                    self.danger_states = new_danger_states
-                    self.danger_trigger = True
-                    print("DANGER_TRIGGER_ON")
+                for j in range(7):
+                    if new_danger_states[j] != self.danger_states[j]:
+                        self.danger_states = new_danger_states
+                        self.danger_trigger = True
+                        print("DANGER_TRIGGER_ON")
+                        break
                 
                 if self.new_velo != -1 and self.new_velo != self.velocity:
                     self.velocity = self.new_velo
