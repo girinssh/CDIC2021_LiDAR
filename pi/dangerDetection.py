@@ -16,7 +16,6 @@ class dangerDetection:
         finOutliers = [] # final outliers list #[i1, i2, …, in] 인덱스 번호
         
         l = len(XPOS)
-        indices = [0, 1, 2]
         
         # algo rotation num is already set: 14
         for i in range(14):
@@ -65,9 +64,8 @@ class dangerDetection:
             if len(inliers) > len(maxInliers):
                 maxInliers = inliers
                 finOutliers = outliers
-                #param = [a, b]
 
-        return POS, maxInliers, finOutliers#, param
+        return POS, maxInliers, finOutliers
     
     # Least Square Method 
     # inliers들로 구성된 기준식 하나 구하기 (=a, b 구하기)
@@ -233,7 +231,7 @@ class dangerDetection:
         return repicto, reled
         
     def estimate(cls, POS, XPOS, YPOS, H):
-        inlier, outlier = cls.RANSAC(POS, XPOS, YPOS, H)
+        _, inlier, outlier = cls.RANSAC(POS, XPOS, YPOS, H)
         param = cls.LSM(POS, inlier, XPOS, YPOS, H)
         _, pictoPit, pictoRol, ledPit, ledRol = cls.estiSlope(POS, cls.udSlope(POS, param), cls.lrSlope(POS, param))
         
