@@ -217,7 +217,7 @@ class Main:
                 new_danger_states = dangerDetection.getState()
                 # print("LED: ", self.danger_states)
                 
-                if sum([ 1 if new_danger_states[i] != self.danger_states[i] else 0 for i in range(7)]) > 1:
+                if sum([ 1 if new_danger_states[i] != self.danger_states[i] else 0 for i in range(7)]) > 0:
                     self.danger_states = new_danger_states
                     self.danger_trigger = True
                 
@@ -233,6 +233,7 @@ class Main:
                         self.velo_trigger = True
                     
                 self.post_trigger = self.velo_trigger or self.danger_trigger
+                
                 end_time = time.time()
                 interval = end_time - start_time
                 interval_max = interval if interval > interval_max else interval_max
