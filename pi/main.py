@@ -135,10 +135,10 @@ class Main:
             if self.post_trigger:       
                 ts = ''
                 for i in self.danger_states[0:3]:
-                    ts += str(i)
+                    ts += '1' if i else '0'
                 ts += str(self.srvo_level)
                 for i in self.danger_states[3:]:
-                    ts += str(i)
+                    ts += '1' if i else '0'
                 ts += '\n'
                 if self.velo_trigger:
                     self.velo_trigger = False
