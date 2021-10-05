@@ -24,10 +24,10 @@ class dangerDetection:
         l = len(XPOS)
         
         # algo rotation num is already set: 14
-        for i in range(14):
-            i1, i2, i3 = np.random.randint(0, l, size=3)
-            while i1 == i2 or i2 == i3 or i1 == i3: 
-                i2, i3 = np.random.randint(0, l, size=2)
+        for i in range(10):
+            i1 = np.random.randint(0, l/3, size=3)
+            i2 = np.random.randint(l/3, l*2/3, size=3)
+            i3 = np.random.randint(l*2/3, l, size=3)
                 
             p = np.array([[XPOS[i1], YPOS[i1], H[i1]],
                           [XPOS[i2], YPOS[i2], H[i2]],
