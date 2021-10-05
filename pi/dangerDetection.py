@@ -188,8 +188,10 @@ class dangerDetection:
                 #finobs.append(packet[i])
 
                 # 오목인지 볼록인지 판단
-                if all(np.array(tmph)>0): dangerDetection.state[UOBS] = 1
-                elif all(np.array(tmph)<0): dangerDetection.state[DOBS] = 1
+                if all(np.array(tmph)>0): 
+                    dangerDetection.state[UOBS] = 1
+                elif all(np.array(tmph)<0): 
+                    dangerDetection.state[DOBS] = 1
                 else: continue
 
                 # 장애물 좌/우/전방 위치 판단

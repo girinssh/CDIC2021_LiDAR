@@ -193,7 +193,8 @@ class Main:
         self.lidarCnt = 2
         
         i = 0
-        while self.serArdu.is_open:
+        # while self.serArdu.is_open:
+        for i in range(cycle):
             start_time = time.time()
             
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
