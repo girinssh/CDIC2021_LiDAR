@@ -127,7 +127,7 @@ class Main:
                 com = self.serArdu.readline().decode('utf-8').rstrip()
                 if "velocity" in com:
                     self.new_velo = float(com.split(':')[1])
-                    print('get:', self.new_velo)
+                    print('get: ', self.new_velo)
             time.sleep(0.1)
 
     def postCommand(self):
@@ -140,8 +140,8 @@ class Main:
                 if self.danger_trigger:
                     self.danger_trigger = False
 
-                threading.Thread(target=self.serArdu.write, args=ts.encode('utf-8')).start()
                 print('post: ', ts)
+                threading.Thread(target=self.serArdu.write, args=ts.encode('utf-8')).start()
                 self.post_trigger = False
             time.sleep(0.01)
     
