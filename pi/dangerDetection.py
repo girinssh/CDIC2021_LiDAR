@@ -79,8 +79,8 @@ class dangerDetection:
             tmpx=XPOS[i]
             tmpy=YPOS[i]
             tmph=H[i]
-            A = np.append(A, np.array([[tmpx, tmpy, 1]]), axis=0)
-            B = np.append(B, np.array([[tmph]]))
+            A = np.append(A, np.array([[tmpx, tmpy, 1]], dtype=np.float32), axis=0)
+            B = np.append(B, np.array([[tmph]], dtype=np.float32))
 
         print(A)
 
