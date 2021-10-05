@@ -118,7 +118,7 @@ class Main:
                     com = self.serArdu.readline().decode('utf-8').rstrip()
                     if "velocity" in com:
                         self.new_velo = float(com.split(':')[1])
-                        print('get: ', self.new_velo)
+                        #print('get: ', self.new_velo)
             except Exception as e:
                 print("GET ERROR: " , e)
             time.sleep(0.1)
@@ -148,7 +148,7 @@ class Main:
                     self.post_trigger = False
             except Exception as e:
                 print("POST ERROR: " , e)
-            time.sleep(0.01)
+            time.sleep(0.1)
     
     def convertRaw2Height(self, raw:dict)->dict:
         return {i[0]: i[1] for i in tpe().map(pi_method.raw2height, raw.keys(), [raw[i][0] for i in raw.keys()], (self.srvo_ang[self.srvo_level],)*self.lidarCnt, (self.height,)*3)}
@@ -256,7 +256,7 @@ class Main:
             interval_max = interval if interval > interval_max else interval_max
             interval_min = interval if interval < interval_min else interval_min
             total_time += interval
-            print(i, interval)
+            print(i, interval, self.danger_states)
             time.sleep(self.onewayTime - interval if self.onewayTime > interval else 0)
         
             i+=1
