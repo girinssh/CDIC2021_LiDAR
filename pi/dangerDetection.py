@@ -213,7 +213,7 @@ class dangerDetection:
         return POS, obspicto, obsled
 
     #roll, pitch, obstacle 각각의 picto, led 결합하여 아두이노로 넘겨줄 최종 picto, led 구하기
-    def finalPictoLed(pictoPit, pictoRol, obspicto, ledPit, ledRol, obsled):
+    def finalPictoLed(pictoPit:str, pictoRol:str, obspicto:list, ledPit:str, ledRol:str, obsled:list):
         finpicto=[0,0,0,0]
         finled=[0,0,0]
         repicto="" #아두이노로 return할 picto num ex. "0001"
