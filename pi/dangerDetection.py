@@ -16,7 +16,6 @@ class dangerDetection:
         finOutliers = [] # final outliers list #[i1, i2, …, in] 인덱스 번호
         
         l = len(XPOS)
-        indices = [0, 1, 2]
         
         # algo rotation num is already set: 14
         for i in range(14):
@@ -32,8 +31,7 @@ class dangerDetection:
             #두 점을 지나는 직선 (z=)f(x)=ax+b 구하기 
             
             
-            param = np.array([
-                sum([p[j][k] * (p[j-2][k-2] - p[j-1][k-2]) for j in range(3)]) for k in indices[-2:1:1]])
+            param = np.array([sum([p[j][k] * (p[j-2][k-2] - p[j-1][k-2]) for j in range(3)]) for k in range(-2, 1, 1)])
             
             # np.append(param, -sum([p[j][0] * (p[j-2][1]*p[j-1][2] - p[j-2][2]*p[j-1][1]) for j in range(3)]))
             
