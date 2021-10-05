@@ -54,7 +54,7 @@ class dangerDetection:
 
                 z_th = 0.3 # threshold value [m]
 
-                d = np.abs(param.dot(w))/np.linalg.norm(param)
+                d = np.abs(np.dot(param,w))/np.linalg.norm(param)
 
                 #pz = a*x+b # p1, p2로 만든 식에 만족하는 z값
 
