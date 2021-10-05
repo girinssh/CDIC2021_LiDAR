@@ -221,6 +221,7 @@ class IMUController:
         AcX_deg, AcY_deg = self.cal_angle_acc(AcX, AcY, AcZ)
 
         self.past = self.cal_angle_gyro(GyX, GyY, GyZ)
+        
         return self.alpha * self.GyY_deg + (1 - self.alpha)*AcY_deg, self.alpha * self.GyX_deg + (1 - self.alpha)*AcX_deg
         
 
@@ -242,13 +243,15 @@ if __name__ == '__main__':
 
     while True:
         # 3) accel, gyro의 Raw data 읽기, 
-        AcX, AcY, AcZ, GyX, GyY, GyZ = test.get_raw_data()
+        # AcX, AcY, AcZ, GyX, GyY, GyZ = test.get_raw_data()
      
-        # 4-1) Accel을 이용한 각도 계산
-        AcX_deg, AcY_deg = test.cal_angle_acc(AcX, AcY, AcZ)
+        # # 4-1) Accel을 이용한 각도 계산
+        # AcX_deg, AcY_deg = test.cal_angle_acc(AcX, AcY, AcZ)
 
-        # 4-2) Gyro를 이용한 각도 계산 
-        test.past = test.cal_angle_gyro(GyX, GyY, GyZ)
+        # # 4-2) Gyro를 이용한 각도 계산 
+        # test.past = test.cal_angle_gyro(GyX, GyY, GyZ)
+
+        AcX_deg, AcY_deg = test.getRollPitch()
 
         # 5) 0.01초 간격으로 값 읽기
         time.sleep(0.01)
