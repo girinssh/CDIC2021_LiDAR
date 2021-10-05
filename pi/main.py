@@ -8,6 +8,7 @@ Created on Thu Sep 23 18:58:26 2021
 from lidarManager import LiDARManager 
 import pi_method
 from dangerDetection import dangerDetection
+from IMU import IMUController
 
 from concurrent.futures import ThreadPoolExecutor as tpe
 
@@ -64,7 +65,6 @@ class Main:
         
         self.velo_range = [0.0, 2.4, 4.0, 5.56]     
         
-        
         self.srvo_ang = np.arctan2(self.height, np.array([3, 5, 7]))
         self.srvo_level = 0
         self.danger_states = [False]*7
@@ -74,7 +74,9 @@ class Main:
         self.danger_trigger = False
         self.post_trigger = True
 
-
+        self.imu = IMUController()
+        self.imu.sensor_calibration()
+    
 
         # self.serArdu = serial.Serial('/dev/ttyACM0', 9600, timeout=1.0)
         
@@ -191,10 +193,11 @@ class Main:
         
         for i in range(cycle):
             start_time = time.time()
-            
+            dangerDetection.resetState()
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
+            rp = tpe().submit(self.imu.getRollPitch)
             heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
             xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
             yposList = tpe().submit(self.convertRaw2YPOS, rawDistAngleTime)
@@ -206,25 +209,16 @@ class Main:
             frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
             #print(frontXList)
             
+            roll, pitch = rp.result()
+            
             if self.lidarCnt == 3:
                 backXList = xposList[2]
                 backYList = yposList[2]
                 backHList = heightList[2]
             
-            pos, led = dangerDetection.estimate(0, frontXList, frontYList, frontHList)
+            dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
+            led = dangerDetection.getState()
             # print("LED: ", led)
-            
-            end_time = time.time()
-            interval = end_time - start_time
-            interval_max = interval if interval > interval_max else interval_max
-            interval_min = interval if interval < interval_min else interval_min
-            print(i, interval, yposList.keys())
-            
-            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
-            # for j in range(self.lidarCnt):
-            #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
-            
-            total_time += interval
             if self.new_velo != -1:
                 self.velocity = self.new_velo
                 self.new_velo = -1
@@ -237,6 +231,18 @@ class Main:
                     self.velo_trigger = True
                 
             self.post_trigger = self.velo_trigger or self.danger_trigger
+            end_time = time.time()
+            interval = end_time - start_time
+            interval_max = interval if interval > interval_max else interval_max
+            interval_min = interval if interval < interval_min else interval_min
+            print(i, interval, yposList.keys())
+            
+            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
+            # for j in range(self.lidarCnt):
+            #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
+            
+            total_time += interval
+
         
         interval_avg = total_time / cycle
         #self.serArdu.close()  

@@ -52,7 +52,7 @@ class LiDARManager:
         timeArray = []
         last = -1
         t = 0
-        if POS == 0 : print(self.secPerOneway * 0.9)
+        #if POS == 0 : print(self.secPerOneway * 0.9)
         while t < self.secLimit:
             last = time.time()
             t = last - start

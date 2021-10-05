@@ -11,10 +11,6 @@ DOBS = 5
 UOBS = 6
 
 class dangerDetection:
-
-    imu = IMU.IMUController()
-    imu.sensor_calibration()
-    
     state = [0]*7
     
     def RANSAC(XPOS, YPOS, H): #XH 평면을 바라보고
@@ -111,8 +107,8 @@ class dangerDetection:
         return np.arctan(-plane[1]/plane[2])
     
     # 예상되는 roll, pitch를 계산해서 상하, 좌우 picto 번호와 led 번호를 반환
-    def estiSlope(POS, pit_ang, rol_ang):
-        carRol, carPit = dangerDetection.imu.getRollPitch() # car roll, pitch 받아오기
+    def estiSlope(POS, pit_ang, rol_ang, carRol, carPit):
+        # car roll, pitch 받아오기
         
         if pit_ang*carPit > 0:
             estPit=abs(pit_ang-carPit) # 차의 현재 각도와 라이다의 예상 각도의 부호가 같을 때 (내리막 > 내리막, 오르막 > 오르막)
@@ -228,15 +224,20 @@ class dangerDetection:
 # 	    #print(reled)
 #         return repicto, reled
         
-    def estimate(POS, XPOS, YPOS, H):
-        dangerDetection.state = [0]*7
+    def estimate(POS, XPOS, YPOS, H, carRol, carPit):
         inlier, outlier = dangerDetection.RANSAC(XPOS, YPOS, H)
         param = dangerDetection.LSM(inlier, XPOS, YPOS, H)
         t = threading.Thread(target=dangerDetection.Obstacle, args=(POS, outlier, XPOS, H))
         t.start()
         ud = dangerDetection.udSlope(param)
         lr = dangerDetection.lrSlope(param)
-        dangerDetection.estiSlope(POS, ud , lr)
+        dangerDetection.estiSlope(POS, ud , lr, carRol, carPit)
         t.join()
-        return POS, dangerDetection.state
+        return
+    
+    def getState():
+        return dangerDetection.state
+    
+    def resetState():
+        dangerDetection.state = [0]*7
         
