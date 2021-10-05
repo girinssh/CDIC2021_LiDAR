@@ -237,9 +237,12 @@ class Main:
                 interval = end_time - start_time
                 interval_max = interval if interval > interval_max else interval_max
                 interval_min = interval if interval < interval_min else interval_min
+                total_time += interval
                 print(i, interval, yposList.keys())
             except:   
                 self.serArdu.close()  
+            finally:               
+                i+=1
             # ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
             # ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
@@ -250,8 +253,6 @@ class Main:
             # for j in range(self.lidarCnt):
             #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
-            total_time += interval
-            i+=1
         
         interval_avg = total_time / (i+1)
         if self.serArdu.is_open:
