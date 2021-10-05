@@ -54,7 +54,7 @@ class dangerDetection:
                 # 임계값 넘어가면 outlier 
                 # 임계값 내에 있으면 inlier
 
-                z_th = 0.05 # threshold value [m]
+                z_th = 0.1 # threshold value [m]
 
                 d = np.abs(np.dot(param[:-1],w))/np.linalg.norm(param[:-1])
 
