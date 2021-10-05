@@ -112,33 +112,39 @@ class Main:
     def getCommand(self):
         self.serArdu.flushInput()
         while self.serArdu.is_open:
-            if self.serArdu.inWaiting() > 0:
-                com = self.serArdu.readline().decode('utf-8').rstrip()
-                if "velocity" in com:
-                    self.new_velo = float(com.split(':')[1])
-                    print('get: ', self.new_velo)
+            try:
+                if self.serArdu.inWaiting() > 0:
+                    com = self.serArdu.readline().decode('utf-8').rstrip()
+                    if "velocity" in com:
+                        self.new_velo = float(com.split(':')[1])
+                        print('get: ', self.new_velo)
+            except Exception as e:
+                print("GET ERROR: " , e)
             time.sleep(0.1)
 
     def postCommand(self):
         self.serArdu.flushOutput()
         while self.serArdu.is_open:
-            if self.post_trigger:       
-                ts = ''
-                for i in self.danger_states[0:3]:
-                    ts += str(i)
-                ts += str(self.srvo_level)
-                for i in self.danger_states[3:]:
-                    ts += str(i)
-                ts += '\n'
-                if self.velo_trigger:
-                    self.velo_trigger = False
-
-                if self.danger_trigger:
-                    self.danger_trigger = False
-
-                print('post: ', ts)
-                threading.Thread(target=self.serArdu.write, args=(ts.encode('utf-8'),)).start()
-                self.post_trigger = False
+            try:
+                if self.post_trigger:       
+                    ts = ''
+                    for i in self.danger_states[0:3]:
+                        ts += str(i)
+                    ts += str(self.srvo_level)
+                    for i in self.danger_states[3:]:
+                        ts += str(i)
+                    ts += '\n'
+                    if self.velo_trigger:
+                        self.velo_trigger = False
+    
+                    if self.danger_trigger:
+                        self.danger_trigger = False
+    
+                    print('post: ', ts)
+                    threading.Thread(target=self.serArdu.write, args=(ts.encode('utf-8'),)).start()
+                    self.post_trigger = False
+            except Exception as e:
+                print("POST ERROR: " , e)
             time.sleep(0.01)
     
     def convertRaw2Height(self, raw:dict)->dict:
@@ -190,7 +196,7 @@ class Main:
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
             # 여기서 raw, angle array를 thread로 distx, disty, height로 변환한다. 
             # { 라이다 번호 : 데이터 } // 0 - left / 1 - right / 2 - backward
-            if len(rawDistAngleTime[0][2]) > 0:
+            if all(len(rawDistAngleTime[:][2])> 0) :
                 rp = tpe().submit(self.imu.getRollPitch)
                 heightList = tpe().submit(self.convertRaw2Height, rawDistAngleTime)
                 xposList = tpe().submit(self.convertRaw2XPOS, rawDistAngleTime)
