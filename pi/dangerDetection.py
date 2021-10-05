@@ -1,5 +1,6 @@
 import numpy as np
 import IMU
+import threading
 
 LEFT = 0
 RIGHT = 1
@@ -231,11 +232,11 @@ class dangerDetection:
         dangerDetection.state = [0]*7
         inlier, outlier = dangerDetection.RANSAC(XPOS, YPOS, H)
         param = dangerDetection.LSM(inlier, XPOS, YPOS, H)
-        
-        ud = dangerDetection.udSlope( param)
+        t = threading.Thread(target=dangerDetection.Obstacle, args=(POS, outlier, XPOS, H))
+        t.start()
+        ud = dangerDetection.udSlope(param)
         lr = dangerDetection.lrSlope(param)
         dangerDetection.estiSlope(POS, ud , lr)
-        dangerDetection.Obstacle(POS, outlier, XPOS, H)
-        
+        t.join()
         return POS, dangerDetection.state
         
