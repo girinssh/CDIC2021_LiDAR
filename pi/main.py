@@ -238,7 +238,7 @@ class Main:
             ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
             ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
-            ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=1.0)
+            ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=0.2)
 
             # ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
             # ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
