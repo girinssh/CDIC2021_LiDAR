@@ -5,7 +5,8 @@ import numpy as np
 
 def raw2YPOS(pos:int, rawDistList, srvo_ang:float, angleList, timeList, velocity: float):
     yList = rawDistList*np.cos(srvo_ang)*np.sin(angleList)
-    yList = yList - (timeList[-1] - timeList)*velocity # array - (scalar - array)*scalar
+    if len(timeList) > 0:
+        yList = yList - (timeList[-1] - timeList)*velocity # array - (scalar - array)*scalar
     return pos, yList
 
 
