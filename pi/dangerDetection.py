@@ -71,8 +71,8 @@ class dangerDetection:
     # inliers들로 구성된 기준식 하나 구하기 (=a, b 구하기)
     # inliersList는 RANSAC이 return한 maxInliers = [i]
     def LSM(cls, POS, maxInliers, XPOS, YPOS, H):
-        A=np.empty((0,3), float) # A = [x, y, 1] (mx2)
-        B=np.empty((0,1), float) # B = [z] (mx1)
+        A=np.empty((0,3), dtype=np.float32) # A = [x, y, 1] (mx2)
+        B=np.empty((0,1), dtype=np.float32) # B = [z] (mx1)
 
         # A, B 행렬 만들기
         for i in maxInliers:
@@ -81,9 +81,6 @@ class dangerDetection:
             tmph=H[i]
             A = np.append(A, np.array([[tmpx, tmpy, 1]], dtype=np.float32), axis=0)
             B = np.append(B, np.array([[tmph]], dtype=np.float32))
-
-        A = A.T
-        print(A.shape, B.shape)
 
         X=np.linalg.inv(A.T@A)@A.T@B # X 업데이트
 
