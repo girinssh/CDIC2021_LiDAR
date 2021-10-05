@@ -82,6 +82,8 @@ class dangerDetection:
             A = np.append(A, np.array([[tmpx, tmpy, 1]]), axis=0)
             B = np.append(B, np.array([[tmph]]))
 
+        print(A)
+
         X=np.linalg.inv(A.T@A)@A.T@B # X 업데이트
 
         return POS, X # np.array X = [a, b, c]를 return
