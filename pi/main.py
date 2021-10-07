@@ -181,16 +181,15 @@ class Main:
         # inlier, outlier, param = [], [], []
         total_time = 0
         
-        # plt.style.use('ggplot') # figure formatting
-        # # figure and axis
-        # fig = plt.figure()
-        # ax = fig.add_subplot(projection='3d')
-        # colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]
-        # cycle = 9
-        
-        # X = np.arange(-2.0, 2.0, 0.1)
-        # Y = np.arange(-1.0, 5.0, 0.1)
-        # X, Y = np.meshgrid(X, Y)
+        plt.style.use('ggplot') # figure formatting
+        # figure and axis
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        colorList = [['#ff0000', '#00ff00', '#0000ff'],['#dd1111', '#11dd11', '#1111dd']]        
+        X = np.arange(-2.0, 2.0, 0.1)
+        Y = np.arange(-1.0, 5.0, 0.1)
+        X, Y = np.meshgrid(X, Y)
+        cycle = 9
         
         self.dangerMaintainTime = 0
         
@@ -201,8 +200,8 @@ class Main:
         
         
         i = 0
-        while self.serArdu.is_open:
-        # for i in range(cycle):
+        # while self.serArdu.is_open:
+        for i in range(cycle):
             start_time = time.time()
             
             rawDistAngleTime = {i[0] : i[1] for i in tpe().map(self.lm.getRaws, (start_time,)*self.lidarCnt, (i for i in range(self.lidarCnt)), (1 - 2 * (i%2),)*self.lidarCnt)}
@@ -221,7 +220,7 @@ class Main:
                 
                 frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
                 #print(frontXList)
-                #inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
+                inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
                 # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
                 
                 if self.lidarCnt == 3:
@@ -282,10 +281,10 @@ class Main:
             time.sleep(self.onewayTime - interval if self.onewayTime > interval else 0)
         
             i+=1
-            # ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
+            ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
-            # ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
-            # ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=0.2)
+            ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
+            ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=0.2)
 
             # ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
             # ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
@@ -300,13 +299,13 @@ class Main:
         print("Interval MAX: ", interval_max)
         print("Interval MIN: ", interval_min)
         print("Interval AVG: ", interval_avg)
-        # ax.set_xlim([-2.0,2.0])
-        # ax.set_zlim([-1.0,self.height * 1.3]) 
-        # ax.set_zlabel('Z Height [m]',fontsize=16) 
-        # ax.set_ylabel('Y Distance [m]',fontsize=16) 
-        # ax.set_xlabel('X Distance [m]',fontsize=16)
-        # ax.set_title('TF-Luna Ranging Test',fontsize=18)
-        # plt.show()
+        ax.set_xlim([-2.0,2.0])
+        ax.set_zlim([-1.0,self.height * 1.3]) 
+        ax.set_zlabel('Z Height [m]',fontsize=16) 
+        ax.set_ylabel('Y Distance [m]',fontsize=16) 
+        ax.set_xlabel('X Distance [m]',fontsize=16)
+        ax.set_title('TF-Luna Ranging Test',fontsize=18)
+        plt.show()
     
         
         # # print(inlier, outlier)
