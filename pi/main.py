@@ -221,9 +221,9 @@ class Main:
                 frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
                 #print(frontXList)
                         
-                np.vstack((frontXList, [0]))
-                np.vstack((frontYList, [0]))
-                np.vstack((frontHList, [0]))
+                np.hstack((frontXList, [0]))
+                np.hstack((frontYList, [0]))
+                np.hstack((frontHList, [0]))
                 
                 inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
                 paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
@@ -233,9 +233,9 @@ class Main:
                     backYList = yposList[2]
                     backHList = heightList[2]
                     
-                    np.vstack((backXList, [0]))
-                    np.vstack((backYList, [0]))
-                    np.vstack((backHList, [0]))
+                    np.hstack((backXList, [0]))
+                    np.hstack((backYList, [0]))
+                    np.hstack((backHList, [0]))
                     # tpe().map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2, timeout=0.02)
                 else :
                     dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
