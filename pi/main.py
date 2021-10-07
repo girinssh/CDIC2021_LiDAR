@@ -117,11 +117,11 @@ class Main:
         self.serArdu.flushInput()
         while self.serArdu.is_open:
             try:
-                if self.serArdu.inWaiting() > 0:
-                    com = self.serArdu.readline().decode('utf-8').rstrip()
-                    if "velocity" in com:
-                        self.new_velo = float(com.split(':')[1])
-                        #print('get: ', self.new_velo)
+                com = self.serArdu.readline().decode('utf-8').rstrip()
+                print(com)
+                if "velocity" in com:
+                    self.new_velo = float(com.split(':')[1])
+                    #print('get: ', self.new_velo)
             except Exception as e:
                 print("GET ERROR: " , e)
             time.sleep(0.1)
