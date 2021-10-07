@@ -297,7 +297,7 @@ class Main:
             ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
             ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
             for j in range(self.lidarCnt):
-                ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
+                ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[i%2][j])
             
         
         interval_avg = total_time / (i+1)
