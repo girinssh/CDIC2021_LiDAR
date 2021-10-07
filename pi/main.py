@@ -250,7 +250,7 @@ class Main:
                         print("DANGER_TRIGGER_ON")
                         break
                 
-                if self.new_velo != -1 and self.new_velo != self.velocity and not self.danger_trigger:
+                if self.new_velo != -1 and self.new_velo != self.velocity and not self.nowDanger:
                     self.velocity = self.new_velo
                     self.new_velo = -1
                     
@@ -262,9 +262,10 @@ class Main:
                         self.srvo_level = step
                         self.velo_trigger = True
                     print("VELO_TRIGGER_ON")
-                elif self.danger_trigger: # 위험상황일 때 증가. 
+                elif self.nowDanger and self.dangerMaintainTime < 5.0/2: # 위험상황일 때 증가. 
                     self.srvo_level = min(self.srvo_level + 1, 2)
                     self.velocity = self.new_velo
+                    self.velo_trigger = True
                 else:
                     self.new_velo = -1
             self.post_trigger = self.velo_trigger or self.danger_trigger
@@ -277,7 +278,7 @@ class Main:
                 self.dangerMaintainTime -= interval
                 
             total_time += interval
-            print(i, interval, self.danger_states)
+            # print(i, interval, self.danger_states)
             time.sleep(self.onewayTime - interval if self.onewayTime > interval else 0)
         
             i+=1
