@@ -288,16 +288,15 @@ class Main:
             print(i, interval, self.danger_states)
             time.sleep(self.onewayTime - interval if self.onewayTime > interval else 0)
         
-            # i+=1
             ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
-            # ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
-            # ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=0.2)
+            ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
+            ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=0.2)
 
-            ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
-            ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
-            for j in range(self.lidarCnt):
-                ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[i%2][j])
+            # ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
+            # ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
+            # for j in range(self.lidarCnt):
+            #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[i%2][j])
             
         
         interval_avg = total_time / (i+1)
