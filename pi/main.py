@@ -222,7 +222,7 @@ class Main:
                     backXList = xposList[2]
                     backYList = yposList[2]
                     backHList = heightList[2]
-                    tpe.map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
+                    tpe().map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
                 else :
                     dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                     
