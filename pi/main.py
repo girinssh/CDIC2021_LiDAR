@@ -221,9 +221,9 @@ class Main:
                 frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
                 #print(frontXList)
                         
-                frontXList.append(0)
-                frontYList.append(0)
-                frontHList.append(0)
+                frontXList.vstack(0)
+                frontYList.vstack(0)
+                frontHList.vstack(0)
                 
                 inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
                 paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
@@ -233,9 +233,9 @@ class Main:
                     backYList = yposList[2]
                     backHList = heightList[2]
                     
-                    backXList.append(0)
-                    backYList.append(0)
-                    backHList.append(0)
+                    backXList.vstack(0)
+                    backYList.vstack(0)
+                    backHList.vstack(0)
                     # tpe().map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2, timeout=0.02)
                 else :
                     dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
