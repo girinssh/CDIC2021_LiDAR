@@ -81,6 +81,8 @@ class Main:
         
         self.serArdu.close()
         
+        self.nowDanger = False
+        
         while not self.serArdu.is_open:
             print('waiting...')
             self.serArdu.open()
@@ -127,6 +129,7 @@ class Main:
     def postCommand(self):
         self.serArdu.flushOutput()
         while self.serArdu.is_open:
+            
             try:
                 if self.post_trigger:       
                     ts = ''
@@ -189,10 +192,13 @@ class Main:
         # Y = np.arange(-1.0, 5.0, 0.1)
         # X, Y = np.meshgrid(X, Y)
         
+        self.dangerMaintainTime = 0
+        
         threading.Thread(target=self.getCommand).start()
         threading.Thread(target=self.postCommand).start()
         
         self.lidarCnt = 3
+        
         
         i = 0
         while self.serArdu.is_open:
@@ -215,30 +221,39 @@ class Main:
                 
                 frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
                 #print(frontXList)
-                inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
+                #inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
                 # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
                 
                 if self.lidarCnt == 3:
                     backXList = xposList[2]
                     backYList = yposList[2]
                     backHList = heightList[2]
-                    tpe().map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2)
+                    tpe().map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2, timeout=0.02)
                 else :
                     dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                     
                 new_danger_states = dangerDetection.getState().copy()
                 # print("LED: ", self.danger_states)
                 
+
+                
                 for j in range(7):
                     if new_danger_states[j] != self.danger_states[j]:
-                        self.danger_states = new_danger_states
+                        if sum(new_danger_states) > 0 or self.dangerMaintainTime <= 0:
+                            self.danger_states = new_danger_states
+                            self.nowDanger = True
+                            self.dangerMaintainTime = 5.0
+                        else:
+                            self.nowDanger = False
+                            
                         self.danger_trigger = True
                         print("DANGER_TRIGGER_ON")
                         break
                 
-                if self.new_velo != -1 and self.new_velo != self.velocity:
+                if self.new_velo != -1 and self.new_velo != self.velocity and not self.danger_trigger:
                     self.velocity = self.new_velo
                     self.new_velo = -1
+                    
                     for j in range(3):
                         if self.velo_range[j] < self.velocity < self.velo_range[j+1]:
                             step = j
@@ -247,14 +262,20 @@ class Main:
                         self.srvo_level = step
                         self.velo_trigger = True
                     print("VELO_TRIGGER_ON")
+                elif self.danger_trigger: # 위험상황일 때 증가. 
+                    self.srvo_level = min(self.srvo_level + 1, 2)
+                    self.velocity = self.new_velo
                 else:
                     self.new_velo = -1
             self.post_trigger = self.velo_trigger or self.danger_trigger
             
             end_time = time.time()
+            
             interval = end_time - start_time
-            interval_max = interval if interval > interval_max else interval_max
-            interval_min = interval if interval < interval_min else interval_min
+            
+            if self.dangerMaintainTime > 0:                    
+                self.dangerMaintainTime -= interval
+                
             total_time += interval
             print(i, interval, self.danger_states)
             time.sleep(self.onewayTime - interval if self.onewayTime > interval else 0)
