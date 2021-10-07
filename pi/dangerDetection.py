@@ -211,9 +211,6 @@ class dangerDetection:
         
     def estimate(POS, XPOS, YPOS, H, carRol, carPit):
         
-        XPOS.append(0)
-        YPOS.append(0)
-        H.append(0)
         inlier, outlier, param = dangerDetection.RANSAC(XPOS, YPOS, H)
         param = dangerDetection.LSM(inlier, XPOS, YPOS, H)
         t = threading.Thread(target=dangerDetection.Obstacle, args=(POS, outlier, XPOS, H))

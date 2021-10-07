@@ -220,20 +220,28 @@ class Main:
                 
                 frontXList, frontYList, frontHList = self.changeDataAxis(xposList, yposList, heightList)
                 #print(frontXList)
+                        
+                frontXList.append(0)
+                frontYList.append(0)
+                frontHList.append(0)
+                
                 inlier, outlier, paramR = dangerDetection.RANSAC(frontXList, frontYList, frontHList)
-                # paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
+                paramLSM = dangerDetection.LSM(inlier, frontXList, frontYList, frontHList)
                 
                 if self.lidarCnt == 3:
                     backXList = xposList[2]
                     backYList = yposList[2]
                     backHList = heightList[2]
-                    tpe().map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2, timeout=0.02)
+                    
+                    backXList.append(0)
+                    backYList.append(0)
+                    backHList.append(0)
+                    # tpe().map(dangerDetection.estimate, (0, 2), (frontXList, backXList), (frontYList, backYList), (frontHList, backHList), (roll,)*2, (pitch,)*2, timeout=0.02)
                 else :
                     dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                     
                 new_danger_states = dangerDetection.getState().copy()
                 # print("LED: ", self.danger_states)
-                
 
                 
                 for j in range(7):
@@ -283,13 +291,13 @@ class Main:
             i+=1
             ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
-            ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
-            ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=0.2)
+            # ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
+            # ax.plot_surface(X, Y, ZR, rstride=4, cstride=4, alpha=0.2)
 
-            # ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
-            # ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
-            # for j in range(self.lidarCnt):
-            #     ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
+            ZLSM = paramLSM[0] * X + paramLSM[1] * Y + paramLSM[2]
+            ax.plot_surface(X, Y, ZLSM, rstride=4, cstride=4, alpha=0.4)
+            for j in range(self.lidarCnt):
+                ax.scatter(xposList[j], yposList[j], heightList[j], color=colorList[j][i%2])
             
         
         interval_avg = total_time / (i+1)
