@@ -285,10 +285,10 @@ class Main:
                 self.dangerMaintainTime -= interval
                 
             total_time += interval
-            # print(i, interval, self.danger_states)
+            print(i, interval, self.danger_states)
             time.sleep(self.onewayTime - interval if self.onewayTime > interval else 0)
         
-            i+=1
+            # i+=1
             ax.scatter(frontXList, frontYList, frontHList, color=colorList[(i%2)][i%3])
             
             # ZR = (paramR[0] * X + paramR[1] * Y + paramR[3])/-paramR[2]
