@@ -399,6 +399,8 @@ class Main:
                         dangerDetection.estimate(0, frontXList, frontYList, frontHList, roll, pitch)
                         
                     new_danger_states = dangerDetection.getState().copy()
+                   
+                    
                     for j in range(7):
                         if new_danger_states[j] != self.danger_states[j]:
                             if sum(new_danger_states) > 0 or self.dangerMaintainTime <= 0:
@@ -431,7 +433,7 @@ class Main:
                     else:
                         self.new_velo = -1
                 self.post_trigger = self.velo_trigger or self.danger_trigger
-                
+                print(self.danger_states)
                 end_time = time.time()
                 
                 interval = end_time - start_time
