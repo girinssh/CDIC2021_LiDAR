@@ -54,7 +54,7 @@ class Main:
         # Need Change!!!!!!!!!!!!!!!!!!!
         self.base_len = np.array([3, 5, 7]) # searching range (unit: meter)
         self.srvo_ang = np.arctan2(self.height, self.base_len) # (unit: radian)
-        self.srvo_level = 2
+        self.srvo_level = 0
 
         ang = np.rad2deg(self.srvo_ang)
         srvo_ang_str = '{:.2f}, {:.2f}, {:.2f}\n'.format(ang[0], ang[1], ang[2])
@@ -415,6 +415,7 @@ class Main:
                                     self.nowDanger = True
                                     self.dangerMaintainTime = 5.0
                                 else:
+                                    self.danger_states = new_danger_states            
                                     self.nowDanger = False
                                 
                             self.danger_trigger = True
@@ -439,6 +440,7 @@ class Main:
                         self.velo_trigger = True
                     else:
                         self.new_velo = -1
+                        
                 self.post_trigger = self.velo_trigger or self.danger_trigger
                 
                 print("DANGER STATE: ", self.danger_states)
