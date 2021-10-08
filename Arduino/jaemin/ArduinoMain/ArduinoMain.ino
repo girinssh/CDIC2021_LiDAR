@@ -1,27 +1,21 @@
 #include <Adafruit_NeoPixel.h>
 #include "setup.h"
 #include "loop.h"
-#include "SerMo.h"
+#include <Servo.h>
 #include <SoftwareSerial.h>
 
 SoftwareSerial subArduino(10, 11); 
-SoftwareSerial rasberry(4, 5);
-
 
 #define GPSBAUD 9600
-int servo_pin[] = {A0, A1, A2};
-int step_pin[] = {A7, A8, A9, A10, A11, A12};
-int step_speed[] = {1000, 400};
 
 //Gps gps(GPSBAUD);
-SerMo servo_moter = SerMo(servo_pin);
-
+Servo servo1, servo2, servo3;
 
 int led_spd;
 int led_pre_time = 0, led_cur_time;
 boolean isLedOn = false;
 String getstr = "";
-String pre_warn_case= "", warn_case;
+String warn_case;
 
 float serv_deg[3];
 
@@ -29,114 +23,113 @@ void setup() {
   //led, speaker init
   ledsp_setup();
   Serial.begin(9600);
-
   subArduino.begin(9600);
 
+  servo1.attach(A0);
+  servo2.attach(A2);
+  servo3.attach(A4);
 
+  servo_init();
+  
+  Serial.println("start");
+  
   //rasbarrypi init
   while(!Serial.available()){  
-    Serial.println("start");
-    delay(100);
   }
   String get_serv_deg;
   while(Serial.available())
     get_serv_deg = Serial.readStringUntil('\n');
+  //send to rpi(ok)
+  //Serial.println(get_serv_deg);
+  String sd = "ok";
+  Serial.println(sd);
+  
+  //initializing sub
+  for(int i =0; i < get_serv_deg.length(); i++)
+    subArduino.write(get_serv_deg.charAt(i));
   setting_serv_deg(get_serv_deg);
-  
 
-  
-//  while(!Serial.available()){
-//  }
-//
-//  if(Serial.available()){
-//    String c = Serial.readStringUntil('\n');
-//    for(int i =0; i< c.length(); i++)
-//      subArduino.write(c.charAt(i));
-//  }
-  String c= "on";
-
-  for(int i =0; i< c.length(); i++)
-    subArduino.write(c.charAt(i));
-  
-  
-  while(!subArduino.available()){
-    
+   
+  //recive success data
+  while(!subArduino.available()){    
   }
+  while(subArduino.available())
+    getstr = subArduino.readStringUntil("\n");
   
-  while(subArduino.available()){
-    getstr = subArduino.readStringUntil('\n');
-  }
   getstr.trim();
-//  Serial.println(getstr);
 
   //send raspi (init)
   String info = "success";
-  for(int i =0; i< info.length(); i++)
-    Serial.write(info.charAt(i));
+  Serial.println(info);  
 }
 
 void loop() {
   
 //  float gps_velocity = gps.getVelocity();
   float gps_velocity = 5.01;
+
   
   //send data to rasberry(gps_velocity)
-  if(Serial.available()){
-    String temp = String(gps_velocity);
-    for(int i =0; i < temp.length(); i++)
-      Serial.write(temp.charAt(i));
-  }
+  String temp = String(gps_velocity);
+  Serial.print("velocity:");
+
+  Serial.println(temp);
   
   //waiting 
   while(!Serial.available()){
+    //send gps_velocity until available 
+    //led rearranging
+    led_control();
+    Serial.print("velocity:");
+    Serial.println(temp);
   }
 
   // rasberry (recive data)
   String recv_data = "";
   while(Serial.available())
     recv_data = Serial.readStringUntil('\n');
-  
-  //parsing
-  //String recv_data = "00141010";
   recv_data.trim();
-  String neo_info = recv_data.substring(0, 4);
+ 
+  //parsing
+  //String recv_data = "00121010";
+  String neo_info = recv_data.substring(0, 3);
   String spd_info = String(recv_data.charAt(3));
-  String led_info = recv_data.substring(5);
-
+  String led_info = recv_data.substring(4);
+  
   if(neo_info.equals("001"))
     neo_info = "110000000011";
   else if(neo_info.equals("010"))
-    neo_info = "001111000000";
-  else if(neo_info.equals("100"))
     neo_info = "000000111100";
+  else if(neo_info.equals("100"))
+    neo_info = "001111000000";
   else if(neo_info.equals("000"))
     neo_info = "000000000000";
+  else if(neo_info.equals("110"))
+    neo_info = "001111111100";
+  else if(neo_info.equals("101"))
+    neo_info = "111111000011";
+  else if(neo_info.equals("011"))
+    neo_info = "110000111111";
+  else if(neo_info.equals("111"))
+    neo_info = "111111111111";
   
   
   int spd = spd_info.toInt();
   
   //servo setting
-  servo_moter.SerMotorMove(serv_deg[spd]);
+  servo_move(serv_deg[spd]);
   String warn_case = "led" + neo_info + "spd" + spd_info + "kind" + led_info;
   
-  //warn_case = Serial.readString();
  // warn_case = "led101010101010spd1kind1010";
-
   
   led_spd = spd +1;
-
-  if(pre_warn_case != warn_case){
-    ledsp_loop(warn_case);
-    
-    led_cur_time = millis();
-    led_pre_time = led_cur_time;
-    isLedOn = true;
-    pre_warn_case = warn_case;
-
-  }
+ 
+  ledsp_loop(warn_case);
+  led_cur_time = millis();
+  led_pre_time = led_cur_time;
+  isLedOn = true;
   
-  if(led_spd)
-    led_control();
+  led_control();
     
 }
 
@@ -170,5 +163,17 @@ void led_control(){
       isLedOn = true;
     }
   }
+}
+
+void servo_move(float angle){
+  servo1.write(92-angle);
+  servo2.write(75-angle);
+  servo3.write(91-angle);
+}
+
+void servo_init(){
+  servo1.write(92);
+  servo2.write(75);
+  servo3.write(91);
 }
   
