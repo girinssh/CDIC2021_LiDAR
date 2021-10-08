@@ -40,7 +40,7 @@ class Main:
         self.min_angle = 2*np.pi / 9
         self.max_angle = 7*np.pi / 9
         
-        self.lm = LiDARManager(self.rpm, self.samp_rate, self.min_angle, self.max_angle, isLiDAROn=activateLiDAR)
+        self.lm = LiDARManager(self.rpm, self.samp_rate, self.min_angle, self.max_angle, isLiDAROn=(activateLiDAR or not isTest))
         
         self.onewayTime = 60 / (self.rpm * 2) # sec
         
