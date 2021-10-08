@@ -5,7 +5,6 @@ Created on Thu Sep 23 16:05:30 2021
 @author: tngus
 """
 
-from lidar import LiDAR
 import time
 import numpy as np
 
@@ -18,15 +17,17 @@ class LiDARManager:
     DIR_LEFT2RIGHT = 1
     DIR_RIGHT2LEFT = -1
     
-    def __init__(self, rpm:int, samp_rate:int, minAngle, maxAngle):
+    def __init__(self, rpm:int, samp_rate:int, minAngle, maxAngle, isLiDAROn = True):
         self.rpm = rpm
         self.samp_rate = samp_rate
-        
-        self.lidars = [
-                LiDAR("/dev/serial0", samp_rate=self.samp_rate),
-                LiDAR("/dev/ttyAMA1", samp_rate=self.samp_rate),
-                LiDAR("/dev/ttyAMA2", samp_rate=self.samp_rate)
-            ]
+        self.isLiDAROn = isLiDAROn
+        if isLiDAROn:
+            from lidar import LiDAR
+            self.lidars = [
+                    LiDAR("/dev/serial0", samp_rate=self.samp_rate),
+                    LiDAR("/dev/ttyAMA1", samp_rate=self.samp_rate),
+                    LiDAR("/dev/ttyAMA2", samp_rate=self.samp_rate)
+                ]
         
         # 편도로 가는 동안 몇개의 데이터를 수집해야하는가.
         self.rawPerOneway = int(30 * samp_rate / self.rpm)
@@ -53,7 +54,7 @@ class LiDARManager:
         last = -1
         t = 0
         #if POS == 0 : print(self.secPerOneway * 0.9)
-        while t < self.secLimit:
+        while t < self.secLimit and self.isLiDAROn:
             last = time.time()
             t = last - start
             # if POS == 0:
@@ -65,7 +66,7 @@ class LiDARManager:
             val = self.lidars[POS].read_data()
             if val >= 8 or val < 0.2:
                 continue
-            rawArray.append(val+5)
+            rawArray.append(val)
             angleArray.append((self.angle_min if DIR == self.DIR_LEFT2RIGHT else self.angle_max) + DIR * self.angle_range * np.sin(2*t*np.pi))
             timeArray.append(t)
         return POS, np.array([rawArray, angleArray, timeArray])
