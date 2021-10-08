@@ -22,27 +22,15 @@ float serv_deg[3];
 void setup() {
   //led, speaker init
   ledsp_setup();
-  Serial.begin(9600);
   subArduino.begin(9600);
 
   servo1.attach(A0);
   servo2.attach(A2);
   servo3.attach(A4);
-
+  
   servo_init();
   
-  Serial.println("start");
-  
-  //rasbarrypi init
-  while(!Serial.available()){  
-  }
-  String get_serv_deg;
-  while(Serial.available())
-    get_serv_deg = Serial.readStringUntil('\n');
-  //send to rpi(ok)
-  //Serial.println(get_serv_deg);
-  String sd = "ok";
-  Serial.println(sd);
+  String get_serv_deg = "10.4, 20.5, 25.5";
   
   //initializing sub
   for(int i =0; i < get_serv_deg.length(); i++)
@@ -58,36 +46,15 @@ void setup() {
   
   getstr.trim();
 
-  //send raspi (init)
-  String info = "success";
-  Serial.println(info);  
+  //after 10seconds, execute
+  delay(10000);
 }
 
 void loop() {
   
-//  float gps_velocity = gps.getVelocity();
-  float gps_velocity = 5.01;
-
   
-  //send data to rasberry(gps_velocity)
-  String temp = String(gps_velocity);
-  Serial.print("velocity:");
-
-  Serial.println(temp);
-  
-  //waiting 
-  while(!Serial.available()){
-    //send gps_velocity until available 
-    //led rearranging
-    led_control();
-    Serial.print("velocity:");
-    Serial.println(temp);
-  }
-
-  // rasberry (recive data)
-  String recv_data = "";
-  while(Serial.available())
-    recv_data = Serial.readStringUntil('\n');
+  // 3 digit for neopixel, 1 digit for speed, 4 digit for led
+  String recv_data = "00111000";
   recv_data.trim();
  
   //parsing
@@ -130,7 +97,6 @@ void loop() {
   isLedOn = true;
   
   led_control();
-    
 }
 
 void setting_serv_deg(String info){

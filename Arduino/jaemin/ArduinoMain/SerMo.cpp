@@ -17,7 +17,7 @@ SerMo :: SerMo(int ServoMotorInfo[3])
 
 void SerMo:: SerMotorMove(float angle)
 {
-  ser_MO[0].write(angle);
-  ser_MO[1].write(angle);
-  ser_MO[2].write(angle);  
+  ser_MO[0].write(92-angle);
+  ser_MO[1].write(98-angle);
+  ser_MO[2].write(89-angle);  
 }

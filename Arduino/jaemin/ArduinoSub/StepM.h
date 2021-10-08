@@ -17,9 +17,10 @@ public:
   // StepMinf[6]={step1_StepPIN, step1_DirPIN, ...} 
   // StepMSpeed[2]={MaxSpeed, speed(steps per second = 200[steps/rotation]*RPM /60[seconds/minute])}
   
-  void stepMove();
-  void init_endstop(bool endStop[]);
-  
+  void StepMmove();
+  void stepMmove1();
+  void stepMmove2();
+  void stepMmove3();
 };
 
 #endif
