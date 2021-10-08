@@ -400,15 +400,20 @@ class Main:
                         
                     new_danger_states = dangerDetection.getState().copy()
                    
-                    
                     for j in range(7):
                         if new_danger_states[j] != self.danger_states[j]:
-                            if sum(new_danger_states) > 0 or self.dangerMaintainTime <= 0:
-                                self.danger_states = new_danger_states
-                                self.nowDanger = True
-                                self.dangerMaintainTime = 5.0
-                            else:
-                                self.nowDanger = False
+                            if self.dangerMaintainTime <= 0: # 시간이 지났다면.
+                                if sum(new_danger_states) > 0: # 위험할 때
+                                    self.danger_states = new_danger_states
+                                    self.nowDanger = True
+                                    self.dangerMaintainTime = 5.0
+                            else:    
+                                if sum(new_danger_states) > 0:
+                                    self.danger_states = new_danger_states
+                                    self.nowDanger = True
+                                    self.dangerMaintainTime = 5.0
+                                else:
+                                    self.nowDanger = False
                                 
                             self.danger_trigger = True
                             print("DANGER_TRIGGER_ON")
