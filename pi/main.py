@@ -24,7 +24,7 @@ import numpy as np
 '''
 for test - True
 for real   - False '''
-isTest = True
+isTest = False
 
 #######################################
 ###             Activation          ###
