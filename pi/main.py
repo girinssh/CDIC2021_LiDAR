@@ -207,6 +207,10 @@ class Main:
             interval_min = 2
             cycle = 3
             
+            if activateSerial:
+                threading.Thread(target=self.getCommand).start()
+                threading.Thread(target=self.postCommand).start()    
+            
             for i in range(cycle):
                 start_time = time.time()
                 rawDistAngleTime = {}
