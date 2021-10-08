@@ -17,33 +17,20 @@
 
 }
 
-void StepM:: stepMove(){
+void StepM:: StepMmove(){
   stepper1.runSpeed();
   stepper2.runSpeed();
   stepper3.runSpeed();
 }
 
+void StepM:: stepMmove1(){
+  stepper1.runSpeed();
+}
 
-void StepM:: init_endstop(bool endStop[]){
-  while(true){
-    if(endStop[0] == 1){
-      if(endStop[1] == 1){
-        if(endStop[2] == 1){
-          break; 
-        }
-        else{
-          stepper3.runSpeed();
-        }
-      }
-      else{
-        stepper2.runSpeed();
-        stepper3.runSpeed();
-      }
-    }
-    else{
-      stepper1.runSpeed();
-      stepper2.runSpeed();
-      stepper3.runSpeed();
-    }
-  }
+void StepM:: stepMmove2(){
+  stepper2.runSpeed();
+}
+
+void StepM:: stepMmove3(){
+  stepper3.runSpeed();
 }
