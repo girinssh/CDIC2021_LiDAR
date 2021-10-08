@@ -402,11 +402,13 @@ class Main:
                    
                     for j in range(7):
                         if new_danger_states[j] != self.danger_states[j]:
-                            if self.dangerMaintainTime <= 0: # 시간이 지났다면.
+                            if self.dangerMaintainTime > 0: # 시간이 지나지 않았다면.
                                 if sum(new_danger_states) > 0: # 위험할 때
                                     self.danger_states = new_danger_states
                                     self.nowDanger = True
                                     self.dangerMaintainTime = 5.0
+                                else:
+                                    break
                             else:    
                                 if sum(new_danger_states) > 0:
                                     self.danger_states = new_danger_states
