@@ -433,7 +433,9 @@ class Main:
                     else:
                         self.new_velo = -1
                 self.post_trigger = self.velo_trigger or self.danger_trigger
-                print(self.danger_states)
+                
+                print("DANGER STATE: ", self.danger_states)
+                
                 end_time = time.time()
                 
                 interval = end_time - start_time
